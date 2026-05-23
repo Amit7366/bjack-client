@@ -15,6 +15,9 @@ const HOP_BY_HOP = new Set([
   "content-length",
 ]);
 
+/** Stripped from proxied responses — fetch() already decompresses the body. */
+const STRIP_FROM_RESPONSE = new Set(["content-encoding"]);
+
 export async function proxyToBackend(request: NextRequest, pathSegments: string[]) {
   const path = pathSegments.join("/");
   const target = new URL(`${API_BASE}/api/v1/${path}`);
@@ -22,10 +25,13 @@ export async function proxyToBackend(request: NextRequest, pathSegments: string[
 
   const headers = new Headers();
   request.headers.forEach((value, key) => {
-    if (!HOP_BY_HOP.has(key.toLowerCase())) {
-      headers.set(key, value);
+    const lower = key.toLowerCase();
+    if (HOP_BY_HOP.has(lower) || lower === "accept-encoding") {
+      return;
     }
+    headers.set(key, value);
   });
+  headers.set("Accept-Encoding", "identity");
 
   const init: RequestInit = {
     method: request.method,
@@ -40,9 +46,11 @@ export async function proxyToBackend(request: NextRequest, pathSegments: string[
   const upstream = await fetch(target, init);
   const responseHeaders = new Headers();
   upstream.headers.forEach((value, key) => {
-    if (!HOP_BY_HOP.has(key.toLowerCase())) {
-      responseHeaders.set(key, value);
+    const lower = key.toLowerCase();
+    if (HOP_BY_HOP.has(lower) || STRIP_FROM_RESPONSE.has(lower)) {
+      return;
     }
+    responseHeaders.set(key, value);
   });
 
   return new NextResponse(upstream.body, {
