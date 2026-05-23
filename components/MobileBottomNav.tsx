@@ -7,6 +7,7 @@ import { getProfileMessages } from "@/lib/i18n/profile-messages";
 import { BottomProfileNavIcon } from "./profile/ProfileMenuIcons";
 import ProfileMobileSheet from "./profile/ProfileMobileSheet";
 import { CasinoSpadeIcon, Slots777Icon } from "./SidebarIcons";
+import { useAuth } from "./AuthProvider";
 import { useLocale } from "./LocaleProvider";
 
 function BottomMenuIcon() {
@@ -116,6 +117,7 @@ export default function MobileBottomNav({
   onProfileClose,
 }: MobileBottomNavProps) {
   const { preferences, t } = useLocale();
+  const { isUser, authReady } = useAuth();
   const pathname = usePathname();
   const locale = preferences.locale;
   const base = `/${locale}`;
@@ -160,17 +162,19 @@ export default function MobileBottomNav({
             icon={<BottomGiftIcon />}
             href={`${base}/promotion`}
           />
-          <NavItem
-            active={isProfileActive}
-            label={p.navLabel}
-            icon={<BottomProfileNavIcon />}
-            onClick={onProfileClick}
-            ariaExpanded={profileOpen}
-          />
+          {authReady && isUser ? (
+            <NavItem
+              active={isProfileActive}
+              label={p.navLabel}
+              icon={<BottomProfileNavIcon />}
+              onClick={onProfileClick}
+              ariaExpanded={profileOpen}
+            />
+          ) : null}
         </div>
       </nav>
 
-      <ProfileMobileSheet open={!!profileOpen} onClose={onProfileClose} />
+      {authReady && isUser ? <ProfileMobileSheet open={!!profileOpen} onClose={onProfileClose} /> : null}
     </>
   );
 }

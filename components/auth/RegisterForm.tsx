@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
+import { registerAndLogin } from "@/lib/auth/api";
 import { getAuthMessages } from "@/lib/i18n/auth-messages";
 import { AuthField, authInputClass } from "./AuthField";
 import PasswordInput from "./PasswordInput";
@@ -63,32 +65,78 @@ function StepIndicator({ step, labels }: { step: number; labels: [string, string
   );
 }
 
+function authErrorMessage(err: unknown, fallback: string, networkFallback: string): string {
+  if (err instanceof TypeError) return networkFallback;
+  if (err instanceof Error && err.message) return err.message;
+  return fallback;
+}
+
 export default function RegisterForm() {
+  const router = useRouter();
   const { preferences } = useLocale();
   const a = getAuthMessages(preferences.locale);
+  const base = `/${preferences.locale}`;
+
   const [step, setStep] = useState<RegisterStep>("contact");
   const [currency, setCurrency] = useState<"BDT" | "INR">(preferences.currency);
   const [phone, setPhone] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const stepIndex = STEPS.indexOf(step);
   const stepTitle =
     step === "contact" ? a.stepContact : step === "username" ? a.stepUsername : a.stepPassword;
 
-  function handleContinue(e: React.FormEvent) {
+  const phonePrefix = currency === "INR" ? "+91" : "+880";
+  const phoneMaxLen = currency === "INR" ? 10 : 10;
+
+  async function handleContinue(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
+
     if (step === "contact") {
-      if (!phone.trim()) return;
+      if (!phone.trim()) {
+        setError(a.phoneRequired);
+        return;
+      }
       setStep("username");
       return;
     }
     if (step === "username") {
-      if (!username.trim()) return;
+      if (!username.trim()) {
+        setError(a.usernameRequired);
+        return;
+      }
       setStep("password");
       return;
     }
-    if (!password.trim()) return;
+
+    if (!password.trim()) {
+      setError(a.passwordRequired);
+      return;
+    }
+    if (password.length < 6) {
+      setError(a.passwordTooShort);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await registerAndLogin({
+        userName: username,
+        password,
+        contactNo: phone,
+        currency,
+      });
+      router.push(base);
+      router.refresh();
+    } catch (err) {
+      setError(authErrorMessage(err, a.registerError, a.networkError));
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -96,6 +144,15 @@ export default function RegisterForm() {
       <h2 className="mb-4 text-[15px] font-bold text-white">{stepTitle}</h2>
 
       <StepIndicator step={stepIndex} labels={[a.stepContact, a.stepUsername, a.stepPassword]} />
+
+      {error ? (
+        <p
+          className="mb-4 rounded-md border border-[#7f1d1d] bg-[#2a1212] px-3 py-2 text-[13px] text-[#fca5a5]"
+          role="alert"
+        >
+          {error}
+        </p>
+      ) : null}
 
       <div className="flex-1 space-y-5">
         {step === "contact" ? (
@@ -106,6 +163,7 @@ export default function RegisterForm() {
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as "BDT" | "INR")}
                   className={`${authInputClass()} cursor-pointer appearance-none pl-[4.5rem] pr-10 text-transparent`}
+                  disabled={loading}
                 >
                   <option value="BDT">BDT</option>
                   <option value="INR">INR</option>
@@ -124,16 +182,17 @@ export default function RegisterForm() {
               <div className="flex gap-2">
                 <div className="flex shrink-0 items-center gap-1.5 rounded-md border border-[#178358] bg-[#1f1f1f] px-2.5 py-3">
                   <BangladeshFlag />
-                  <span className="text-[14px] text-white">+880</span>
+                  <span className="text-[14px] text-white">{phonePrefix}</span>
                   <span className="text-[10px] text-[#6b7280]">▾</span>
                 </div>
                 <input
                   type="tel"
                   inputMode="numeric"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, phoneMaxLen))}
                   placeholder="----------"
                   className={`${authInputClass(true)} min-w-0 flex-1 tracking-[0.2em]`}
+                  disabled={loading}
                 />
               </div>
             </AuthField>
@@ -149,6 +208,7 @@ export default function RegisterForm() {
               onChange={(e) => setUsername(e.target.value)}
               placeholder={a.enterUsername}
               className={authInputClass()}
+              disabled={loading}
             />
           </AuthField>
         ) : null}
@@ -167,9 +227,10 @@ export default function RegisterForm() {
 
       <button
         type="submit"
-        className="focus-ring mt-8 w-full min-h-12 rounded-md bg-[#0d4a2e] py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-[#178358]"
+        disabled={loading}
+        className="focus-ring mt-8 w-full min-h-12 rounded-md bg-[#0d4a2e] py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-[#178358] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {step === "password" ? a.signUpButton : a.continue}
+        {loading ? "…" : step === "password" ? a.signUpButton : a.continue}
       </button>
     </form>
   );

@@ -17,7 +17,7 @@ import {
   PROFILE_TABS,
   type ProfileTabId,
 } from "@/lib/member-profile-tabs";
-import { MOCK_PROFILE_USER } from "@/lib/profile-user";
+import { getProfileUser } from "@/lib/profile-user";
 import {
   memberContainerProfile,
   MEMBER_PAGE_BG,
@@ -147,17 +147,18 @@ export default function MemberProfilePage({ activeTab }: MemberProfilePageProps)
   const m = getMemberProfileMessages(locale);
   const profileNav = getProfileMessages(locale);
   const router = useRouter();
+  const profileUser = getProfileUser();
   const [copied, setCopied] = useState(false);
 
   const copyUsername = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(MOCK_PROFILE_USER.username);
+      await navigator.clipboard.writeText(profileUser.username);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
       /* ignore */
     }
-  }, []);
+  }, [profileUser.username]);
 
   return (
     <div className={MEMBER_PAGE_BG}>
@@ -210,7 +211,7 @@ export default function MemberProfilePage({ activeTab }: MemberProfilePageProps)
                 </h2>
                 <div>
                   <InfoRow label={m.personalInfo.username}>
-                    <span className="font-medium">{MOCK_PROFILE_USER.username}</span>
+                    <span className="font-medium">{profileUser.username}</span>
                     <button
                       type="button"
                       onClick={copyUsername}
@@ -236,8 +237,8 @@ export default function MemberProfilePage({ activeTab }: MemberProfilePageProps)
                     label={m.personalInfo.phone}
                     onClick={() => router.push(phoneHref(locale))}
                   >
-                    <span>{MOCK_PROFILE_USER.phone}</span>
-                    {MOCK_PROFILE_USER.phoneNeedsAttention ? <WarningIcon /> : null}
+                    <span>{profileUser.phone}</span>
+                    {profileUser.phoneNeedsAttention ? <WarningIcon /> : null}
                     <ChevronRight />
                   </InfoRow>
                   <InfoRow

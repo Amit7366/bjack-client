@@ -9,7 +9,16 @@ import { ProfileNavIcon } from "./ProfileMenuIcons";
 
 const HOVER_CLOSE_DELAY_MS = 180;
 
-export default function ProfileDropdown() {
+type ProfileDropdownProps = {
+  variant?: "default" | "compact";
+  /** Where the dropdown panel anchors under the trigger */
+  menuAlign?: "start" | "end";
+};
+
+export default function ProfileDropdown({
+  variant = "default",
+  menuAlign = "start",
+}: ProfileDropdownProps) {
   const { preferences } = useLocale();
   const locale = preferences.locale;
   const p = getProfileMessages(locale);
@@ -61,10 +70,13 @@ export default function ProfileDropdown() {
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open]);
 
+  const isCompact = variant === "compact";
+  const menuPositionClass = menuAlign === "end" ? "right-0" : "left-0";
+
   return (
     <div
       ref={rootRef}
-      className="relative hidden md:block"
+      className="relative"
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
@@ -72,23 +84,30 @@ export default function ProfileDropdown() {
         type="button"
         aria-haspopup="true"
         aria-expanded={open}
+        aria-label={p.navLabel}
         onClick={() => setOpen((v) => !v)}
-        className={`focus-ring relative flex items-center gap-1.5 rounded-md px-2.5 py-2 text-[13px] transition-colors ${
-          isActive ? "text-white" : "text-[#d4d4d4] hover:bg-white/5 hover:text-white"
+        className={`focus-ring relative flex items-center justify-center transition-colors ${
+          isCompact
+            ? `h-9 w-9 rounded-full bg-gradient-to-br from-[#22c55e] to-[#0d3d24] ${
+                isActive ? "ring-2 ring-[#178358]" : ""
+              }`
+            : `gap-1.5 rounded-md px-2.5 py-2 text-[13px] ${
+                isActive ? "text-white" : "text-[#d4d4d4] hover:bg-white/5 hover:text-white"
+              }`
         }`}
       >
-        {isActive ? (
+        {!isCompact && isActive ? (
           <span
             className="absolute inset-x-1 top-0 h-0.5 rounded-full bg-[#178358]"
             aria-hidden
           />
         ) : null}
         <ProfileNavIcon />
-        <span>{p.navLabel}</span>
+        {!isCompact ? <span>{p.navLabel}</span> : null}
       </button>
 
       <div
-        className={`absolute right-0 top-full z-[60] w-[min(100vw-1.5rem,320px)] pt-1 transition-all duration-150 ${
+        className={`absolute ${menuPositionClass} top-full z-[60] w-[min(100vw-1.5rem,320px)] pt-1 transition-all duration-150 ${
           open
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-1 opacity-0"

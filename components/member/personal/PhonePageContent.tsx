@@ -9,7 +9,7 @@ import {
   phoneVerifyHref,
 } from "@/lib/member-personal-routes";
 import { memberSectionHref } from "@/lib/member-routes";
-import { MOCK_PROFILE_USER } from "@/lib/profile-user";
+import { getProfileUser } from "@/lib/profile-user";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   memberBtnPrimary,
@@ -42,7 +42,7 @@ export default function PhonePageContent() {
   const locale = preferences.locale;
   const p = getPersonalInfoMessages(locale);
   const router = useRouter();
-  const defaultDigits = MOCK_PROFILE_USER.phone.replace(/\D/g, "").slice(-10);
+  const defaultDigits = getProfileUser().phone.replace(/\D/g, "").slice(-10);
   const [phone, setPhone] = useState(defaultDigits || "1896453033");
   const [error, setError] = useState<string | null>(null);
 

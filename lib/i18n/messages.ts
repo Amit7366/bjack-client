@@ -25,6 +25,13 @@ export type Messages = {
   promotions: string;
   vip: string;
   viewAll: string;
+  navbar: {
+    withdraw: string;
+    deposit: string;
+    hideBalance: string;
+    showBalance: string;
+    refreshBalance: string;
+  };
   ui: {
     openMenu: string;
     closeMenu: string;
@@ -107,6 +114,13 @@ const en: Messages = {
   promotions: "Promotions",
   vip: "VIP",
   viewAll: "View all",
+  navbar: {
+    withdraw: "Withdraw",
+    deposit: "Deposit",
+    hideBalance: "Hide balance",
+    showBalance: "Show balance",
+    refreshBalance: "Refresh balance",
+  },
   ui: {
     openMenu: "Open menu",
     closeMenu: "Close menu",
@@ -357,6 +371,13 @@ const bn: Messages = {
   promotions: "প্রমোশন",
   vip: "ভিআইপি",
   viewAll: "সব দেখুন",
+  navbar: {
+    withdraw: "উইথড্র",
+    deposit: "ডিপোজিট",
+    hideBalance: "ব্যালেন্স লুকান",
+    showBalance: "ব্যালেন্স দেখান",
+    refreshBalance: "ব্যালেন্স রিফ্রেশ",
+  },
   ui: {
     openMenu: "মেনু খুলুন",
     closeMenu: "মেনু বন্ধ করুন",
@@ -607,6 +628,13 @@ const hi: Messages = {
   promotions: "प्रमोशन",
   vip: "वीआईपी",
   viewAll: "सभी देखें",
+  navbar: {
+    withdraw: "निकासी",
+    deposit: "जमा",
+    hideBalance: "बैलेंस छिपाएँ",
+    showBalance: "बैलेंस दिखाएँ",
+    refreshBalance: "बैलेंस रिफ्रेश करें",
+  },
   ui: {
     openMenu: "मेनू खोलें",
     closeMenu: "मेनू बंद करें",

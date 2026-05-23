@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { lobbyCategoryHref, type LobbyKind } from "@/lib/vendor-routes";
 import LocaleMenuButton from "./LocaleMenuButton";
+import LoggedInWalletBar from "./nav/LoggedInWalletBar";
 import ProfileDropdown from "./profile/ProfileDropdown";
+import { useAuth } from "./AuthProvider";
 import { useLocale } from "./LocaleProvider";
 
 function MenuIcon() {
@@ -87,6 +89,42 @@ function NavLink({
   );
 }
 
+function NavbarAuthActions() {
+  const { preferences, t } = useLocale();
+  const { isUser, authReady } = useAuth();
+  const locale = preferences.locale;
+
+  if (!authReady) {
+    return (
+      <div
+        className="h-9 w-[9.5rem] shrink-0 rounded-md bg-[#2a2a2a]/60 sm:w-[11rem]"
+        aria-hidden
+      />
+    );
+  }
+
+  if (isUser) {
+    return <LoggedInWalletBar />;
+  }
+
+  return (
+    <>
+      <Link
+        href={`/${locale}/login`}
+        className="focus-ring flex h-9 min-w-[4.5rem] items-center justify-center rounded-md border border-[#555555] px-3 text-[12px] font-medium text-white transition-colors hover:border-[#777777] hover:bg-white/5 sm:min-w-[5rem] sm:text-[13px]"
+      >
+        {t.login}
+      </Link>
+      <Link
+        href={`/${locale}/register`}
+        className="focus-ring flex h-9 min-w-[4.5rem] items-center justify-center rounded-md bg-[#178358] px-3 text-[12px] font-medium text-white transition-colors hover:bg-[#1a9664] sm:min-w-[5rem] sm:text-[13px]"
+      >
+        {t.signUp}
+      </Link>
+    </>
+  );
+}
+
 export default function TopNavbar({
   onMenuClick,
   menuOpen,
@@ -95,6 +133,7 @@ export default function TopNavbar({
   menuOpen?: boolean;
 }) {
   const { preferences, t } = useLocale();
+  const { isUser, authReady } = useAuth();
   const locale = preferences.locale;
   const navHrefs: { kind: LobbyKind; icon: React.ReactNode; label: string }[] = [
     { kind: "sports", icon: <SportsIcon />, label: t.sidebar.sports },
@@ -130,23 +169,12 @@ export default function TopNavbar({
             {navHrefs.map(({ kind, icon, label }) => (
               <NavLink key={kind} href={lobbyCategoryHref(locale, kind)} icon={icon} label={label} />
             ))}
-            <ProfileDropdown />
+            {authReady && isUser ? <ProfileDropdown menuAlign="start" /> : null}
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 lg:gap-3">
-          <Link
-            href={`/${locale}/login`}
-            className="focus-ring flex h-9 min-w-[4.5rem] items-center justify-center rounded-md border border-[#555555] px-3 text-[12px] font-medium text-white transition-colors hover:border-[#777777] hover:bg-white/5 sm:min-w-[5rem] sm:text-[13px]"
-          >
-            {t.login}
-          </Link>
-          <Link
-            href={`/${locale}/register`}
-            className="focus-ring flex h-9 min-w-[4.5rem] items-center justify-center rounded-md bg-[#178358] px-3 text-[12px] font-medium text-white transition-colors hover:bg-[#1a9664] sm:min-w-[5rem] sm:text-[13px]"
-          >
-            {t.signUp}
-          </Link>
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-3">
+          <NavbarAuthActions />
           <LocaleMenuButton />
         </div>
       </nav>
