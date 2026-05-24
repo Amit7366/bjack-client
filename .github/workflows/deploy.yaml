@@ -22,9 +22,3 @@ jobs:
             cd /root/mns-client
             git pull
             docker compose up -d --build
-
-vps login
-terminal
-root folder - clone - access
-git pull
-docker compose up -d
