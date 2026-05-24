@@ -8,17 +8,45 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_KEY }}
+          envs: GITHUB_TOKEN
+          script_stop: true
           script: |
-            cd /root/mns-client
-            git pull
+            set -euo pipefail
+            export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+            DEPLOY_DIR="/root/mns-client"
+            REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+
+            if ! command -v git >/dev/null 2>&1; then
+              echo "ERROR: git is not installed on the VPS."
+              exit 1
+            fi
+
+            if [ ! -d "${DEPLOY_DIR}/.git" ]; then
+              echo "Cloning repository into ${DEPLOY_DIR}..."
+              rm -rf "${DEPLOY_DIR}"
+              git clone --branch main "${REPO_URL}" "${DEPLOY_DIR}"
+            fi
+
+            cd "${DEPLOY_DIR}"
+            git remote set-url origin "${REPO_URL}"
+            git fetch origin main
+            git reset --hard origin/main
+
+            if ! command -v docker >/dev/null 2>&1; then
+              echo "Docker not found — installing..."
+              curl -fsSL https://get.docker.com | sh
+              export PATH="/usr/local/bin:/usr/bin:/bin:${PATH}"
+            fi
+
             docker compose up -d --build
