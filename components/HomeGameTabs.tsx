@@ -10,6 +10,8 @@ import {
   type HomeTabId,
 } from "@/lib/home-games-data";
 import { categoryProviderHref, lobbyCategoryHref } from "@/lib/vendor-routes";
+import { useAuth } from "./AuthProvider";
+import GameLoginPromptModal from "./GameLoginPromptModal";
 import { menuIconFor } from "./SidebarIcons";
 import { useLocale } from "./LocaleProvider";
 
@@ -56,16 +58,19 @@ function PopularGameCard({
   provider,
   image,
   priority,
+  onClick,
 }: {
   title: string;
   provider: string;
   image: string;
   priority?: boolean;
+  onClick: () => void;
 }) {
   return (
-    <a
-      href="#"
-      className="group relative block w-full overflow-hidden rounded-md bg-[#141414] shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition-transform duration-200 active:scale-[0.98] lg:rounded-[10px] lg:shadow-[0_4px_16px_rgba(0,0,0,0.35)] lg:active:scale-100 lg:hover:scale-[1.02]"
+    <button
+      type="button"
+      onClick={onClick}
+      className="group relative block w-full overflow-hidden rounded-md bg-[#141414] text-left shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition-transform duration-200 active:scale-[0.98] lg:rounded-[10px] lg:shadow-[0_4px_16px_rgba(0,0,0,0.35)] lg:active:scale-100 lg:hover:scale-[1.02]"
     >
       <div className="relative aspect-[3/4] w-full">
         <Image
@@ -80,7 +85,7 @@ function PopularGameCard({
           <BjMark />
         </span>
       </div>
-    </a>
+    </button>
   );
 }
 
@@ -118,7 +123,16 @@ function ProviderCard({
 
 export default function HomeGameTabs() {
   const { t, preferences } = useLocale();
+  const { isUser, authReady } = useAuth();
   const [activeTab, setActiveTab] = useState<HomeTabId>("popular");
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+
+  function handlePopularGameClick() {
+    if (!authReady) return;
+    if (!isUser) {
+      setLoginPromptOpen(true);
+    }
+  }
 
   return (
     <section className="bg-[#0a0a0a] px-3 py-4 sm:px-4 lg:px-6">
@@ -155,6 +169,7 @@ export default function HomeGameTabs() {
                 provider={t.home.providers[game.providerKey] ?? game.providerKey}
                 image={game.image}
                 priority={index < 4}
+                onClick={handlePopularGameClick}
               />
             ))}
           </div>
@@ -181,6 +196,7 @@ export default function HomeGameTabs() {
           ))}
         </div>
       )}
+      <GameLoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} />
     </section>
   );
 }

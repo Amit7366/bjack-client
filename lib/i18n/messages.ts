@@ -25,6 +25,11 @@ export type Messages = {
   promotions: string;
   vip: string;
   viewAll: string;
+  gameLoginPrompt: {
+    title: string;
+    description: string;
+    close: string;
+  };
   navbar: {
     withdraw: string;
     deposit: string;
@@ -114,6 +119,11 @@ const en: Messages = {
   promotions: "Promotions",
   vip: "VIP",
   viewAll: "View all",
+  gameLoginPrompt: {
+    title: "Become a BJ Member",
+    description: "Log in to play the game. If you don't have an account, sign up for free!",
+    close: "Close",
+  },
   navbar: {
     withdraw: "Withdraw",
     deposit: "Deposit",
@@ -371,6 +381,11 @@ const bn: Messages = {
   promotions: "প্রমোশন",
   vip: "ভিআইপি",
   viewAll: "সব দেখুন",
+  gameLoginPrompt: {
+    title: "একজন BJ সদস্য হন",
+    description: "গেমটি খেলতে লগ ইন করুন। আপনার যদি অ্যাকাউন্ট না থাকে তবে ফ্রি সাইন আপ করুন!",
+    close: "বন্ধ করুন",
+  },
   navbar: {
     withdraw: "উইথড্র",
     deposit: "ডিপোজিট",
@@ -628,6 +643,11 @@ const hi: Messages = {
   promotions: "प्रमोशन",
   vip: "वीआईपी",
   viewAll: "सभी देखें",
+  gameLoginPrompt: {
+    title: "BJ सदस्य बनें",
+    description: "गेम खेलने के लिए लॉग इन करें। अकाउंट नहीं है तो मुफ्त में साइन अप करें!",
+    close: "बंद करें",
+  },
   navbar: {
     withdraw: "निकासी",
     deposit: "जमा",
