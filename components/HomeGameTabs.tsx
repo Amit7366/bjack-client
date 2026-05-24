@@ -135,7 +135,8 @@ export default function HomeGameTabs() {
   }
 
   return (
-    <section className="bg-[#0a0a0a] px-3 py-4 sm:px-4 lg:px-6">
+    <section className="bg-[#0a0a0a]">
+      <div className="mx-auto w-full max-w-[1400px] px-3 py-4 sm:px-4 lg:px-10 xl:px-16">
       <div className="flex gap-1 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {homeTabIds.map((tabId) => {
           const active = activeTab === tabId;
@@ -196,6 +197,7 @@ export default function HomeGameTabs() {
           ))}
         </div>
       )}
+      </div>
       <GameLoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} />
     </section>
   );

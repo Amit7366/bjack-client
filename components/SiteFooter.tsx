@@ -72,7 +72,8 @@ export default function SiteFooter() {
   const f = t.footer;
 
   return (
-    <footer className="safe-bottom border-t border-[#1f1f1f] bg-black px-4 py-8 sm:px-6 lg:px-8">
+    <footer className="safe-bottom border-t border-[#1f1f1f] bg-black">
+      <div className="mx-auto w-full max-w-[1400px] px-3 py-8 sm:px-4 lg:px-10 xl:px-16">
       <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-2 md:grid-cols-4">
         <FooterColumn title={f.gaming}>
           {footerGamingLinks.map((id) => (
@@ -140,6 +141,7 @@ export default function SiteFooter() {
       </div>
 
       <FooterBottomSection />
+      </div>
     </footer>
   );
 }

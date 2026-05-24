@@ -6,6 +6,7 @@ import { useLocale } from "@/components/LocaleProvider";
 import { registerAndLogin } from "@/lib/auth/api";
 import { getAuthMessages } from "@/lib/i18n/auth-messages";
 import { AuthField, authInputClass } from "./AuthField";
+import AuthSubmitLoader from "./AuthSubmitLoader";
 import PasswordInput from "./PasswordInput";
 
 const STEPS = ["contact", "username", "password"] as const;
@@ -228,9 +229,19 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={loading}
-        className="focus-ring mt-8 w-full min-h-12 rounded-md bg-[#0d4a2e] py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-[#178358] disabled:cursor-not-allowed disabled:opacity-60"
+        aria-busy={loading}
+        className="focus-ring mt-8 flex w-full min-h-12 items-center justify-center rounded-md bg-[#0d4a2e] py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-[#178358] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? "…" : step === "password" ? a.signUpButton : a.continue}
+        {loading ? (
+          <>
+            <AuthSubmitLoader />
+            <span className="sr-only">{step === "password" ? a.signUpButton : a.continue}</span>
+          </>
+        ) : step === "password" ? (
+          a.signUpButton
+        ) : (
+          a.continue
+        )}
       </button>
     </form>
   );

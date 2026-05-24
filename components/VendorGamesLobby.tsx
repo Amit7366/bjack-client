@@ -350,7 +350,8 @@ export default function VendorGamesLobby({ locale, kind, vendors, activeTypes, g
 
   return (
     <div className="min-h-full bg-[#0a0a0a] pb-8 lg:pb-8 max-lg:pb-mobile-nav">
-      <div className="border-b border-[#1f1f1f] px-3 py-3 sm:px-4 lg:px-6">
+      <div className="border-b border-[#1f1f1f]">
+        <div className="mx-auto w-full max-w-[1400px] px-3 py-3 sm:px-4 lg:px-10 xl:px-16">
         <div className="mb-3 flex items-center justify-between">
           <div className="relative min-w-0" ref={menuWrapRef}>
             <button
@@ -499,10 +500,11 @@ export default function VendorGamesLobby({ locale, kind, vendors, activeTypes, g
             })}
           </div>
         ) : null}
+        </div>
       </div>
 
-      <div className="px-2 pt-4 sm:px-3 lg:px-4">
-        <div className="mx-auto grid max-w-[1600px] grid-cols-2 gap-1.5 sm:grid-cols-3 sm:gap-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+      <div className="mx-auto w-full max-w-[1400px] px-3 pt-4 sm:px-4 lg:px-10 xl:px-16">
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 sm:gap-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
           {visibleGames.map((game) => (
             <Link
               key={game.id}
@@ -552,7 +554,7 @@ export default function VendorGamesLobby({ locale, kind, vendors, activeTypes, g
         ) : null}
 
         {totalGames > 0 ? (
-          <div className="mx-auto mt-8 flex max-w-[1600px] flex-col items-center gap-3 px-2 pb-2">
+          <div className="mt-8 flex flex-col items-center gap-3 pb-2">
             {canLoadMore ? (
               <button
                 type="button"
@@ -580,15 +582,15 @@ export default function VendorGamesLobby({ locale, kind, vendors, activeTypes, g
             </p>
           </div>
         ) : null}
-      </div>
 
-      <div className="mt-6 flex justify-center px-4">
-        <Link
-          href={`/${locale}`}
-          className="text-sm font-medium text-[#4ade80] underline-offset-2 hover:underline"
-        >
-          ← {t.ui.backHome}
-        </Link>
+        <div className="mt-6 flex justify-center">
+          <Link
+            href={`/${locale}`}
+            className="text-sm font-medium text-[#4ade80] underline-offset-2 hover:underline"
+          >
+            ← {t.ui.backHome}
+          </Link>
+        </div>
       </div>
 
       {filterPortalReady && filterOpen

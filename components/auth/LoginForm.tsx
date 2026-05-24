@@ -6,6 +6,7 @@ import { useLocale } from "@/components/LocaleProvider";
 import { loginWithUsername } from "@/lib/auth/api";
 import { getAuthMessages } from "@/lib/i18n/auth-messages";
 import { AuthField, authInputClass } from "./AuthField";
+import AuthSubmitLoader from "./AuthSubmitLoader";
 import PasswordInput from "./PasswordInput";
 
 function authErrorMessage(err: unknown, fallback: string, networkFallback: string): string {
@@ -96,9 +97,17 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="focus-ring mt-auto w-full min-h-12 rounded-md bg-[#0d4a2e] py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-[#178358] disabled:cursor-not-allowed disabled:opacity-60"
+        aria-busy={loading}
+        className="focus-ring mt-auto flex w-full min-h-12 items-center justify-center rounded-md bg-[#0d4a2e] py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-[#178358] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? "…" : a.logInButton}
+        {loading ? (
+          <>
+            <AuthSubmitLoader />
+            <span className="sr-only">{a.logInButton}</span>
+          </>
+        ) : (
+          a.logInButton
+        )}
       </button>
     </form>
   );

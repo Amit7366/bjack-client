@@ -162,7 +162,8 @@ export default function ProviderSection() {
   }, [updateScrollState]);
 
   return (
-    <section className="bg-[#0a0a0a] px-3 py-5 sm:px-4 lg:px-6">
+    <section className="bg-[#0a0a0a]">
+      <div className="mx-auto w-full max-w-[1400px] px-3 py-5 sm:px-4 lg:px-10 xl:px-16">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="h-5 w-[3px] rounded-full bg-[#178358]" aria-hidden />
@@ -183,6 +184,7 @@ export default function ProviderSection() {
         {featuredProviders.map((provider) => (
           <ProviderCard key={provider.id} {...provider} />
         ))}
+      </div>
       </div>
     </section>
   );

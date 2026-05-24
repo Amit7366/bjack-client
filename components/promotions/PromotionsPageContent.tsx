@@ -22,7 +22,8 @@ export default function PromotionsPageContent() {
   );
 
   return (
-    <div className="min-h-full bg-[#0a0a0a] px-3 py-5 sm:px-4 lg:px-6">
+    <div className="min-h-full bg-[#0a0a0a]">
+      <div className="mx-auto w-full max-w-[1400px] px-3 py-5 sm:px-4 lg:px-10 xl:px-16">
       <h1 className="mb-4 text-xl font-bold text-white sm:text-2xl">{p.pageTitle}</h1>
 
       <div className="mb-5 flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -56,6 +57,7 @@ export default function PromotionsPageContent() {
           {p.noResults}
         </p>
       ) : null}
+      </div>
     </div>
   );
 }

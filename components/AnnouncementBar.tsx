@@ -21,7 +21,7 @@ export default function AnnouncementBar() {
 
   return (
     <section className="border-y border-[#252525] bg-[#111111]">
-      <div className="flex h-10 items-center gap-3 px-3 sm:px-4">
+      <div className="mx-auto flex h-10 w-full max-w-[1400px] items-center gap-3 px-3 sm:px-4 lg:px-10 xl:px-16">
         <div className="flex shrink-0 items-center justify-center rounded-md bg-[#178358]/15 p-1.5">
           <MegaphoneIcon />
         </div>
