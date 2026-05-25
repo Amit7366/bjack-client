@@ -27,9 +27,20 @@ jobs:
             DEPLOY_DIR="/root/mns-client"
             REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
 
-            # Fix APT sources before proceeding
-            sudo sed -i '12d' /etc/apt/sources.list.d/ubuntu-mirrors.list || true
-            sudo apt-get update || true
+            prepare_apt() {
+              local mirrors="/etc/apt/sources.list.d/ubuntu-mirrors.list"
+              if [ -f "$mirrors" ]; then
+                sudo awk 'NF && !seen[$0]++' "$mirrors" | sudo tee "${mirrors}.dedup" >/dev/null
+                sudo mv "${mirrors}.dedup" "$mirrors"
+              fi
+              if sudo apt-get update -qq; then
+                return 0
+              fi
+              echo "WARN: apt-get update failed; removing duplicate mirror list"
+              sudo rm -f "$mirrors"
+              sudo apt-get update -qq || echo "WARN: apt-get update still failed"
+              return 0
+            }
 
             if ! command -v git >/dev/null 2>&1; then
               echo "ERROR: git is not installed on the VPS."
@@ -49,6 +60,7 @@ jobs:
 
             if ! command -v docker >/dev/null 2>&1; then
               echo "Docker not found — installing..."
+              prepare_apt
               curl -fsSL https://get.docker.com | sh
               export PATH="/usr/local/bin:/usr/bin:/bin:${PATH}"
             fi
