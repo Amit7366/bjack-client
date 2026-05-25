@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3020:3000" # VPS host 3020 (3000 is used by another service)
     environment:
       NODE_ENV: production
     restart: unless-stopped
@@ -14,7 +14,7 @@ services:
     working_dir: /app
     command: sh -c "npm ci && npm run dev"
     ports:
-      - "3000:3000"
+      - "3002:3000"
     environment:
       NODE_ENV: development
       WATCHPACK_POLLING: "true"

@@ -65,4 +65,25 @@ jobs:
               export PATH="/usr/local/bin:/usr/bin:/bin:${PATH}"
             fi
 
+            APP_HOST_PORT=3020
+
+            free_app_port() {
+              echo "Stopping existing compose stack..."
+              docker compose down --remove-orphans 2>/dev/null || true
+
+              local cid
+              for cid in $(docker ps -q --filter "publish=${APP_HOST_PORT}" 2>/dev/null); do
+                echo "Stopping container ${cid} (port ${APP_HOST_PORT})..."
+                docker stop "${cid}" || true
+              done
+
+              if command -v fuser >/dev/null 2>&1; then
+                if fuser "${APP_HOST_PORT}"/tcp >/dev/null 2>&1; then
+                  echo "Freeing port ${APP_HOST_PORT}..."
+                  sudo fuser -k "${APP_HOST_PORT}"/tcp 2>/dev/null || true
+                fi
+              fi
+            }
+
+            free_app_port
             docker compose up -d --build
