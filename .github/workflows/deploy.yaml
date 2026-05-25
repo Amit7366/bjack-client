@@ -27,6 +27,10 @@ jobs:
             DEPLOY_DIR="/root/mns-client"
             REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
 
+            # Fix APT sources before proceeding
+            sudo sed -i '12d' /etc/apt/sources.list.d/ubuntu-mirrors.list || true
+            sudo apt-get update || true
+
             if ! command -v git >/dev/null 2>&1; then
               echo "ERROR: git is not installed on the VPS."
               exit 1
