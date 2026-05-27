@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -10,10 +9,9 @@ import {
   type HomeTabId,
 } from "@/lib/home-games-data";
 import { categoryProviderHref, lobbyCategoryHref } from "@/lib/vendor-routes";
-import { useAuth } from "./AuthProvider";
-import GameLoginPromptModal from "./GameLoginPromptModal";
 import { menuIconFor } from "./SidebarIcons";
 import { useLocale } from "./LocaleProvider";
+import GameCard from "./games/GameCard";
 
 function PopularCrownIcon() {
   return (
@@ -42,51 +40,6 @@ function PopularCrownIcon() {
 function tabIconFor(id: HomeTabId) {
   if (id === "popular") return <PopularCrownIcon />;
   return menuIconFor(id);
-}
-
-function BjMark() {
-  return (
-    <span className="text-[8px] font-bold leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] lg:text-[11px]">
-      <span className="text-white">b</span>
-      <span className="text-[#ed1c24]">j</span>
-    </span>
-  );
-}
-
-function PopularGameCard({
-  title,
-  provider,
-  image,
-  priority,
-  onClick,
-}: {
-  title: string;
-  provider: string;
-  image: string;
-  priority?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="group relative block w-full overflow-hidden rounded-md bg-[#141414] text-left shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition-transform duration-200 active:scale-[0.98] lg:rounded-[10px] lg:shadow-[0_4px_16px_rgba(0,0,0,0.35)] lg:active:scale-100 lg:hover:scale-[1.02]"
-    >
-      <div className="relative aspect-[3/4] w-full">
-        <Image
-          src={image}
-          alt={`${title} — ${provider}`}
-          fill
-          priority={priority}
-          sizes="(max-width: 1023px) 33vw, 12.5vw"
-          className="object-cover object-center"
-        />
-        <span className="absolute right-1 top-1 z-[2] lg:right-2 lg:top-2">
-          <BjMark />
-        </span>
-      </div>
-    </button>
-  );
 }
 
 function ProviderCard({
@@ -123,16 +76,7 @@ function ProviderCard({
 
 export default function HomeGameTabs() {
   const { t, preferences } = useLocale();
-  const { isUser, authReady } = useAuth();
   const [activeTab, setActiveTab] = useState<HomeTabId>("popular");
-  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
-
-  function handlePopularGameClick() {
-    if (!authReady) return;
-    if (!isUser) {
-      setLoginPromptOpen(true);
-    }
-  }
 
   return (
     <section className="bg-[#0a0a0a]">
@@ -164,13 +108,15 @@ export default function HomeGameTabs() {
         <div>
           <div className="grid grid-cols-3 gap-1.5 sm:gap-2 lg:grid-cols-8 lg:gap-2.5">
             {popularGames.map((game, index) => (
-              <PopularGameCard
+              <GameCard
                 key={game.id}
+                gameId={game.id}
+                gameCode={game.gameCode}
                 title={t.home.games[game.id] ?? game.id}
                 provider={t.home.providers[game.providerKey] ?? game.providerKey}
                 image={game.image}
                 priority={index < 4}
-                onClick={handlePopularGameClick}
+                className="group relative block w-full overflow-hidden rounded-md bg-[#141414] text-left shadow-[0_2px_10px_rgba(0,0,0,0.35)] transition-transform duration-200 active:scale-[0.98] lg:rounded-[10px] lg:shadow-[0_4px_16px_rgba(0,0,0,0.35)] lg:active:scale-100 lg:hover:scale-[1.02]"
               />
             ))}
           </div>
@@ -198,7 +144,6 @@ export default function HomeGameTabs() {
         </div>
       )}
       </div>
-      <GameLoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} />
     </section>
   );
 }

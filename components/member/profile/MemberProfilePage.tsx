@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getMemberProfileMessages } from "@/lib/i18n/member-profile-messages";
 import { memberSectionHref } from "@/lib/member-routes";
 import {
@@ -17,7 +17,9 @@ import {
   PROFILE_TABS,
   type ProfileTabId,
 } from "@/lib/member-profile-tabs";
-import { getProfileUser } from "@/lib/profile-user";
+import { fetchMyNormalUserProfile } from "@/lib/member/profile-api";
+import { PROFILE_CACHE_CHANGE_EVENT } from "@/lib/member/profile-cache";
+import { getProfileUser, type ProfileUser } from "@/lib/profile-user";
 import {
   memberContainerProfile,
   MEMBER_PAGE_BG,
@@ -26,6 +28,7 @@ import {
   MemberPageHeader,
 } from "@/components/member/shared/member-ui";
 import { getProfileMessages } from "@/lib/i18n/profile-messages";
+import { useToast } from "@/components/ToastProvider";
 import { useLocale } from "@/components/LocaleProvider";
 
 function ChevronRight() {
@@ -147,18 +150,60 @@ export default function MemberProfilePage({ activeTab }: MemberProfilePageProps)
   const m = getMemberProfileMessages(locale);
   const profileNav = getProfileMessages(locale);
   const router = useRouter();
-  const profileUser = getProfileUser();
+  const { showToast } = useToast();
+  const [profileUser, setProfileUser] = useState<ProfileUser>(() => getProfileUser());
   const [copied, setCopied] = useState(false);
 
-  const copyUsername = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(profileUser.username);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* ignore */
+  useEffect(() => {
+    function refresh() {
+      setProfileUser(getProfileUser());
     }
-  }, [profileUser.username]);
+    refresh();
+    window.addEventListener(PROFILE_CACHE_CHANGE_EVENT, refresh);
+    return () => window.removeEventListener(PROFILE_CACHE_CHANGE_EVENT, refresh);
+  }, []);
+
+  useEffect(() => {
+    if (activeTab !== "personal-info") return;
+    let cancelled = false;
+    fetchMyNormalUserProfile()
+      .then(() => {
+        if (!cancelled) setProfileUser(getProfileUser());
+      })
+      .catch(() => {
+        /* keep cached values */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab]);
+
+  const copyUsername = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const text = profileUser.username;
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.style.position = "fixed";
+          textarea.style.opacity = "0";
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+        }
+        setCopied(true);
+        showToast(m.usernameCopiedToast);
+        window.setTimeout(() => setCopied(false), 2000);
+      } catch {
+        showToast(m.copyUsername);
+      }
+    },
+    [profileUser.username, showToast, m.usernameCopiedToast, m.copyUsername],
+  );
 
   return (
     <div className={MEMBER_PAGE_BG}>
@@ -225,13 +270,23 @@ export default function MemberProfilePage({ activeTab }: MemberProfilePageProps)
                     label={m.personalInfo.fullLegalName}
                     onClick={() => router.push(fullLegalNameHref(locale))}
                   >
-                    <ManageAction label={m.manage} />
+                    {profileUser.legalName ? (
+                      <span className="font-medium">{profileUser.legalName}</span>
+                    ) : (
+                      <ManageAction label={m.manage} />
+                    )}
+                    <ChevronRight />
                   </InfoRow>
                   <InfoRow
                     label={m.personalInfo.dateOfBirth}
                     onClick={() => router.push(dateOfBirthHref(locale))}
                   >
-                    <ManageAction label={m.manage} />
+                    {profileUser.dateOfBirth ? (
+                      <span className="font-medium">{profileUser.dateOfBirth}</span>
+                    ) : (
+                      <ManageAction label={m.manage} />
+                    )}
+                    <ChevronRight />
                   </InfoRow>
                   <InfoRow
                     label={m.personalInfo.phone}
@@ -245,7 +300,14 @@ export default function MemberProfilePage({ activeTab }: MemberProfilePageProps)
                     label={m.personalInfo.email}
                     onClick={() => router.push(emailHref(locale))}
                   >
-                    <ManageAction label={m.manage} />
+                    {profileUser.email ? (
+                      <span className="max-w-[200px] truncate font-medium sm:max-w-none">
+                        {profileUser.email}
+                      </span>
+                    ) : (
+                      <ManageAction label={m.manage} />
+                    )}
+                    <ChevronRight />
                   </InfoRow>
                 </div>
               </>

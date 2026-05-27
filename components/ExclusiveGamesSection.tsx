@@ -1,7 +1,7 @@
 "use client";
 
 import ImageCarouselSection from "./ImageCarouselSection";
-import { exclusiveGameImages } from "@/lib/home-carousel-data";
+import { exclusiveCarouselSlides } from "@/lib/home-carousel-data";
 import { useLocale } from "./LocaleProvider";
 
 export default function ExclusiveGamesSection() {
@@ -10,7 +10,7 @@ export default function ExclusiveGamesSection() {
   return (
     <ImageCarouselSection
       title={t.home.exclusiveGamesTitle}
-      images={exclusiveGameImages}
+      slides={exclusiveCarouselSlides}
       variant="card"
       autoSlideMs={4000}
     />

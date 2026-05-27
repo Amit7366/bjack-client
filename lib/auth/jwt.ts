@@ -1,5 +1,6 @@
 export type JwtAuthClaims = {
   id?: string;
+  objectId?: string;
   role?: string;
   email?: string;
   userName?: string;

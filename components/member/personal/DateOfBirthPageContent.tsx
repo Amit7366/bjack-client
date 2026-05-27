@@ -1,10 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { authInputClass } from "@/components/auth/AuthField";
+import { useToast } from "@/components/ToastProvider";
 import { getPersonalInfoMessages } from "@/lib/i18n/personal-info-messages";
 import { memberSectionHref } from "@/lib/member-routes";
+import {
+  fetchMyNormalUserProfile,
+  formatDateOfBirthForInput,
+  updateMyDateOfBirth,
+} from "@/lib/member/profile-api";
+import { readMemberProfileCache } from "@/lib/member/profile-cache";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   memberBtnPrimary,
@@ -24,36 +30,86 @@ function CalendarIcon() {
   );
 }
 
-const EXPIRY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export default function DateOfBirthPageContent() {
   const { preferences } = useLocale();
   const locale = preferences.locale;
   const p = getPersonalInfoMessages(locale);
-  const router = useRouter();
+  const { showToast } = useToast();
+
   const [dob, setDob] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const backHref = memberSectionHref(locale, "personal-info");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      const cached = readMemberProfileCache().dateOfBirth;
+      if (cached) {
+        setDob(cached);
+      }
+
+      try {
+        const profile = await fetchMyNormalUserProfile();
+        if (!cancelled && profile.dateOfBirth) {
+          setDob(profile.dateOfBirth);
+        }
+      } catch {
+        if (!cancelled && !cached) {
+          setError(p.dateOfBirth.loadError);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [p.dateOfBirth.loadError]);
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setError(null);
+
+      const trimmed = dob.trim();
+      if (!DATE_PATTERN.test(trimmed)) {
+        setError(p.dateOfBirth.invalidDate);
+        return;
+      }
+
+      setSaving(true);
+      setSaved(false);
+      try {
+        const updated = await updateMyDateOfBirth(trimmed);
+        const savedDob = formatDateOfBirthForInput(updated.dateOfBirth ?? trimmed);
+        setDob(savedDob);
+        setSaved(true);
+        showToast(p.dateOfBirth.submitted);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : p.dateOfBirth.saveError;
+        setError(message);
+        showToast(p.dateOfBirth.saveError);
+      } finally {
+        setSaving(false);
+      }
+    },
+    [dob, p.dateOfBirth, showToast],
+  );
 
   return (
     <div className={MEMBER_PAGE_BG}>
       <MemberPersonalHeader title={p.dateOfBirth.pageTitle} backHref={backHref} backLabel={p.back} />
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!EXPIRY_PATTERN.test(dob)) {
-            setError(p.dateOfBirth.invalidDate);
-            return;
-          }
-          setError(null);
-          setSubmitted(true);
-          window.setTimeout(() => router.push(backHref), 600);
-        }}
-        className={`${memberContainerNarrow} ${memberPagePaddingNarrow}`}
-      >
+      <form onSubmit={handleSubmit} className={`${memberContainerNarrow} ${memberPagePaddingNarrow}`}>
         <label className="block">
           <span className="mb-2 block text-[13px] text-[#9ca3af] sm:text-[14px]">
             {p.dateOfBirth.fieldLabel}
@@ -64,14 +120,18 @@ export default function DateOfBirthPageContent() {
               value={dob}
               onChange={(e) => {
                 setDob(e.target.value);
+                setSaved(false);
                 setError(null);
               }}
               placeholder={p.dateOfBirth.placeholder}
               className={`${authInputClass()} pr-11`}
+              disabled={loading || saving}
+              inputMode="numeric"
             />
             <button
               type="button"
               className="absolute inset-y-0 right-0 flex w-11 items-center justify-center"
+              disabled={loading || saving}
               onClick={() => {
                 const el = document.getElementById("dob-picker") as HTMLInputElement | null;
                 el?.showPicker?.();
@@ -86,9 +146,11 @@ export default function DateOfBirthPageContent() {
               type="date"
               className="pointer-events-none absolute h-0 w-0 opacity-0"
               tabIndex={-1}
+              value={DATE_PATTERN.test(dob) ? dob : ""}
               onChange={(e) => {
                 if (e.target.value) {
                   setDob(e.target.value);
+                  setSaved(false);
                   setError(null);
                 }
               }}
@@ -99,6 +161,11 @@ export default function DateOfBirthPageContent() {
               {error}
             </p>
           ) : null}
+          {saved && !error ? (
+            <p className="mt-2 text-[12px] text-[#86efac]" role="status">
+              {p.dateOfBirth.submitted}
+            </p>
+          ) : null}
         </label>
 
         <div className="mt-4">
@@ -107,10 +174,10 @@ export default function DateOfBirthPageContent() {
 
         <button
           type="submit"
-          disabled={!dob.trim() || submitted}
+          disabled={loading || saving || !dob.trim() || !DATE_PATTERN.test(dob.trim())}
           className={`${memberBtnPrimary} mt-8`}
         >
-          {submitted ? p.dateOfBirth.submitted : p.dateOfBirth.submit}
+          {saving ? p.dateOfBirth.saving : saved ? p.dateOfBirth.submitted : p.dateOfBirth.submit}
         </button>
       </form>
     </div>

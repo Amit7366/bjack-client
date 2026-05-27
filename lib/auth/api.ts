@@ -1,4 +1,5 @@
 import type { ApiResponse, LoginResponseData, RegisterResponseData } from "@/lib/api/types";
+import { clearMemberProfileCache } from "@/lib/member/profile-cache";
 import { clearAuthSession, enrichSession, saveAuthSession, type AuthSession } from "./session";
 
 const API_PREFIX = "/api/v1";
@@ -140,6 +141,18 @@ export async function logoutUser(): Promise<void> {
   } catch {
     /* still clear client session if network fails */
   } finally {
+    clearMemberProfileCache();
     clearAuthSession();
+  }
+}
+
+export async function changePasswordUser(oldPassword: string, newPassword: string): Promise<void> {
+  const { ok, body } = await requestJson<null>("/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify({ oldPassword, newPassword }),
+  });
+
+  if (!ok) {
+    throw new Error(body.message || "Failed to change password");
   }
 }

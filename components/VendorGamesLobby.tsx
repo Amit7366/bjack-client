@@ -15,10 +15,10 @@ import {
   lobbyCategoryHref,
   type LobbyKind,
 } from "@/lib/vendor-routes";
-import { isValidGameImageUrl, type VendorGameTile } from "@/lib/vendor-games-data";
+import type { GameTile } from "@/lib/game-tile";
 import { menuIconFor } from "./SidebarIcons";
 import { useLocale } from "./LocaleProvider";
-import Image from "next/image";
+import GameCard from "./games/GameCard";
 
 function lobbyCategoryLabel(t: Messages, kind: LobbyKind): string {
   if (kind === "sports") return t.home.tabs.sports;
@@ -72,7 +72,7 @@ function sortLabel(t: Messages, mode: LobbySortMode): string {
 }
 
 /** Lower index in source list = newer (top of API / curated list). */
-function applyLobbySort(list: VendorGameTile[], mode: LobbySortMode, order: Map<string, number>): VendorGameTile[] {
+function applyLobbySort(list: GameTile[], mode: LobbySortMode, order: Map<string, number>): GameTile[] {
   const arr = [...list];
   const rank = (id: string) => order.get(id) ?? 1e6;
   switch (mode) {
@@ -175,7 +175,7 @@ type VendorGamesLobbyProps = {
   kind: LobbyKind;
   vendors: string[];
   activeTypes: string[];
-  games: VendorGameTile[];
+  games: GameTile[];
 };
 
 export default function VendorGamesLobby({ locale, kind, vendors, activeTypes, games }: VendorGamesLobbyProps) {
@@ -277,14 +277,6 @@ export default function VendorGamesLobby({ locale, kind, vendors, activeTypes, g
   function formatShownGames(shown: number, total: number): string {
     return t.lobby.shownGames.replace("{shown}", String(shown)).replace("{total}", String(total));
   }
-
-  const buildTileHref = (gameId: string) => {
-    const q = new URLSearchParams();
-    q.set("vendor", vendorQuery);
-    if (activeTypes.length) q.set("type", activeTypes.join(","));
-    q.set("game", gameId);
-    return `${pathname}?${q.toString()}`;
-  };
 
   const applyFiltersToUrl = () => {
     const vArr = draftVendors.size > 0 ? Array.from(draftVendors) : [LOBBY_VENDOR_ALL];
@@ -506,44 +498,18 @@ export default function VendorGamesLobby({ locale, kind, vendors, activeTypes, g
       <div className="mx-auto w-full max-w-[1400px] px-3 pt-4 sm:px-4 lg:px-10 xl:px-16">
         <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 sm:gap-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
           {visibleGames.map((game) => (
-            <Link
+            <GameCard
               key={game.id}
-              href={buildTileHref(game.id)}
+              gameId={game.id}
+              gameCode={game.gameCode}
+              image={game.image}
+              title={game.title}
+              provider={game.providerLabel}
+              sizes="(max-width: 640px) 33vw, (max-width: 1023px) 25vw, 12.5vw"
+              imageClassName="transition-transform duration-200 group-hover:scale-105"
+              ariaLabel={`${game.title} — ${game.providerLabel}`}
               className="group relative aspect-[3/4] overflow-hidden rounded-md bg-[#141414]"
-            >
-              {isValidGameImageUrl(game.image) ? (
-                <Image
-                  src={game.image}
-                  alt={`${game.title} — ${game.providerLabel}`}
-                  fill
-                  sizes="(max-width: 640px) 33vw, (max-width: 1023px) 25vw, 12.5vw"
-                  className="object-cover object-center transition-transform duration-200 group-hover:scale-105"
-                />
-              ) : (
-                <>
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-b ${game.gradient} transition-transform duration-200 group-hover:scale-105`}
-                  />
-                  <div
-                    className="absolute inset-0 opacity-25"
-                    style={{
-                      background: `radial-gradient(circle at 50% 25%, ${game.glow}, transparent 60%)`,
-                    }}
-                  />
-                  <span className="absolute right-1.5 top-1.5 z-[1] text-[9px] font-bold uppercase leading-none tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                    bj
-                  </span>
-                  <div className="absolute inset-x-0 bottom-0 z-[1] bg-gradient-to-t from-black via-black/75 to-transparent px-1.5 pb-2 pt-8 sm:px-2 sm:pb-2.5 sm:pt-10">
-                    <p className="text-center text-[10px] font-extrabold uppercase leading-tight tracking-wide text-white drop-shadow-md sm:text-[11px]">
-                      {game.title}
-                    </p>
-                    <p className="mt-1 text-center text-[8px] font-medium uppercase tracking-wider text-white/80 sm:text-[9px]">
-                      {game.providerLabel}
-                    </p>
-                  </div>
-                </>
-              )}
-            </Link>
+            />
           ))}
         </div>
 

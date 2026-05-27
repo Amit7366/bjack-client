@@ -8,6 +8,7 @@ import { getAuthMessages } from "@/lib/i18n/auth-messages";
 import { AuthField, authInputClass } from "./AuthField";
 import AuthSubmitLoader from "./AuthSubmitLoader";
 import PasswordInput from "./PasswordInput";
+import { changePasswordHref } from "@/lib/member-profile-tabs";
 
 function authErrorMessage(err: unknown, fallback: string, networkFallback: string): string {
   if (err instanceof TypeError) return networkFallback;
@@ -42,12 +43,21 @@ export default function LoginForm() {
 
     setLoading(true);
     try {
-      await loginWithUsername(username, password);
+      const { session } = await loginWithUsername(username, password);
       const next = searchParams.get("next");
+      const isChangePasswordNext = !!next && next.startsWith(changePasswordHref(preferences.locale));
+
+      // If password is already updated (`needsPasswordChange === false`),
+      // don't redirect back to the change-password page again.
+      const shouldGoHome =
+        isChangePasswordNext && session?.needsPasswordChange === false;
+
       const target =
-        next && next.startsWith(`/${preferences.locale}/`) && !next.includes("//")
-          ? next
-          : base;
+        shouldGoHome
+          ? base
+          : next && next.startsWith(`/${preferences.locale}/`) && !next.includes("//")
+            ? next
+            : base;
       router.push(target);
       router.refresh();
     } catch (err) {

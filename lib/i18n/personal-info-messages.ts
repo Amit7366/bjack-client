@@ -8,6 +8,10 @@ export type PersonalInfoMessages = {
     placeholder: string;
     submit: string;
     submitted: string;
+    saving: string;
+    loadError: string;
+    saveError: string;
+    nameTooShort: string;
   };
   dateOfBirth: {
     pageTitle: string;
@@ -15,6 +19,9 @@ export type PersonalInfoMessages = {
     placeholder: string;
     submit: string;
     submitted: string;
+    saving: string;
+    loadError: string;
+    saveError: string;
     invalidDate: string;
   };
   phone: {
@@ -31,7 +38,11 @@ export type PersonalInfoMessages = {
     subtitle: string;
     fieldLabel: string;
     placeholder: string;
-    continue: string;
+    submit: string;
+    submitted: string;
+    saving: string;
+    loadError: string;
+    saveError: string;
     invalidEmail: string;
   };
   verify: {
@@ -59,6 +70,10 @@ const en: PersonalInfoMessages = {
     placeholder: "Enter your full legal name",
     submit: "Submit",
     submitted: "Full legal name saved.",
+    saving: "Saving…",
+    loadError: "Could not load your legal name.",
+    saveError: "Could not save your legal name. Try again.",
+    nameTooShort: "Name must be at least 3 characters.",
   },
   dateOfBirth: {
     pageTitle: "Date of birth",
@@ -66,6 +81,9 @@ const en: PersonalInfoMessages = {
     placeholder: "YYYY-MM-DD",
     submit: "Submit",
     submitted: "Date of birth saved.",
+    saving: "Saving…",
+    loadError: "Could not load your date of birth.",
+    saveError: "Could not save your date of birth. Try again.",
     invalidDate: "Use date format YYYY-MM-DD.",
   },
   phone: {
@@ -79,10 +97,14 @@ const en: PersonalInfoMessages = {
   email: {
     pageTitle: "Email",
     heading: "Email address",
-    subtitle: "A verification code will be sent to the email address you provide.",
+    subtitle: "Enter the email address linked to your account.",
     fieldLabel: "Email",
     placeholder: "Enter your email",
-    continue: "Continue",
+    submit: "Submit",
+    submitted: "Email saved.",
+    saving: "Saving…",
+    loadError: "Could not load your email.",
+    saveError: "Could not save your email. Try again.",
     invalidEmail: "Enter a valid email address.",
   },
   verify: {
@@ -111,6 +133,10 @@ const bn: PersonalInfoMessages = {
     placeholder: "আপনার পূর্ণ আইনি নাম লিখুন",
     submit: "জমা দিন",
     submitted: "পূর্ণ আইনি নাম সংরক্ষিত হয়েছে।",
+    saving: "সংরক্ষণ হচ্ছে…",
+    loadError: "আইনি নাম লোড করা যায়নি।",
+    saveError: "আইনি নাম সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।",
+    nameTooShort: "নাম কমপক্ষে ৩ অক্ষরের হতে হবে।",
   },
   dateOfBirth: {
     pageTitle: "জন্ম তারিখ",
@@ -118,6 +144,9 @@ const bn: PersonalInfoMessages = {
     placeholder: "YYYY-MM-DD",
     submit: "জমা দিন",
     submitted: "জন্ম তারিখ সংরক্ষিত হয়েছে।",
+    saving: "সংরক্ষণ হচ্ছে…",
+    loadError: "জন্ম তারিখ লোড করা যায়নি।",
+    saveError: "জন্ম তারিখ সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।",
     invalidDate: "YYYY-MM-DD তারিখ ফরম্যাট ব্যবহার করুন।",
   },
   phone: {
@@ -131,10 +160,14 @@ const bn: PersonalInfoMessages = {
   email: {
     pageTitle: "ইমেইল",
     heading: "ইমেইল ঠিকানা",
-    subtitle: "আপনার প্রদত্ত ইমেইল ঠিকানায় একটি ভেরিফিকেশন কোড পাঠানো হবে।",
+    subtitle: "আপনার অ্যাকাউন্টের সাথে যুক্ত ইমেইল ঠিকানা লিখুন।",
     fieldLabel: "ইমেইল",
     placeholder: "আপনার ইমেইল লিখুন",
-    continue: "চালিয়ে যান",
+    submit: "জমা দিন",
+    submitted: "ইমেইল সংরক্ষিত হয়েছে।",
+    saving: "সংরক্ষণ হচ্ছে…",
+    loadError: "ইমেইল লোড করা যায়নি।",
+    saveError: "ইমেইল সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।",
     invalidEmail: "একটি বৈধ ইমেইল লিখুন।",
   },
   verify: {
@@ -163,6 +196,10 @@ const hi: PersonalInfoMessages = {
     placeholder: "अपना पूरा कानूनी नाम दर्ज करें",
     submit: "जमा करें",
     submitted: "पूरा कानूनी नाम सहेजा गया।",
+    saving: "सहेजा जा रहा है…",
+    loadError: "कानूनी नाम लोड नहीं हो सका।",
+    saveError: "कानूनी नाम सहेजा नहीं जा सका। पुनः प्रयास करें।",
+    nameTooShort: "नाम कम से कम 3 अक्षर का होना चाहिए।",
   },
   dateOfBirth: {
     pageTitle: "जन्म तिथि",
@@ -170,6 +207,9 @@ const hi: PersonalInfoMessages = {
     placeholder: "YYYY-MM-DD",
     submit: "जमा करें",
     submitted: "जन्म तिथि सहेजी गई।",
+    saving: "सहेजा जा रहा है…",
+    loadError: "जन्म तिथि लोड नहीं हो सकी।",
+    saveError: "जन्म तिथि सहेजी नहीं जा सकी। पुनः प्रयास करें।",
     invalidDate: "YYYY-MM-DD तिथि प्रारूप का उपयोग करें।",
   },
   phone: {
@@ -183,10 +223,14 @@ const hi: PersonalInfoMessages = {
   email: {
     pageTitle: "ईमेल",
     heading: "ईमेल पता",
-    subtitle: "आपके द्वारा दिए गए ईमेल पते पर सत्यापन कोड भेजा जाएगा।",
+    subtitle: "अपने खाते से जुड़ा ईमेल पता दर्ज करें।",
     fieldLabel: "ईमेल",
     placeholder: "अपना ईमेल दर्ज करें",
-    continue: "जारी रखें",
+    submit: "जमा करें",
+    submitted: "ईमेल सहेजा गया।",
+    saving: "सहेजा जा रहा है…",
+    loadError: "ईमेल लोड नहीं हो सका।",
+    saveError: "ईमेल सहेजा नहीं जा सका। पुनः प्रयास करें।",
     invalidEmail: "एक वैध ईमेल दर्ज करें।",
   },
   verify: {

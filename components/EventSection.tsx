@@ -10,7 +10,10 @@ export default function EventSection() {
   return (
     <ImageCarouselSection
       title={t.home.eventTitle}
-      images={eventSlideImages}
+      slides={eventSlideImages.map((image, index) => ({
+        image,
+        title: `${t.home.eventTitle} ${index + 1}`,
+      }))}
       variant="banner"
       autoSlideMs={4500}
     />

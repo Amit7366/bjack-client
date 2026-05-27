@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale } from "./LocaleProvider";
+import GameCard from "./games/GameCard";
+import type { CarouselSlide } from "@/lib/home-carousel-data";
 
 type ImageCarouselSectionProps = {
   title: string;
-  images: string[];
+  slides: CarouselSlide[];
   variant: "banner" | "card";
   autoSlideMs?: number;
 };
@@ -52,7 +53,7 @@ function NavButton({
 
 export default function ImageCarouselSection({
   title,
-  images,
+  slides,
   variant,
   autoSlideMs = 4500,
 }: ImageCarouselSectionProps) {
@@ -92,14 +93,23 @@ export default function ImageCarouselSection({
   );
 
   useEffect(() => {
-    if (paused || images.length <= 1) return;
+    if (paused || slides.length <= 1) return;
 
     const id = window.setInterval(() => {
       scroll("right");
     }, autoSlideMs);
 
     return () => window.clearInterval(id);
-  }, [autoSlideMs, images.length, paused, scroll]);
+  }, [autoSlideMs, slides.length, paused, scroll]);
+
+  function slideTitle(slide: CarouselSlide, index: number): string {
+    if (slide.gameId) {
+      const games = t.home.games as Record<string, string>;
+      return games[slide.gameId] ?? slide.gameId;
+    }
+    if (slide.title) return slide.title;
+    return `${title} ${index + 1}`;
+  }
 
   const itemClass =
     variant === "banner"
@@ -131,17 +141,19 @@ export default function ImageCarouselSection({
           variant === "banner" ? "gap-2.5" : "gap-2"
         }`}
       >
-        {images.map((src, index) => (
-          <a key={`${src}-${index}`} href="#" className={itemClass}>
-            <Image
-              src={src}
-              alt=""
-              fill
-              sizes={variant === "banner" ? "420px" : "124px"}
-              className="object-cover"
-              unoptimized
-            />
-          </a>
+        {slides.map((slide, index) => (
+          <GameCard
+            key={`${slide.image}-${index}`}
+            image={slide.image}
+            gameId={slide.gameId}
+            gameCode={slide.gameCode}
+            title={slideTitle(slide, index)}
+            className={itemClass}
+            contentClassName="!aspect-auto h-full"
+            sizes={variant === "banner" ? "420px" : "124px"}
+            imageClassName="object-cover"
+            unoptimized
+          />
         ))}
       </div>
       </div>

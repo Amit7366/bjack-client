@@ -13,6 +13,7 @@ export type AuthSession = {
   accessToken: string;
   role: string;
   memberId?: string;
+  objectId?: string;
   balance?: string;
   vipPoints?: string;
   userName?: string;
@@ -46,6 +47,7 @@ export function enrichSession(
     ...partial,
     role: partial.role ?? claims?.role ?? USER_ROLE,
     memberId: partial.memberId ?? claims?.id,
+    objectId: partial.objectId ?? claims?.objectId,
     userName: partial.userName ?? claims?.userName,
     contactNo: partial.contactNo ?? claims?.contactNo,
     vipPoints: partial.vipPoints ?? "0",

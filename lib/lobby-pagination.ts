@@ -1,4 +1,4 @@
-import type { VendorGameTile } from "./vendor-games-data";
+import type { GameTile } from "./game-tile";
 
 /** Games shown per "Load more" step (matches product reference). */
 export const LOBBY_GAMES_PAGE_SIZE = 120;
@@ -7,11 +7,11 @@ export const LOBBY_GAMES_PAGE_SIZE = 120;
 export const LOBBY_DEMO_CATALOG_SIZE = 4487;
 
 /** Duplicate base tiles with unique ids until `targetSize` (for mock / large-list UX). */
-export function expandLobbyCatalog(games: VendorGameTile[], targetSize: number): VendorGameTile[] {
+export function expandLobbyCatalog(games: GameTile[], targetSize: number): GameTile[] {
   if (games.length === 0 || games.length >= targetSize) {
     return games.length > targetSize ? games.slice(0, targetSize) : games;
   }
-  const out: VendorGameTile[] = [...games];
+  const out: GameTile[] = [...games];
   let n = 0;
   while (out.length < targetSize) {
     const base = games[n % games.length];

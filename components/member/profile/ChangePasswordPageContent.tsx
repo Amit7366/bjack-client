@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import PasswordInput from "@/components/auth/PasswordInput";
+import { useAuth } from "@/components/AuthProvider";
 import {
   memberBtnPrimary,
   memberContainerNarrow,
@@ -19,6 +20,9 @@ import {
 import { getChangePasswordMessages } from "@/lib/i18n/change-password-messages";
 import { memberSectionHref } from "@/lib/member-routes";
 import { useLocale } from "@/components/LocaleProvider";
+import { changePasswordUser } from "@/lib/auth/api";
+import { useToast } from "@/components/ToastProvider";
+import AuthSubmitLoader from "@/components/auth/AuthSubmitLoader";
 
 function RuleIcon({ met }: { met: boolean }) {
   if (met) {
@@ -49,11 +53,14 @@ export default function ChangePasswordPageContent() {
   const locale = preferences.locale;
   const c = getChangePasswordMessages(locale);
   const router = useRouter();
+  const { logout } = useAuth();
+  const { showToast } = useToast();
 
   const [current, setCurrent] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const rules = useMemo(() => checkPasswordRules(newPassword), [newPassword]);
   const rulesMet = allPasswordRulesMet(rules);
@@ -64,13 +71,24 @@ export default function ChangePasswordPageContent() {
     newPassword === confirm &&
     confirm.length > 0;
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
-    setSubmitted(true);
-    window.setTimeout(() => {
-      router.push(memberSectionHref(locale, "login-security"));
-    }, 600);
+    setError(null);
+    setLoading(true);
+    try {
+      await changePasswordUser(current.trim(), newPassword);
+      await logout();
+      showToast(c.success);
+      // Use replace to clear any `next=...` query so the user won't bounce back.
+      router.replace(`/${locale}/login`);
+      router.refresh();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : c.success;
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -82,6 +100,11 @@ export default function ChangePasswordPageContent() {
       />
 
       <form onSubmit={handleSubmit} className={`${memberContainerNarrow} ${memberPagePaddingNarrow}`}>
+        {error ? (
+          <p className="mb-4 text-[12px] text-[#e85d4a] sm:text-[13px]" role="alert">
+            {error}
+          </p>
+        ) : null}
         <div className="space-y-5">
           <label className="block">
             <MemberFieldLabel>{c.currentPassword}</MemberFieldLabel>
@@ -136,8 +159,19 @@ export default function ChangePasswordPageContent() {
           </label>
         </div>
 
-        <button type="submit" disabled={!canSubmit || submitted} className={`${memberBtnPrimary} mt-8`}>
-          {submitted ? c.success : c.submit}
+        <button
+          type="submit"
+          disabled={!canSubmit || loading}
+          className={`${memberBtnPrimary} mt-8 disabled:cursor-not-allowed disabled:opacity-60`}
+        >
+          {loading ? (
+            <>
+              <AuthSubmitLoader />
+              <span className="sr-only">{c.submit}</span>
+            </>
+          ) : (
+            c.submit
+          )}
         </button>
       </form>
     </div>

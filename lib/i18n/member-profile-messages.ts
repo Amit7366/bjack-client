@@ -7,6 +7,7 @@ export type MemberProfileMessages = {
   manage: string;
   copyUsername: string;
   copied: string;
+  usernameCopiedToast: string;
   personalInfo: {
     username: string;
     fullLegalName: string;
@@ -33,6 +34,7 @@ const en: MemberProfileMessages = {
   manage: "Manage",
   copyUsername: "Copy username",
   copied: "Copied",
+  usernameCopiedToast: "Username copied",
   personalInfo: {
     username: "Username",
     fullLegalName: "Full legal name",
@@ -60,6 +62,7 @@ const bn: MemberProfileMessages = {
   manage: "ম্যানেজ",
   copyUsername: "ব্যবহারকারীর নাম কপি করুন",
   copied: "কপি হয়েছে",
+  usernameCopiedToast: "ব্যবহারকারীর নাম কপি হয়েছে",
   personalInfo: {
     username: "ব্যবহারকারীর নাম",
     fullLegalName: "পূর্ণ আইনি নাম",
@@ -87,6 +90,7 @@ const hi: MemberProfileMessages = {
   manage: "प्रबंधित करें",
   copyUsername: "उपयोगकर्ता नाम कॉपी करें",
   copied: "कॉपी हो गया",
+  usernameCopiedToast: "उपयोगकर्ता नाम कॉपी हो गया",
   personalInfo: {
     username: "उपयोगकर्ता नाम",
     fullLegalName: "पूरा कानूनी नाम",

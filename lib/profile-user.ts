@@ -1,4 +1,5 @@
 import { readAuthSession } from "@/lib/auth/session";
+import { readMemberProfileCache } from "@/lib/member/profile-cache";
 
 /** Demo logged-in user when no session exists. */
 export const MOCK_PROFILE_USER = {
@@ -10,6 +11,9 @@ export const MOCK_PROFILE_USER = {
 
 export type ProfileUser = {
   username: string;
+  legalName?: string;
+  dateOfBirth?: string;
+  email?: string;
   signUpDate: string;
   phone: string;
   phoneNeedsAttention: boolean;
@@ -18,11 +22,20 @@ export type ProfileUser = {
 /** Prefer stored auth session; fall back to demo user on server or when logged out. */
 export function getProfileUser(): ProfileUser {
   const session = readAuthSession();
+  const cache = readMemberProfileCache();
   if (!session?.userName) {
-    return { ...MOCK_PROFILE_USER };
+    return {
+      ...MOCK_PROFILE_USER,
+      legalName: cache.legalName,
+      dateOfBirth: cache.dateOfBirth,
+      email: cache.email,
+    };
   }
   return {
     username: session.userName,
+    legalName: cache.legalName,
+    dateOfBirth: cache.dateOfBirth,
+    email: cache.email,
     signUpDate: MOCK_PROFILE_USER.signUpDate,
     phone: session.contactNo ?? MOCK_PROFILE_USER.phone,
     phoneNeedsAttention: !session.contactNo,
