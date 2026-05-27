@@ -12,6 +12,7 @@ import { useAuth } from "@/components/AuthProvider";
 import GameLoginPromptModal from "@/components/GameLoginPromptModal";
 import { useToast } from "@/components/ToastProvider";
 import { launchGameInBrowser } from "@/lib/game-launch";
+import GameLaunchOverlay from "./GameLaunchOverlay";
 
 export type GameClickOptions = {
   title?: string;
@@ -56,6 +57,7 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
   const { showToast } = useToast();
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [launching, setLaunching] = useState(false);
+  const [launchingTitle, setLaunchingTitle] = useState<string | undefined>();
 
   const handleGameClick = useCallback(
     async ({ title, gameId, gameCode, onAuthorized }: GameClickOptions) => {
@@ -67,17 +69,18 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
       }
 
       if (gameCode) {
+        setLaunching(true);
+        setLaunchingTitle(title);
         try {
-          setLaunching(true);
           await launchGameInBrowser(gameCode, session);
           return;
         } catch (error: unknown) {
           const msg =
             error instanceof Error ? error.message : "Failed to launch game";
           showToast(`API Error: ${msg}`);
-          return;
-        } finally {
           setLaunching(false);
+          setLaunchingTitle(undefined);
+          return;
         }
       }
 
@@ -97,6 +100,7 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
         open={loginPromptOpen}
         onClose={() => setLoginPromptOpen(false)}
       />
+      <GameLaunchOverlay open={launching} gameTitle={launchingTitle} />
     </GamePlayGateContext.Provider>
   );
 }
