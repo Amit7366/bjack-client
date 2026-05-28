@@ -165,7 +165,9 @@ export default function TopNavbar({
             <span className="text-[#ed1c24]">Baji</span>
           </Link>
 
-          <div className="hidden min-w-0 items-center gap-0.5 md:flex">
+          <div
+            className={`hidden min-w-0 items-center gap-0.5 ${authReady && isUser ? "lg:flex" : "md:flex"}`}
+          >
             {navHrefs.map(({ kind, icon, label }) => (
               <NavLink key={kind} href={lobbyCategoryHref(locale, kind)} icon={icon} label={label} />
             ))}
@@ -173,7 +175,7 @@ export default function TopNavbar({
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-3">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5 lg:gap-3">
           <NavbarAuthActions />
           <LocaleMenuButton />
         </div>

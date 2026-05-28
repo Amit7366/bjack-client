@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
+import { memberDepositHref } from "@/lib/member-routes";
 
 function VipCoinIcon() {
   return (
@@ -72,13 +74,13 @@ function RefreshIcon({ spinning }: { spinning: boolean }) {
   );
 }
 
-function DepositBadgeIcon() {
+function DepositPlusIcon() {
   return (
     <span
       className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-[#22c55e] to-[#0d4a2e] shadow-md"
       aria-hidden
     >
-      <span className="text-[18px] font-bold leading-none text-[#f5c518]">+</span>
+      <span className="text-[20px] font-bold leading-none text-[#f5c518]">+</span>
       <svg
         className="absolute -bottom-0.5 left-1/2 h-3 w-5 -translate-x-1/2"
         viewBox="0 0 20 8"
@@ -119,6 +121,7 @@ export default function LoggedInWalletBar() {
   const [mounted, setMounted] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const depositHref = memberDepositHref(preferences.locale);
 
   useEffect(() => {
     setMounted(true);
@@ -139,20 +142,20 @@ export default function LoggedInWalletBar() {
   }, [refreshBalance]);
 
   return (
-    <div className="flex max-w-[min(72vw,520px)] items-center gap-1 overflow-x-auto [-webkit-overflow-scrolling:touch] [scrollbar-width:none] sm:max-w-none sm:gap-2 sm:overflow-visible [&::-webkit-scrollbar]:hidden">
+    <div className="flex items-center gap-1 sm:max-w-none sm:gap-2 [&::-webkit-scrollbar]:hidden">
       <div className="flex items-center gap-1 rounded-md bg-[#2a2a2a] px-1.5 py-1 sm:gap-1.5 sm:px-2 sm:py-1.5">
-        <div className="flex items-center gap-1 sm:gap-1.5">
+        <div className="hidden items-center gap-1 sm:flex sm:gap-1.5">
           <VipCoinIcon />
           <span className="min-w-[1ch] text-[12px] font-semibold text-white tabular-nums sm:text-[13px]">
             {maskValue(vipPoints, hidden)}
           </span>
         </div>
 
-        <span className="mx-0.5 h-5 w-px bg-[#444]" aria-hidden />
+        <span className="mx-0.5 hidden h-5 w-px bg-[#444] sm:block" aria-hidden />
 
         <div className="flex items-center gap-1 sm:gap-1.5">
           <TakaIcon />
-          <span className="min-w-[2ch] text-[12px] font-semibold text-white tabular-nums sm:text-[13px]">
+          <span className="max-w-[5.5rem] truncate text-[12px] font-semibold text-white tabular-nums sm:max-w-none sm:text-[13px]">
             {maskValue(balanceDisplay, hidden)}
           </span>
         </div>
@@ -160,7 +163,7 @@ export default function LoggedInWalletBar() {
         <button
           type="button"
           onClick={() => setHidden((v) => !v)}
-          className="focus-ring flex h-7 w-7 items-center justify-center rounded text-[#9ca3af] transition-colors hover:text-white"
+          className="focus-ring hidden h-7 w-7 items-center justify-center rounded text-[#9ca3af] transition-colors hover:text-white sm:flex"
           aria-label={hidden ? t.navbar.showBalance : t.navbar.hideBalance}
         >
           <EyeIcon hidden={hidden} />
@@ -170,12 +173,27 @@ export default function LoggedInWalletBar() {
           type="button"
           onClick={onRefresh}
           disabled={refreshing}
-          className="focus-ring flex h-7 w-7 items-center justify-center rounded text-[#9ca3af] transition-colors hover:text-white disabled:opacity-50"
+          className="focus-ring flex h-7 w-7 shrink-0 items-center justify-center rounded text-[#9ca3af] transition-colors hover:text-white disabled:opacity-50"
           aria-label={t.navbar.refreshBalance}
         >
           <RefreshIcon spinning={refreshing} />
         </button>
       </div>
+
+      <Link
+        href={depositHref}
+        className="focus-ring flex shrink-0 sm:hidden"
+        aria-label={t.navbar.deposit}
+      >
+        <DepositPlusIcon />
+      </Link>
+
+      <Link
+        href={depositHref}
+        className="focus-ring hidden h-9 shrink-0 items-center justify-center rounded-md bg-[#178358] px-3 text-[12px] font-semibold text-white transition-colors hover:bg-[#1a9664] sm:flex sm:text-[13px]"
+      >
+        {t.navbar.deposit}
+      </Link>
 
       <button
         type="button"
@@ -184,15 +202,13 @@ export default function LoggedInWalletBar() {
         {t.navbar.withdraw}
       </button>
 
-      <div className="flex items-center gap-1">
-        <button
-          type="button"
-          className="focus-ring flex h-9 shrink-0 items-center justify-center rounded-md bg-[#178358] px-3 text-[12px] font-semibold text-white transition-colors hover:bg-[#1a9664] sm:text-[13px]"
-        >
-          {t.navbar.deposit}
-        </button>
-        <DepositBadgeIcon />
-      </div>
+      <Link
+        href={depositHref}
+        className="focus-ring hidden shrink-0 sm:flex"
+        aria-label={t.navbar.deposit}
+      >
+        <DepositPlusIcon />
+      </Link>
     </div>
   );
 }

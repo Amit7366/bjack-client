@@ -43,13 +43,13 @@ export default function ProfileMobileSheet({ open, onClose }: ProfileMobileSheet
         aria-modal="true"
         aria-label={p.navLabel}
         onClick={(e) => e.stopPropagation()}
-        className="animate-slide-up relative max-h-[min(88dvh,720px)] w-full overflow-hidden rounded-t-2xl border border-b-0 border-[#333] bg-[#1e1e1e] shadow-[0_-16px_48px_rgba(0,0,0,0.55)]"
+        className="animate-slide-up relative flex max-h-[min(92dvh,780px)] w-full flex-col overflow-hidden rounded-t-2xl border border-b-0 border-[#333] bg-[#1e1e1e] shadow-[0_-16px_48px_rgba(0,0,0,0.55)]"
       >
-        <div className="flex justify-center pb-1 pt-3" aria-hidden>
+        <div className="flex shrink-0 justify-center pb-1 pt-3" aria-hidden>
           <span className="h-1 w-10 rounded-full bg-[#555]" />
         </div>
 
-        <div className="overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
           <ProfileMenuPanel onClose={onClose} />
         </div>
       </div>
