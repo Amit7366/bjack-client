@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   MEMBER_PAGE_BG,
@@ -60,6 +61,7 @@ function Chevron({ open }: { open: boolean }) {
 
 export default function QuickDepositPage() {
   const { preferences } = useLocale();
+  const router = useRouter();
   const locale = preferences.locale;
   const isBn = locale === "bn";
 
@@ -111,6 +113,16 @@ export default function QuickDepositPage() {
   const addPreset = (extra: number) => {
     const current = Number.parseInt(normalizeDigits(amount || "0"), 10) || 0;
     setAmount(String(current + extra));
+  };
+
+  const handleSubmit = () => {
+    if (!canSubmit) return;
+    const q = new URLSearchParams({
+      amount: String(amountNum),
+      method: selectedMethod,
+      channel: selectedChannel,
+    });
+    router.push(`/${locale}/member/deposit/quick/verify?${q.toString()}`);
   };
 
   return (
@@ -287,6 +299,7 @@ export default function QuickDepositPage() {
         <button
           type="button"
           disabled={!canSubmit}
+          onClick={handleSubmit}
           className="focus-ring mt-2 min-h-11 w-full rounded-sm bg-[#178358] px-4 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#1a9664] disabled:cursor-not-allowed disabled:opacity-45"
         >
           {isBn ? "সাবমিট" : "Submit"}

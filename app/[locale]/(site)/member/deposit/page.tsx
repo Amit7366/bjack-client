@@ -114,39 +114,39 @@ export default function MemberDepositPage() {
         ],
         href: `/${locale}/member/deposit/quick`,
       },
-      {
-        id: "ewallet",
-        icon: "ewallet",
-        title: isBn ? "ই-ওয়ালেট" : "E-wallet",
-        logos: [
-          { text: "✈", tone: "pink" },
-          { text: "🎯", tone: "gold" },
-          { text: "নগদ", tone: "purple" },
-        ],
-        percent: isBn ? "100% শতাংশ" : "100%",
-      },
-      {
-        id: "crypto",
-        icon: "crypto",
-        title: isBn ? "ক্রিপ্টো" : "Crypto",
-        logos: [
-          { text: "₮", tone: "green" },
-          { text: "₿", tone: "orange" },
-          { text: "⬡", tone: "gray" },
-        ],
-        percent: isBn ? "100% শতাংশ" : "100%",
-      },
-      {
-        id: "local-bank",
-        icon: "bank",
-        title: isBn ? "লোকাল ব্যাংক" : "Local bank",
-        logos: [
-          { text: "◎", tone: "gray" },
-          { text: "◍", tone: "gray" },
-          { text: "◭", tone: "gray" },
-        ],
-        percent: isBn ? "100% শতাংশ" : "100%",
-      },
+      // {
+      //   id: "ewallet",
+      //   icon: "ewallet",
+      //   title: isBn ? "ই-ওয়ালেট" : "E-wallet",
+      //   logos: [
+      //     { text: "✈", tone: "pink" },
+      //     { text: "🎯", tone: "gold" },
+      //     { text: "নগদ", tone: "purple" },
+      //   ],
+      //   percent: isBn ? "100% শতাংশ" : "100%",
+      // },
+      // {
+      //   id: "crypto",
+      //   icon: "crypto",
+      //   title: isBn ? "ক্রিপ্টো" : "Crypto",
+      //   logos: [
+      //     { text: "₮", tone: "green" },
+      //     { text: "₿", tone: "orange" },
+      //     { text: "⬡", tone: "gray" },
+      //   ],
+      //   percent: isBn ? "100% শতাংশ" : "100%",
+      // },
+      // {
+      //   id: "local-bank",
+      //   icon: "bank",
+      //   title: isBn ? "লোকাল ব্যাংক" : "Local bank",
+      //   logos: [
+      //     { text: "◎", tone: "gray" },
+      //     { text: "◍", tone: "gray" },
+      //     { text: "◭", tone: "gray" },
+      //   ],
+      //   percent: isBn ? "100% শতাংশ" : "100%",
+      // },
     ],
     [isBn],
   );
