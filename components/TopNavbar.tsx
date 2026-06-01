@@ -97,7 +97,7 @@ function NavbarAuthActions() {
   if (!authReady) {
     return (
       <div
-        className="h-9 w-[9.5rem] shrink-0 rounded-md bg-[#2a2a2a]/60 sm:w-[11rem]"
+        className="h-9 w-[9.5rem] shrink-0 animate-pulse rounded-md bg-[#2a2a2a] sm:w-[11rem]"
         aria-hidden
       />
     );

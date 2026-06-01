@@ -116,7 +116,7 @@ function formatBalance(amount: string | undefined, locale: string): string {
 }
 
 export default function LoggedInWalletBar() {
-  const { session, refreshBalance } = useAuth();
+  const { session, refreshBalance, balanceSyncing } = useAuth();
   const { preferences, t } = useLocale();
   const [mounted, setMounted] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -128,9 +128,11 @@ export default function LoggedInWalletBar() {
   }, []);
 
   const vipPoints = session?.vipPoints ?? "0";
-  const balanceDisplay = mounted
-    ? formatBalance(session?.balance, preferences.locale)
-    : "0.00";
+  const balanceDisplay = balanceSyncing
+    ? "···"
+    : mounted
+      ? formatBalance(session?.balance, preferences.locale)
+      : "0.00";
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -172,11 +174,11 @@ export default function LoggedInWalletBar() {
         <button
           type="button"
           onClick={onRefresh}
-          disabled={refreshing}
+          disabled={refreshing || balanceSyncing}
           className="focus-ring flex h-7 w-7 shrink-0 items-center justify-center rounded text-[#9ca3af] transition-colors hover:text-white disabled:opacity-50"
           aria-label={t.navbar.refreshBalance}
         >
-          <RefreshIcon spinning={refreshing} />
+          <RefreshIcon spinning={refreshing || balanceSyncing} />
         </button>
       </div>
 

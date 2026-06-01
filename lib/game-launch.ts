@@ -1,4 +1,6 @@
 import type { AuthSession } from "@/lib/auth/session";
+import { markNeedsBalanceRefresh } from "@/lib/game-balance-sync";
+import { dispatchGameDeparting } from "@/lib/game-return-events";
 
 /** bm24api-20251210 — public launch settings (secrets stay server-side / PHP). */
 export const GAME_LAUNCH_PLAYER_PREFIX =
@@ -73,7 +75,7 @@ export function buildGameLaunchPayload(
     game_uid: gameCode.toString(),
     member_account: buildGameMemberAccount(memberId),
     timestamp: Date.now().toString(),
-    credit_amount: "100".toString(),
+    credit_amount: resolveGameCreditAmount(session).toString(),
     currency_code: "BDT",
     language: "en",
     platform: getGameLaunchPlatform(),
@@ -118,7 +120,8 @@ export async function launchGameInBrowser(
 ): Promise<void> {
   const launchUrl = await requestGameLaunch(gameCode, session);
   if (typeof window !== "undefined") {
-    localStorage.setItem("needsBalanceRefresh", "1");
-    window.location.href = launchUrl;
+    markNeedsBalanceRefresh();
+    dispatchGameDeparting();
+    window.location.assign(launchUrl);
   }
 }

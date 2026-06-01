@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -11,14 +12,20 @@ import {
 import { useAuth } from "@/components/AuthProvider";
 import GameLoginPromptModal from "@/components/GameLoginPromptModal";
 import { useToast } from "@/components/ToastProvider";
+import {
+  refreshBalanceAfterGameReturn,
+  shouldRefreshBalanceAfterGame,
+} from "@/lib/game-balance-sync";
+import {
+  GAME_DEPARTING_EVENT,
+  GAME_RETURN_EVENT,
+} from "@/lib/game-return-events";
 import { launchGameInBrowser } from "@/lib/game-launch";
 import GameLaunchOverlay from "./GameLaunchOverlay";
 
 export type GameClickOptions = {
   title?: string;
-  /** Client-side game id (e.g. `aviator`) */
   gameId?: string;
-  /** Provider game_code from server game data */
   gameCode?: string;
   onAuthorized?: () => void;
 };
@@ -53,11 +60,31 @@ type GamePlayGateContextValue = {
 const GamePlayGateContext = createContext<GamePlayGateContextValue | null>(null);
 
 export function GamePlayGateProvider({ children }: { children: ReactNode }) {
-  const { isUser, authReady, session } = useAuth();
+  const { isUser, authReady, session, refreshSession } = useAuth();
   const { showToast } = useToast();
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [launching, setLaunching] = useState(false);
   const [launchingTitle, setLaunchingTitle] = useState<string | undefined>();
+
+  const clearLaunchState = useCallback(() => {
+    setLaunching(false);
+    setLaunchingTitle(undefined);
+  }, []);
+
+  useEffect(() => {
+    const onDepart = () => clearLaunchState();
+    const onReturn = () => clearLaunchState();
+
+    window.addEventListener(GAME_DEPARTING_EVENT, onDepart);
+    window.addEventListener(GAME_RETURN_EVENT, onReturn);
+    window.addEventListener("pageshow", onReturn);
+
+    return () => {
+      window.removeEventListener(GAME_DEPARTING_EVENT, onDepart);
+      window.removeEventListener(GAME_RETURN_EVENT, onReturn);
+      window.removeEventListener("pageshow", onReturn);
+    };
+  }, [clearLaunchState]);
 
   const handleGameClick = useCallback(
     async ({ title, gameId, gameCode, onAuthorized }: GameClickOptions) => {
@@ -72,14 +99,22 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
         setLaunching(true);
         setLaunchingTitle(title);
         try {
+          if (shouldRefreshBalanceAfterGame()) {
+            try {
+              await refreshBalanceAfterGameReturn();
+              refreshSession();
+            } catch {
+              /* GameReturnHandler will retry */
+            }
+          }
+          clearLaunchState();
           await launchGameInBrowser(gameCode, session);
           return;
         } catch (error: unknown) {
           const msg =
             error instanceof Error ? error.message : "Failed to launch game";
           showToast(`API Error: ${msg}`);
-          setLaunching(false);
-          setLaunchingTitle(undefined);
+          clearLaunchState();
           return;
         }
       }
@@ -88,7 +123,7 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
       if (message) showToast(message);
       onAuthorized?.();
     },
-    [authReady, isUser, launching, session, showToast],
+    [authReady, isUser, launching, session, showToast, refreshSession, clearLaunchState],
   );
 
   const value = useMemo(() => ({ handleGameClick }), [handleGameClick]);

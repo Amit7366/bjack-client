@@ -10,6 +10,10 @@ import {
   type ReactNode,
 } from "react";
 import { logoutUser as logoutApi, refreshWalletBalance } from "@/lib/auth/api";
+import {
+  refreshBalanceAfterGameReturn,
+  shouldRefreshBalanceAfterGame,
+} from "@/lib/game-balance-sync";
 import { USER_ROLE } from "@/lib/auth/constants";
 import {
   AUTH_CHANGE_EVENT,
@@ -21,6 +25,7 @@ import {
 type AuthContextValue = {
   session: AuthSession | null;
   authReady: boolean;
+  balanceSyncing: boolean;
   isAuthenticated: boolean;
   isUser: boolean;
   refreshSession: () => void;
@@ -33,6 +38,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [authReady, setAuthReady] = useState(false);
+  const [balanceSyncing, setBalanceSyncing] = useState(false);
 
   const refreshSession = useCallback(() => {
     setSession(readAuthSession());
@@ -58,8 +64,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refreshSession]);
 
   const refreshBalance = useCallback(async () => {
-    await refreshWalletBalance();
-    refreshSession();
+    setBalanceSyncing(true);
+    try {
+      if (shouldRefreshBalanceAfterGame()) {
+        await refreshBalanceAfterGameReturn();
+      } else {
+        await refreshWalletBalance();
+      }
+      refreshSession();
+    } finally {
+      setBalanceSyncing(false);
+    }
   }, [refreshSession]);
 
   const logout = useCallback(async () => {
@@ -71,13 +86,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       session,
       authReady,
+      balanceSyncing,
       isAuthenticated: Boolean(session?.accessToken),
       isUser: session?.role === USER_ROLE,
       refreshSession,
       refreshBalance,
       logout,
     }),
-    [session, authReady, refreshSession, refreshBalance, logout],
+    [session, authReady, balanceSyncing, refreshSession, refreshBalance, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

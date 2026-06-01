@@ -1,12 +1,23 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
 import { MEMBER_PAGE_BG } from "@/components/member/shared/member-ui";
+import {
+  createManualDeposit,
+  failAutoPayDeposit,
+  isSupportedQuickDepositMethod,
+  mapQuickDepositMethod,
+  syncSessionBalance,
+  verifyAutoPayDeposit,
+  type DepositPaymentMethod,
+} from "@/lib/deposit-api";
+import { memberDepositHref } from "@/lib/member-routes";
 
 const PAYMENT_WINDOW_SEC = 10 * 60;
 const VERIFY_WINDOW_SEC = 3 * 60;
+const VERIFY_POLL_MS = 2500;
 const CASHOUT_NUMBER = "01635063453";
 
 function formatClock(totalSec: number): string {
@@ -59,11 +70,36 @@ function VerifyContent() {
     return Number.isNaN(raw) ? 0 : raw;
   }, [searchParams]);
 
+  const methodParam = searchParams.get("method") ?? "bKash";
+  const channel = searchParams.get("channel") ?? "";
+
+  const paymentMethod = useMemo<DepositPaymentMethod>(
+    () => mapQuickDepositMethod(methodParam),
+    [methodParam],
+  );
+
+  const paymentLabel = useMemo(() => {
+    if (paymentMethod === "nagad") return "NAGAD";
+    if (paymentMethod === "rocket") return "Rocket";
+    return "bKash";
+  }, [paymentMethod]);
+
+  useEffect(() => {
+    if (!isSupportedQuickDepositMethod(methodParam)) {
+      router.replace(memberDepositHref(locale));
+    }
+  }, [methodParam, router, locale]);
+
   const [stage, setStage] = useState<"pay" | "verifying">("pay");
   const [paySecLeft, setPaySecLeft] = useState(PAYMENT_WINDOW_SEC);
   const [verifySecLeft, setVerifySecLeft] = useState(VERIFY_WINDOW_SEC);
   const [txnId, setTxnId] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const depositRecordIdRef = useRef<string | null>(null);
+  const verifyDoneRef = useRef(false);
 
   useEffect(() => {
     if (stage !== "pay") return;
@@ -74,13 +110,68 @@ function VerifyContent() {
 
   useEffect(() => {
     if (stage !== "verifying") return;
-    if (verifySecLeft <= 0) {
-      router.push(`/${locale}/member/deposit`);
-      return;
-    }
+    if (verifySecLeft <= 0) return;
     const id = window.setInterval(() => setVerifySecLeft((s) => s - 1), 1000);
     return () => window.clearInterval(id);
-  }, [stage, verifySecLeft, router, locale]);
+  }, [stage, verifySecLeft]);
+
+  const handleVerifyTimeout = useCallback(async () => {
+    if (verifyDoneRef.current) return;
+    verifyDoneRef.current = true;
+
+    const id = depositRecordIdRef.current;
+    if (id) {
+      try {
+        await failAutoPayDeposit(id);
+      } catch {
+        /* ignore */
+      }
+    }
+    router.replace(memberDepositHref(locale));
+  }, [router, locale]);
+
+  useEffect(() => {
+    if (stage !== "verifying") return;
+    if (verifySecLeft > 0) return;
+    void handleVerifyTimeout();
+  }, [stage, verifySecLeft, handleVerifyTimeout]);
+
+  useEffect(() => {
+    if (stage !== "verifying" || !depositRecordIdRef.current) return;
+
+    const depositId = depositRecordIdRef.current;
+    const normalizedTxn = txnId.trim().toUpperCase();
+
+    const poll = async () => {
+      if (verifyDoneRef.current) return;
+      try {
+        const result = await verifyAutoPayDeposit({
+          depositTransactionId: depositId,
+          amount,
+          transactionId: normalizedTxn,
+          paymentMethod,
+        });
+
+        if (result.matched && result.status === "success") {
+          verifyDoneRef.current = true;
+          syncSessionBalance(result.currentBalance);
+          router.replace(`/${locale}`);
+          return;
+        }
+
+        if (result.status === "failed") {
+          verifyDoneRef.current = true;
+          router.replace(memberDepositHref(locale));
+        }
+      } catch {
+        /* keep polling until timeout */
+      }
+    };
+
+    void poll();
+    const id = window.setInterval(() => void poll(), VERIFY_POLL_MS);
+    return () => window.clearInterval(id);
+  }, [stage, amount, txnId, paymentMethod, router, locale]);
 
   const copyValue = useCallback(async (key: string, value: string) => {
     try {
@@ -92,7 +183,30 @@ function VerifyContent() {
     }
   }, []);
 
-  const canSubmit = txnId.trim().length >= 4 && paySecLeft > 0;
+  const handleSubmit = async () => {
+    if (submitting || !txnId.trim() || paySecLeft <= 0 || amount <= 0) return;
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const record = await createManualDeposit({
+        amount,
+        transactionId: txnId.trim(),
+        paymentMethod,
+      });
+
+      depositRecordIdRef.current = record._id;
+      setStage("verifying");
+      setVerifySecLeft(VERIFY_WINDOW_SEC);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not submit deposit");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const canSubmit = txnId.trim().length >= 4 && paySecLeft > 0 && amount > 0 && !submitting;
 
   return (
     <div className={`${MEMBER_PAGE_BG} flex justify-center`}>
@@ -113,6 +227,17 @@ function VerifyContent() {
                   {isBn
                     ? "নিচের নম্বরটিতে দয়াকরে ক্যাশআউট করুন, ট্রাঞ্জেকশন আইডি বসান এবং ডিপোজিট রিকোয়েস্টটি কমপ্লিট করতে সাবমিট করুন। ধন্যবাদ।"
                     : "Please cash out to the number below, enter the transaction ID, and submit to complete your deposit request. Thank you."}
+                </p>
+
+                <p className="mt-2 text-center text-[11px] text-[#6b7280]">
+                  {isBn ? "পেমেন্ট:" : "Payment:"}{" "}
+                  <span className="font-semibold text-[#1aa05a]">{paymentLabel}</span>
+                  {channel ? (
+                    <>
+                      {" "}
+                      · {isBn ? "চ্যানেল:" : "Channel:"} {channel}
+                    </>
+                  ) : null}
                 </p>
 
                 <div className="mt-5 space-y-4">
@@ -156,7 +281,7 @@ function VerifyContent() {
                     <input
                       type="text"
                       value={txnId}
-                      onChange={(e) => setTxnId(e.target.value)}
+                      onChange={(e) => setTxnId(e.target.value.toUpperCase())}
                       placeholder={isBn ? "ট্রাঞ্জেকশন আইডি বসান" : "Enter transaction ID"}
                       className="flex-1 rounded border border-[#d1d5db] px-3 py-2 text-[13px] text-[#111827] outline-none focus:border-[#1aa05a] placeholder:text-[#9ca3af]"
                     />
@@ -169,13 +294,17 @@ function VerifyContent() {
                   </p>
                 ) : null}
 
+                {error ? (
+                  <p className="mt-3 text-center text-[12px] font-medium text-[#e11d48]">{error}</p>
+                ) : null}
+
                 <button
                   type="button"
                   disabled={!canSubmit}
-                  onClick={() => setStage("verifying")}
+                  onClick={() => void handleSubmit()}
                   className="mt-5 min-h-12 w-full rounded-md bg-[#1aa05a] text-[15px] font-semibold text-white transition-colors hover:bg-[#178a4f] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {isBn ? "সাবমিট" : "Submit"}
+                  {submitting ? (isBn ? "সাবমিট হচ্ছে…" : "Submitting…") : isBn ? "সাবমিট" : "Submit"}
                 </button>
 
                 <div className="mt-6 border-t border-[#e5e7eb] pt-4">
@@ -213,6 +342,11 @@ function VerifyContent() {
                 <p className="text-[13px] text-[#374151]">
                   {isBn ? "আপনার পেমেন্টটি ভেরিফাই করা হচ্ছে " : "Verifying your payment "}
                   <span className="font-semibold text-[#e11d48] tabular-nums">{formatClock(verifySecLeft)}</span>
+                </p>
+                <p className="mt-2 max-w-[260px] text-center text-[11px] text-[#6b7280]">
+                  {isBn
+                    ? `আপনার ${paymentLabel} SMS (ট্রানজেকশন আইডি + পরিমাণ) মিললে স্বয়ংক্রিয়ভাবে ব্যালেন্স যোগ হবে।`
+                    : `When your ${paymentLabel} SMS matches (transaction ID + amount), your balance will be credited.`}
                 </p>
               </div>
             </>

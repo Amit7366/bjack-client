@@ -9,6 +9,7 @@ import {
   memberPagePaddingNarrow,
   MemberPageHeader,
 } from "@/components/member/shared/member-ui";
+import { depositMethodToUrlParam, mapQuickDepositMethod } from "@/lib/deposit-api";
 
 type Method = {
   id: string;
@@ -67,10 +68,9 @@ export default function QuickDepositPage() {
 
   const methods = useMemo<Method[]>(
     () => [
-      { id: "bikash", label: isBn ? "বিকাশ" : "bKash", badge: "✈" },
-      { id: "nagad", label: isBn ? "নগদ" : "Nagad", badge: "🎯" },
-      { id: "rocket", label: isBn ? "রকেট" : "Rocket", badge: "নগদ" },
-      { id: "upay", label: "UPay", badge: "◎" },
+      { id: "bKash", label: isBn ? "বিকাশ" : "bKash", badge: "✈" },
+      { id: "NAGAD", label: isBn ? "নগদ" : "Nagad", badge: "🎯" },
+      { id: "Rocket", label: isBn ? "রকেট" : "Rocket", badge: "🚀" },
     ],
     [isBn],
   );
@@ -117,9 +117,10 @@ export default function QuickDepositPage() {
 
   const handleSubmit = () => {
     if (!canSubmit) return;
+    const paymentMethod = mapQuickDepositMethod(selectedMethod);
     const q = new URLSearchParams({
       amount: String(amountNum),
-      method: selectedMethod,
+      method: depositMethodToUrlParam(paymentMethod),
       channel: selectedChannel,
     });
     router.push(`/${locale}/member/deposit/quick/verify?${q.toString()}`);
