@@ -128,11 +128,9 @@ export default function LoggedInWalletBar() {
   }, []);
 
   const vipPoints = session?.vipPoints ?? "0";
-  const balanceDisplay = balanceSyncing
-    ? "···"
-    : mounted
-      ? formatBalance(session?.balance, preferences.locale)
-      : "0.00";
+  const balanceDisplay = mounted
+    ? formatBalance(session?.balance, preferences.locale)
+    : "0.00";
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

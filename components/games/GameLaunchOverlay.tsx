@@ -9,7 +9,9 @@ type GameLaunchOverlayProps = {
 };
 
 export default function GameLaunchOverlay({ open, gameTitle }: GameLaunchOverlayProps) {
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(
+    () => typeof document !== "undefined",
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -24,7 +26,8 @@ export default function GameLaunchOverlay({ open, gameTitle }: GameLaunchOverlay
     };
   }, [open]);
 
-  if (!mounted || !open) return null;
+  if (!open) return null;
+  if (!mounted) return null;
 
   return createPortal(
     <div

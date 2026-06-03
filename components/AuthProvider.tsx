@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -35,14 +36,42 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+const WALLET_FOCUS_DEBOUNCE_MS = 1500;
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [balanceSyncing, setBalanceSyncing] = useState(false);
+  const walletSyncRef = useRef(false);
+  const lastWalletSyncRef = useRef(0);
 
   const refreshSession = useCallback(() => {
     setSession(readAuthSession());
   }, []);
+
+  const syncWalletFromServer = useCallback(
+    async (opts?: { gameReturn?: boolean }) => {
+      const current = readAuthSession();
+      if (!current?.accessToken || !current.memberId) return;
+      if (walletSyncRef.current) return;
+
+      walletSyncRef.current = true;
+      setBalanceSyncing(true);
+      try {
+        if (opts?.gameReturn && shouldRefreshBalanceAfterGame()) {
+          await refreshBalanceAfterGameReturn();
+        } else {
+          await refreshWalletBalance();
+        }
+        refreshSession();
+      } finally {
+        setBalanceSyncing(false);
+        walletSyncRef.current = false;
+        lastWalletSyncRef.current = Date.now();
+      }
+    },
+    [refreshSession],
+  );
 
   useEffect(() => {
     const current = readAuthSession();
@@ -63,19 +92,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [refreshSession]);
 
+  /** On load: always pull currentBalance from MongoDB (fixes stale localStorage). */
+  useEffect(() => {
+    if (!authReady || !session?.accessToken || !session.memberId) return;
+    void syncWalletFromServer();
+  }, [authReady, session?.accessToken, session?.memberId, syncWalletFromServer]);
+
+  /** When user returns to tab: refresh wallet so all devices stay aligned. */
+  useEffect(() => {
+    if (!authReady || !session?.accessToken) return;
+
+    const onVisible = () => {
+      if (document.visibilityState !== "visible") return;
+      const elapsed = Date.now() - lastWalletSyncRef.current;
+      if (elapsed < WALLET_FOCUS_DEBOUNCE_MS) return;
+      void syncWalletFromServer();
+    };
+
+    window.addEventListener("focus", onVisible);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.removeEventListener("focus", onVisible);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [authReady, session?.accessToken, syncWalletFromServer]);
+
   const refreshBalance = useCallback(async () => {
-    setBalanceSyncing(true);
-    try {
-      if (shouldRefreshBalanceAfterGame()) {
-        await refreshBalanceAfterGameReturn();
-      } else {
-        await refreshWalletBalance();
-      }
-      refreshSession();
-    } finally {
-      setBalanceSyncing(false);
-    }
-  }, [refreshSession]);
+    await syncWalletFromServer({
+      gameReturn: shouldRefreshBalanceAfterGame(),
+    });
+  }, [syncWalletFromServer]);
 
   const logout = useCallback(async () => {
     await logoutApi();

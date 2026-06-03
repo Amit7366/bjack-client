@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import {
   GAME_RETURN_EVENT,
   dispatchGameReturn,
@@ -17,7 +16,6 @@ import { AUTH_CHANGE_EVENT, readAuthSession } from "@/lib/auth/session";
  * Kept separate so pageshow / bfcache recovery always runs even if other state is stale.
  */
 export default function GameReturnHandler() {
-  const router = useRouter();
   const runningRef = useRef(false);
 
   useEffect(() => {
@@ -32,7 +30,6 @@ export default function GameReturnHandler() {
       try {
         await refreshBalanceAfterGameReturn();
         window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
-        router.refresh();
       } catch {
         /* flag stays set; user can tap refresh */
       } finally {
@@ -53,7 +50,7 @@ export default function GameReturnHandler() {
       window.removeEventListener("pageshow", onPageShow);
       window.removeEventListener("focus", onPageShow);
     };
-  }, [router]);
+  }, []);
 
   return null;
 }

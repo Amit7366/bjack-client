@@ -16,10 +16,7 @@ import {
   refreshBalanceAfterGameReturn,
   shouldRefreshBalanceAfterGame,
 } from "@/lib/game-balance-sync";
-import {
-  GAME_DEPARTING_EVENT,
-  GAME_RETURN_EVENT,
-} from "@/lib/game-return-events";
+import { GAME_RETURN_EVENT } from "@/lib/game-return-events";
 import { launchGameInBrowser } from "@/lib/game-launch";
 import GameLaunchOverlay from "./GameLaunchOverlay";
 
@@ -72,15 +69,12 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const onDepart = () => clearLaunchState();
     const onReturn = () => clearLaunchState();
 
-    window.addEventListener(GAME_DEPARTING_EVENT, onDepart);
     window.addEventListener(GAME_RETURN_EVENT, onReturn);
     window.addEventListener("pageshow", onReturn);
 
     return () => {
-      window.removeEventListener(GAME_DEPARTING_EVENT, onDepart);
       window.removeEventListener(GAME_RETURN_EVENT, onReturn);
       window.removeEventListener("pageshow", onReturn);
     };
@@ -98,6 +92,12 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
       if (gameCode) {
         setLaunching(true);
         setLaunchingTitle(title);
+
+        // Let React paint the loader before any async work (desktop + mobile).
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        });
+
         try {
           if (shouldRefreshBalanceAfterGame()) {
             try {
@@ -107,7 +107,7 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
               /* GameReturnHandler will retry */
             }
           }
-          clearLaunchState();
+
           await launchGameInBrowser(gameCode, session);
           return;
         } catch (error: unknown) {

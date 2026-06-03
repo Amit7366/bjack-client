@@ -57,13 +57,26 @@ export async function loginWithUsername(
   const session = enrichSession({
     accessToken: body.data.accessToken,
     memberId: body.data.memberId,
-    balance: body.data.balance,
+    balance: formatWalletBalance(body.data.balance) ?? body.data.balance,
     userName: userName.trim(),
     needsPasswordChange: body.data.needsPasswordChange,
   });
 
   saveAuthSession(session);
-  return { session, message: body.message ?? "Logged in" };
+
+  try {
+    const fresh = await refreshWalletBalance();
+    if (fresh) {
+      return {
+        session: { ...session, balance: fresh },
+        message: body.message ?? "Logged in",
+      };
+    }
+  } catch {
+    /* login response balance is still usable */
+  }
+
+  return { session: readAuthSessionForRequest() ?? session, message: body.message ?? "Logged in" };
 }
 
 export async function registerUser(input: {
@@ -109,9 +122,21 @@ export async function registerAndLogin(input: {
   return { session, message: registerResult.message };
 }
 
-type BalancePayload = { currentBalance?: number; balance?: string };
+type BalancePayload = {
+  currentBalance?: number;
+  balance?: string;
+  id?: string;
+};
 
-/** Re-fetch wallet balance for the logged-in member */
+/** Normalize wallet amount from API / login payload. */
+export function formatWalletBalance(value: number | string | undefined | null): string | undefined {
+  if (value == null || value === "") return undefined;
+  const num = typeof value === "number" ? value : Number.parseFloat(String(value));
+  if (!Number.isFinite(num)) return undefined;
+  return num.toFixed(2);
+}
+
+/** Authoritative balance from UserBalance collection (by member id). */
 export async function refreshWalletBalance(): Promise<string | undefined> {
   const current = readAuthSessionForRequest();
   const memberId = current?.memberId;
@@ -124,14 +149,15 @@ export async function refreshWalletBalance(): Promise<string | undefined> {
 
   if (!ok || !body.data) return current.balance;
 
-  const raw = body.data.currentBalance ?? body.data.balance;
-  const balance =
-    typeof raw === "number" ? raw.toFixed(2) : typeof raw === "string" ? raw : current.balance;
+  const formatted = formatWalletBalance(
+    body.data.currentBalance ?? body.data.balance,
+  );
 
-  if (balance !== undefined) {
-    saveAuthSession({ ...current, balance });
+  if (formatted !== undefined) {
+    saveAuthSession({ ...current, balance: formatted });
+    return formatted;
   }
-  return balance;
+  return current.balance;
 }
 
 /** Invalidate refresh cookie on server and clear local session */

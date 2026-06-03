@@ -1,5 +1,5 @@
 import type { ApiResponse } from "@/lib/api/types";
-import { refreshWalletBalance } from "@/lib/auth/api";
+import { formatWalletBalance, refreshWalletBalance } from "@/lib/auth/api";
 import { readAuthSession, saveAuthSession } from "@/lib/auth/session";
 
 const API_PREFIX = "/api/v1";
@@ -81,11 +81,11 @@ export async function syncGameTransactionsAndBalance(): Promise<GameSyncResult |
     throw new Error(body.message || "Failed to sync game balance");
   }
 
-  const balance = Number(body.data.currentBalance);
-  if (Number.isFinite(balance)) {
+  const formatted = formatWalletBalance(body.data.currentBalance);
+  if (formatted) {
     saveAuthSession({
       ...session,
-      balance: balance.toFixed(2),
+      balance: formatted,
     });
   }
 
