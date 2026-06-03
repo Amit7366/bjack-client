@@ -82,6 +82,7 @@ export async function createManualDeposit(input: {
   amount: number;
   transactionId: string;
   paymentMethod: "bkash" | "nagad" | "rocket";
+  promoCode?: string;
 }): Promise<ManualDepositRecord> {
   const session = readAuthSession();
   if (!session?.objectId || !session.memberId) {
@@ -99,7 +100,7 @@ export async function createManualDeposit(input: {
     agentNumber: "01635063453",
     walletNumber: "00000000000",
     proofImage: "quick-deposit",
-    promoCode: "NO_PROMO",
+    promoCode: input.promoCode?.trim() || "NO_PROMO",
     bonusAmount: 0,
   };
 

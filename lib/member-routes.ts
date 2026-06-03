@@ -20,6 +20,10 @@ export function memberDepositHref(locale: string): string {
   return `/${locale}/member/deposit`;
 }
 
+export function memberWithdrawHref(locale: string): string {
+  return `/${locale}/member/withdraw`;
+}
+
 export function isMemberSection(value: string): value is MemberSection {
   return (MEMBER_SECTIONS as readonly string[]).includes(value);
 }

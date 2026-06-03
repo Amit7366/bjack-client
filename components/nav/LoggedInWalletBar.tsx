@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
-import { memberDepositHref } from "@/lib/member-routes";
+import { memberDepositHref, memberWithdrawHref } from "@/lib/member-routes";
 
 function VipCoinIcon() {
   return (
@@ -122,6 +122,7 @@ export default function LoggedInWalletBar() {
   const [hidden, setHidden] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const depositHref = memberDepositHref(preferences.locale);
+  const withdrawHref = memberWithdrawHref(preferences.locale);
 
   useEffect(() => {
     setMounted(true);
@@ -190,17 +191,17 @@ export default function LoggedInWalletBar() {
 
       <Link
         href={depositHref}
-        className="focus-ring hidden h-9 shrink-0 items-center justify-center rounded-md bg-[#178358] px-3 text-[12px] font-semibold text-white transition-colors hover:bg-[#1a9664] sm:flex sm:text-[13px]"
+        className="focus-ring flex h-8 shrink-0 items-center justify-center rounded-md bg-[#178358] px-2.5 text-[11px] font-semibold text-white transition-colors hover:bg-[#1a9664] sm:h-9 sm:px-3 sm:text-[13px]"
       >
         {t.navbar.deposit}
       </Link>
 
-      <button
-        type="button"
-        className="focus-ring hidden h-9 shrink-0 items-center justify-center rounded-md bg-[#2a2a2a] px-3 text-[12px] font-semibold text-white transition-colors hover:bg-[#333] sm:flex sm:text-[13px]"
+      <Link
+        href={withdrawHref}
+        className="focus-ring flex h-8 shrink-0 items-center justify-center rounded-md bg-[#2a2a2a] px-2.5 text-[11px] font-semibold text-white transition-colors hover:bg-[#333] sm:h-9 sm:px-3 sm:text-[13px]"
       >
         {t.navbar.withdraw}
-      </button>
+      </Link>
 
       <Link
         href={depositHref}

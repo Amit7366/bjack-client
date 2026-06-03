@@ -19,8 +19,8 @@ import {
   formatLocalDateOnly,
   formatTransactionDateOnly,
   formatTransactionDateTime,
-  INITIAL_TRANSACTIONS,
-  isTransactionInDateFilter,
+  getGatewayTypeLabel,
+  getPaymentTypeDetailLabel,
   TRANSACTION_DATE_FILTER_IDS,
   TRANSACTION_PAYMENT_TYPE_IDS,
   TRANSACTION_STATUS_IDS,
@@ -29,6 +29,13 @@ import {
   type TransactionRecord,
   type TransactionStatus,
 } from "@/lib/transactions-data";
+import {
+  fetchUserTransactions,
+  getDateRangeForFilter,
+  uiStatusesToApiParam,
+  uiTypesToApiParam,
+} from "@/lib/transaction-records-api";
+import { mapApiTransactionToRecord } from "@/lib/transaction-records-mapper";
 import { useLocale } from "@/components/LocaleProvider";
 
 type AppliedFilters = {
@@ -118,11 +125,29 @@ function amountClass(amount: number): string {
   return "text-white";
 }
 
-function matchesFilters(record: TransactionRecord, filters: AppliedFilters): boolean {
-  if (filters.statuses.size > 0 && !filters.statuses.has(record.status)) return false;
-  if (filters.paymentTypes.size > 0 && !filters.paymentTypes.has(record.paymentType)) return false;
-  if (!isTransactionInDateFilter(record.createdAt, filters.date)) return false;
-  return true;
+function PaymentMethodLogo({ method }: { method?: "bkash" | "nagad" | "rocket" }) {
+  if (method === "bkash") {
+    return (
+      <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded bg-[#e2136e] text-[10px] font-bold text-white">
+        b
+      </span>
+    );
+  }
+  if (method === "nagad") {
+    return (
+      <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded bg-[#f6921e] text-[10px] font-bold text-white">
+        N
+      </span>
+    );
+  }
+  if (method === "rocket") {
+    return (
+      <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded bg-[#8b2f8f] text-[10px] font-bold text-white">
+        R
+      </span>
+    );
+  }
+  return null;
 }
 
 function groupTransactions(
@@ -345,15 +370,17 @@ function TransactionFilterPanel({
 function TransactionCard({
   record,
   labels,
+  locale,
   onDetails,
 }: {
   record: TransactionRecord;
   labels: ReturnType<typeof getTransactionMessages>;
+  locale: "en" | "bn" | "hi";
   onDetails: () => void;
 }) {
   return (
     <article className={memberRecordCardClass}>
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-2">
         <span
           className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[12px] font-medium ${statusBadgeClass(record.status)}`}
         >
@@ -369,17 +396,18 @@ function TransactionCard({
         </button>
       </div>
 
-      <h3 className="mt-3 text-[15px] font-bold text-white sm:text-[16px]">
+      <p className="mt-2 text-center text-[12px] text-[#9ca3af]">{record.referenceId}</p>
+
+      <h3 className="mt-2 text-[17px] font-bold text-white">
         {labels.paymentTypeLabels[record.paymentType]}
       </h3>
 
-      <p className="mt-2 text-[13px] text-[#9ca3af]">{record.referenceId}</p>
-      <p className="mt-0.5 text-[14px] text-[#d4d4d4]">{record.method}</p>
+      <p className="mt-1 text-[14px] text-[#d4d4d4]">{record.method}</p>
 
       <div className="mt-4 flex items-end justify-between gap-4">
         <p className="text-[12px] text-[#9ca3af]">{formatTransactionDateTime(record.createdAt)}</p>
-        <p className={`text-[15px] font-bold tabular-nums sm:text-[16px] ${amountClass(record.amount)}`}>
-          {formatAmount(record.amount)}
+        <p className={`text-[16px] font-bold tabular-nums ${amountClass(record.amount)}`}>
+          {formatAmount(record.amount, locale)}
         </p>
       </div>
     </article>
@@ -388,9 +416,10 @@ function TransactionCard({
 
 export default function TransactionRecordsPageContent() {
   const { preferences } = useLocale();
-  const labels = getTransactionMessages(preferences.locale);
-  const profile = getProfileMessages(preferences.locale);
-  const base = `/${preferences.locale}`;
+  const locale = preferences.locale;
+  const labels = getTransactionMessages(locale);
+  const profile = getProfileMessages(locale);
+  const base = `/${locale}`;
 
   const [applied, setApplied] = useState<AppliedFilters>(() => ({
     statuses: new Set(DEFAULT_FILTERS.statuses),
@@ -409,6 +438,9 @@ export default function TransactionRecordsPageContent() {
   const [paymentOpen, setPaymentOpen] = useState(true);
   const [dateOpen, setDateOpen] = useState(true);
   const [detailsRecord, setDetailsRecord] = useState<TransactionRecord | null>(null);
+  const [records, setRecords] = useState<TransactionRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     setFilterPortalReady(true);
@@ -442,12 +474,31 @@ export default function TransactionRecordsPageContent() {
     };
   }, [detailsRecord]);
 
-  const filtered = useMemo(
-    () => INITIAL_TRANSACTIONS.filter((r) => matchesFilters(r, applied)),
-    [applied],
-  );
+  const loadRecords = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const { from, to } = getDateRangeForFilter(applied.date);
+      const data = await fetchUserTransactions({
+        from,
+        to,
+        status: uiStatusesToApiParam(applied.statuses),
+        transactionType: uiTypesToApiParam(applied.paymentTypes),
+      });
+      setRecords(data.map((tx) => mapApiTransactionToRecord(tx, locale)));
+    } catch {
+      setLoadError(labels.loadError);
+      setRecords([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [applied, locale, labels.loadError]);
 
-  const groups = useMemo(() => groupTransactions(filtered, labels), [filtered, labels]);
+  useEffect(() => {
+    void loadRecords();
+  }, [loadRecords]);
+
+  const groups = useMemo(() => groupTransactions(records, labels), [records, labels]);
 
   const openFilter = useCallback(() => {
     setDraft({
@@ -484,7 +535,7 @@ export default function TransactionRecordsPageContent() {
   }, []);
 
   const dateChipLabel = labels.dateFilterLabels[applied.date];
-  const total = filtered.length;
+  const total = records.length;
   const from = total === 0 ? 0 : 1;
   const to = total;
 
@@ -522,7 +573,16 @@ export default function TransactionRecordsPageContent() {
           filterAriaLabel={labels.filterTitle}
         />
 
-        {total === 0 ? (
+        {loading ? (
+          <p className="py-12 text-center text-[14px] text-[#9ca3af]">{labels.loading}</p>
+        ) : loadError ? (
+          <div className="space-y-3 py-8 text-center">
+            <p className="text-[14px] text-[#f87171]">{loadError}</p>
+            <button type="button" className={memberBtnSecondary} onClick={() => void loadRecords()}>
+              {locale === "bn" ? "আবার চেষ্টা করুন" : "Try again"}
+            </button>
+          </div>
+        ) : total === 0 ? (
           <MemberEmptyState message={labels.empty} />
         ) : (
           <div className="space-y-6">
@@ -535,6 +595,7 @@ export default function TransactionRecordsPageContent() {
                       <TransactionCard
                         record={record}
                         labels={labels}
+                        locale={locale}
                         onDetails={() => setDetailsRecord(record)}
                       />
                     </li>
@@ -587,11 +648,11 @@ export default function TransactionRecordsPageContent() {
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="tx-details-title"
-                className="safe-bottom w-full max-w-md rounded-t-2xl border border-[#333] bg-[#1a1a1a] p-5 shadow-2xl sm:rounded-lg"
+                className="safe-bottom flex max-h-[92dvh] w-full max-w-md flex-col rounded-t-2xl border border-[#333] bg-[#1a1a1a] shadow-2xl sm:max-h-[85vh] sm:rounded-lg"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <h2 id="tx-details-title" className="text-lg font-bold text-white">
+                <div className="flex items-center justify-between border-b border-[#2a2a2a] px-4 py-4">
+                  <h2 id="tx-details-title" className="text-[17px] font-bold text-white">
                     {labels.detailsTitle}
                   </h2>
                   <button
@@ -604,53 +665,117 @@ export default function TransactionRecordsPageContent() {
                   </button>
                 </div>
 
-                <dl className="space-y-3 text-[14px]">
-                  <div>
-                    <dt className="text-[#9ca3af]">{labels.referenceId}</dt>
-                    <dd className="mt-0.5 font-medium text-white">{detailsRecord.referenceId}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[#9ca3af]">{labels.type}</dt>
-                    <dd className="mt-0.5 font-medium text-white">
-                      {labels.paymentTypeLabels[detailsRecord.paymentType]}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[#9ca3af]">{labels.status}</dt>
-                    <dd className="mt-1">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[12px] font-medium ${statusBadgeClass(detailsRecord.status)}`}
-                      >
-                        <StatusIcon status={detailsRecord.status} />
-                        {labels.statusLabels[detailsRecord.status]}
-                      </span>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[#9ca3af]">{labels.paymentMethod}</dt>
-                    <dd className="mt-0.5 text-white">{detailsRecord.method}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[#9ca3af]">{labels.dateTime}</dt>
-                    <dd className="mt-0.5 text-white">
-                      {formatTransactionDateTime(detailsRecord.createdAt)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-[#9ca3af]">{labels.amount}</dt>
-                    <dd className={`mt-0.5 text-lg font-bold tabular-nums ${amountClass(detailsRecord.amount)}`}>
-                      {formatAmount(detailsRecord.amount)}
-                    </dd>
-                  </div>
-                </dl>
+                <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+                  <p
+                    className={`text-center text-[28px] font-bold tabular-nums ${amountClass(detailsRecord.amount)}`}
+                  >
+                    {formatAmount(detailsRecord.amount, locale)}
+                  </p>
+                  <p className="mt-1 text-center text-[13px] text-[#9ca3af]">
+                    {getGatewayTypeLabel(detailsRecord.paymentType, locale)}
+                  </p>
 
-                <button
-                  type="button"
-                  className={`${memberBtnPrimary} mt-6`}
-                  onClick={() => setDetailsRecord(null)}
-                >
-                  {labels.detailsClose}
-                </button>
+                  <div
+                    className={`mt-4 flex items-center gap-2 rounded-md border px-3 py-2.5 ${
+                      detailsRecord.status === "rejected"
+                        ? "border-[#7a2a2a] bg-[#5c1a1a]/80 text-[#f5a8a8]"
+                        : detailsRecord.status === "approved"
+                          ? "border-[#178358]/40 bg-[#0f3d2a]/80 text-[#86efac]"
+                          : "border-[#5c4a10] bg-[#3d3208]/80 text-[#fde047]"
+                    }`}
+                  >
+                    <StatusIcon status={detailsRecord.status} />
+                    <span className="text-[14px] font-medium">
+                      {labels.statusLabels[detailsRecord.status]}
+                    </span>
+                  </div>
+
+                  {detailsRecord.timeline && detailsRecord.timeline.length > 0 ? (
+                    <div className="mt-4 rounded-lg border border-[#2a2a2a] bg-[#141414] p-4">
+                      <ul className="space-y-0">
+                        {detailsRecord.timeline.map((step, index) => (
+                          <li key={step.id} className="relative flex gap-3 pb-5 last:pb-0">
+                            {index < detailsRecord.timeline!.length - 1 ? (
+                              <span
+                                className="absolute left-[9px] top-5 h-[calc(100%-12px)] w-px bg-[#23c97f]/50"
+                                aria-hidden
+                              />
+                            ) : null}
+                            <span
+                              className={`relative z-[1] mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border-2 ${
+                                step.active
+                                  ? "border-[#23c97f] bg-[#1a1a1a]"
+                                  : "border-[#23c97f] bg-[#23c97f]"
+                              }`}
+                            >
+                              {step.active ? (
+                                <span className="h-2 w-2 rounded-full bg-[#23c97f]" />
+                              ) : (
+                                <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                              )}
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[14px] font-medium text-white">{step.label}</p>
+                              <p className="mt-0.5 text-[12px] text-[#9ca3af]">
+                                {formatTransactionDateTime(step.at)}
+                              </p>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+
+                  <dl className="mt-4 space-y-3 rounded-lg border border-[#2a2a2a] bg-[#141414] p-4 text-[14px]">
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-[#9ca3af]">{labels.no}</dt>
+                      <dd className="text-right font-medium text-white">{detailsRecord.referenceId}</dd>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-[#9ca3af]">{labels.gatewayType}</dt>
+                      <dd className="text-right text-white">
+                        {getGatewayTypeLabel(detailsRecord.paymentType, locale)}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-[#9ca3af]">{labels.paymentMethod}</dt>
+                      <dd className="flex items-center justify-end gap-2 text-white">
+                        <PaymentMethodLogo method={detailsRecord.paymentMethod} />
+                        <span>{detailsRecord.method.split(" (")[0]}</span>
+                      </dd>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-[#9ca3af]">{labels.paymentTypeDetail}</dt>
+                      <dd className="text-right text-white">
+                        {getPaymentTypeDetailLabel(detailsRecord.paymentMethod, locale)}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-[#9ca3af]">{labels.phoneNumber}</dt>
+                      <dd className="text-right text-white">
+                        {detailsRecord.walletNumber || "—"}
+                      </dd>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-[#9ca3af]">{labels.amount}</dt>
+                      <dd
+                        className={`text-right font-semibold tabular-nums ${amountClass(detailsRecord.amount)}`}
+                      >
+                        {formatAmount(detailsRecord.amount, locale)}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <div className="border-t border-[#2a2a2a] p-4">
+                  <button
+                    type="button"
+                    className={memberBtnPrimary}
+                    onClick={() => setDetailsRecord(null)}
+                  >
+                    {labels.close}
+                  </button>
+                </div>
               </div>
             </div>,
             document.body,

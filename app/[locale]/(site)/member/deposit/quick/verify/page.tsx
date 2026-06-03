@@ -72,6 +72,7 @@ function VerifyContent() {
 
   const methodParam = searchParams.get("method") ?? "bKash";
   const channel = searchParams.get("channel") ?? "";
+  const promoCode = searchParams.get("promo")?.trim() || "NO_PROMO";
 
   const paymentMethod = useMemo<DepositPaymentMethod>(
     () => mapQuickDepositMethod(methodParam),
@@ -194,6 +195,7 @@ function VerifyContent() {
         amount,
         transactionId: txnId.trim(),
         paymentMethod,
+        promoCode,
       });
 
       depositRecordIdRef.current = record._id;

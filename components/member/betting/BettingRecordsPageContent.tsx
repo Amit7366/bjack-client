@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import BettingNoData from "./BettingNoData";
 import {
   MEMBER_PAGE_BG,
+  memberBtnSecondary,
   memberContainerXl,
   memberPagePadding,
   memberRecordCardClass,
@@ -14,9 +15,9 @@ import {
 } from "@/components/member/shared/member-ui";
 import { getProfileMessages } from "@/lib/i18n/profile-messages";
 import { getBettingMessages } from "@/lib/i18n/betting-messages";
+import { fetchUserBetHistory } from "@/lib/betting-records-api";
+import { mapGameTxnToRecord } from "@/lib/betting-records-mapper";
 import {
-  bettingRecordsForTab,
-  filterBettingRecords,
   formatBetAmount,
   formatBettingDateOnly,
   formatBettingDateTime,
@@ -107,9 +108,11 @@ function groupBets(
 function BettingCard({
   record,
   labels,
+  locale,
 }: {
   record: BettingRecord;
   labels: ReturnType<typeof getBettingMessages>;
+  locale: "en" | "bn" | "hi";
 }) {
   return (
     <article className={memberRecordCardClass}>
@@ -121,19 +124,20 @@ function BettingCard({
         </span>
         <span className="text-[12px] text-[#9ca3af]">{record.category}</span>
       </div>
-      <h3 className="mt-3 text-[15px] font-bold text-white sm:text-[16px]">{record.gameName}</h3>
-      <p className="mt-1 text-[13px] text-[#9ca3af]">
-        {labels.betId}: {record.betId}
-      </p>
+
+      <p className="mt-2 text-center text-[12px] text-[#9ca3af]">{record.betId}</p>
+
+      <h3 className="mt-2 text-[17px] font-bold text-white">{record.gameName}</h3>
+
       <div className="mt-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[12px] text-[#9ca3af]">{formatBettingDateTime(record.settledAt)}</p>
           <p className="mt-1 text-[13px] text-[#d4d4d4]">
-            {labels.stake}: {record.stake.toFixed(2)}
+            {labels.stake}: {formatBetAmount(record.stake, locale).replace(/^\+/, "")}
           </p>
         </div>
-        <p className={`text-[15px] font-bold tabular-nums sm:text-[16px] ${payoutClass(record.result, record.payout)}`}>
-          {labels.payout}: {formatBetAmount(record.payout)}
+        <p className={`text-[16px] font-bold tabular-nums ${payoutClass(record.result, record.payout)}`}>
+          {formatBetAmount(record.payout, locale)}
         </p>
       </div>
     </article>
@@ -142,9 +146,10 @@ function BettingCard({
 
 export default function BettingRecordsPageContent() {
   const { preferences } = useLocale();
-  const labels = getBettingMessages(preferences.locale);
-  const profile = getProfileMessages(preferences.locale);
-  const base = `/${preferences.locale}`;
+  const locale = preferences.locale;
+  const labels = getBettingMessages(locale);
+  const profile = getProfileMessages(locale);
+  const base = `/${locale}`;
 
   const [activeTab, setActiveTab] = useState<BettingTab>("settled");
   const [appliedDate, setAppliedDate] = useState<TransactionDateFilter>("last7days");
@@ -152,6 +157,9 @@ export default function BettingRecordsPageContent() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterPortalReady, setFilterPortalReady] = useState(false);
   const [dateOpen, setDateOpen] = useState(true);
+  const [records, setRecords] = useState<BettingRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     setFilterPortalReady(true);
@@ -167,14 +175,28 @@ export default function BettingRecordsPageContent() {
     };
   }, [filterOpen, appliedDate]);
 
-  const sourceRecords = useMemo(() => bettingRecordsForTab(activeTab), [activeTab]);
+  const loadRecords = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const result = await fetchUserBetHistory({
+        dateFilter: appliedDate,
+        tab: activeTab,
+      });
+      setRecords(result.history.map((tx) => mapGameTxnToRecord(tx, locale)));
+    } catch {
+      setLoadError(labels.loadError);
+      setRecords([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab, appliedDate, locale, labels.loadError]);
 
-  const filtered = useMemo(
-    () => filterBettingRecords(sourceRecords, appliedDate),
-    [sourceRecords, appliedDate],
-  );
+  useEffect(() => {
+    void loadRecords();
+  }, [loadRecords]);
 
-  const groups = useMemo(() => groupBets(filtered, labels), [filtered, labels]);
+  const groups = useMemo(() => groupBets(records, labels), [records, labels]);
 
   const openFilter = useCallback(() => {
     setDraftDate(appliedDate);
@@ -199,10 +221,10 @@ export default function BettingRecordsPageContent() {
   }, []);
 
   const dateChipLabel = labels.dateFilterLabels[appliedDate];
-  const total = filtered.length;
+  const total = records.length;
   const from = total === 0 ? 0 : 1;
   const to = total;
-  const showNoData = total === 0;
+  const showNoData = !loading && !loadError && total === 0;
 
   return (
     <div className={MEMBER_PAGE_BG}>
@@ -231,7 +253,16 @@ export default function BettingRecordsPageContent() {
           filterAriaLabel={labels.filterTitle}
         />
 
-        {showNoData ? (
+        {loading ? (
+          <p className="py-12 text-center text-[14px] text-[#9ca3af]">{labels.loading}</p>
+        ) : loadError ? (
+          <div className="space-y-3 py-8 text-center">
+            <p className="text-[14px] text-[#f87171]">{loadError}</p>
+            <button type="button" className={memberBtnSecondary} onClick={() => void loadRecords()}>
+              {locale === "bn" ? "আবার চেষ্টা করুন" : "Try again"}
+            </button>
+          </div>
+        ) : showNoData ? (
           <BettingNoData message={labels.noData} />
         ) : (
           <div className="space-y-6">
@@ -241,7 +272,7 @@ export default function BettingRecordsPageContent() {
                 <ul className="space-y-3">
                   {group.items.map((record) => (
                     <li key={record.id}>
-                      <BettingCard record={record} labels={labels} />
+                      <BettingCard record={record} labels={labels} locale={locale} />
                     </li>
                   ))}
                 </ul>

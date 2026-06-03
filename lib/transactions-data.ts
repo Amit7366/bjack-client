@@ -1,6 +1,15 @@
+import type { Locale } from "@/lib/locale";
+
 export type TransactionStatus = "processing" | "approved" | "rejected" | "reverted";
 export type TransactionPaymentType = "deposit" | "withdrawal" | "adjustment";
 export type TransactionDateFilter = "today" | "yesterday" | "last7days";
+
+export type TransactionTimelineStep = {
+  id: string;
+  label: string;
+  at: string;
+  active: boolean;
+};
 
 export type TransactionRecord = {
   id: string;
@@ -8,58 +17,14 @@ export type TransactionRecord = {
   status: TransactionStatus;
   paymentType: TransactionPaymentType;
   method: string;
+  paymentMethod?: "bkash" | "nagad" | "rocket";
   amount: number;
   createdAt: string;
+  updatedAt?: string;
+  providerTrxId?: string;
+  walletNumber?: string;
+  timeline?: TransactionTimelineStep[];
 };
-
-/** Demo records; dates relative to 2026-05-20 reference from design. */
-export const INITIAL_TRANSACTIONS: TransactionRecord[] = [
-  {
-    id: "tx-1",
-    referenceId: "D00961877130",
-    status: "rejected",
-    paymentType: "deposit",
-    method: "Bkash (E-wallet)",
-    amount: 100,
-    createdAt: "2026-05-20T10:36:30",
-  },
-  {
-    id: "tx-2",
-    referenceId: "W00961234001",
-    status: "approved",
-    paymentType: "withdrawal",
-    method: "Nagad (E-wallet)",
-    amount: -500,
-    createdAt: "2026-05-20T08:15:00",
-  },
-  {
-    id: "tx-3",
-    referenceId: "D00961000088",
-    status: "processing",
-    paymentType: "deposit",
-    method: "Rocket (E-wallet)",
-    amount: 250,
-    createdAt: "2026-05-19T14:22:10",
-  },
-  {
-    id: "tx-4",
-    referenceId: "A00960001234",
-    status: "approved",
-    paymentType: "adjustment",
-    method: "System",
-    amount: 50,
-    createdAt: "2026-05-19T09:00:00",
-  },
-  {
-    id: "tx-5",
-    referenceId: "D00959887766",
-    status: "reverted",
-    paymentType: "deposit",
-    method: "Bkash (E-wallet)",
-    amount: 1000,
-    createdAt: "2026-05-13T16:45:00",
-  },
-];
 
 export const TRANSACTION_STATUS_IDS: TransactionStatus[] = [
   "processing",
@@ -71,7 +36,6 @@ export const TRANSACTION_STATUS_IDS: TransactionStatus[] = [
 export const TRANSACTION_PAYMENT_TYPE_IDS: TransactionPaymentType[] = [
   "deposit",
   "withdrawal",
-  "adjustment",
 ];
 
 export const TRANSACTION_DATE_FILTER_IDS: TransactionDateFilter[] = [
@@ -123,7 +87,41 @@ export function formatLocalDateOnly(d: Date): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
-export function formatAmount(amount: number): string {
-  const sign = amount >= 0 ? "+" : "";
-  return `${sign}${amount.toFixed(2)}`;
+export function formatAmount(amount: number, locale: Locale = "en"): string {
+  const sign = amount >= 0 ? "+" : "-";
+  const abs = Math.abs(amount).toLocaleString(
+    locale === "bn" ? "bn-BD" : locale === "hi" ? "hi-IN" : "en-US",
+    { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+  );
+  return `${sign}${abs}`;
+}
+
+export function getGatewayTypeLabel(
+  paymentType: TransactionPaymentType,
+  locale: Locale,
+): string {
+  if (paymentType === "deposit") {
+    if (locale === "bn") return "ডিপোজিট পেমেন্ট গেটওয়ে";
+    if (locale === "hi") return "जमा पेमेंट गेटवे";
+    return "Deposit payment gateway";
+  }
+  if (locale === "bn") return "উইথড্রয়াল পেমেন্ট গেটওয়ে";
+  if (locale === "hi") return "निकासी पेमेंट गेटवे";
+  return "Withdrawal payment gateway";
+}
+
+export function getPaymentTypeDetailLabel(
+  method: "bkash" | "nagad" | "rocket" | undefined,
+  locale: Locale,
+): string {
+  if (locale === "bn") {
+    if (method === "bkash") return "বিকাশ পেমেন্ট";
+    if (method === "nagad") return "নগদ পেমেন্ট";
+    if (method === "rocket") return "রকেট পেমেন্ট";
+    return "পেমেন্ট";
+  }
+  if (method === "bkash") return "bKash payment";
+  if (method === "nagad") return "Nagad payment";
+  if (method === "rocket") return "Rocket payment";
+  return "Payment";
 }

@@ -10,6 +10,10 @@ import {
   MemberPageHeader,
 } from "@/components/member/shared/member-ui";
 import { depositMethodToUrlParam, mapQuickDepositMethod } from "@/lib/deposit-api";
+import DepositPromotionPicker, {
+  DEFAULT_PROMO_CODE,
+} from "@/components/member/deposit/DepositPromotionPicker";
+import { getMinimumDepositAmount, hasSelectedPromotion } from "@/lib/deposit-promotions";
 
 type Method = {
   id: string;
@@ -89,10 +93,24 @@ export default function QuickDepositPage() {
   const [amount, setAmount] = useState("");
   const [amountFocused, setAmountFocused] = useState(false);
   const [infoOpen, setInfoOpen] = useState(true);
+  const [promoCode, setPromoCode] = useState(DEFAULT_PROMO_CODE);
+  const [promoMinDeposit, setPromoMinDeposit] = useState(0);
 
   const amountNum = Number.parseFloat(amount || "0");
-  const validAmount = !Number.isNaN(amountNum) && amountNum >= 100 && amountNum <= 30000;
+  const minDepositRequired = getMinimumDepositAmount(promoCode, promoMinDeposit);
+  const promoSelected = hasSelectedPromotion(promoCode);
+  const validAmount =
+    !Number.isNaN(amountNum) &&
+    amountNum >= minDepositRequired &&
+    amountNum <= 30000;
+  const amountTooLowForPromo =
+    promoSelected && amount.length > 0 && amountNum > 0 && amountNum < minDepositRequired;
   const canSubmit = validAmount && Boolean(selectedChannel) && Boolean(selectedMethod);
+
+  const handlePromoChange = (code: string, minDeposit: number) => {
+    setPromoCode(code);
+    setPromoMinDeposit(minDeposit);
+  };
   const keypadDigits = isBn ? ["১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯", "০", "০০"] : ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "00"];
 
   const normalizeDigits = (value: string): string => {
@@ -122,6 +140,7 @@ export default function QuickDepositPage() {
       amount: String(amountNum),
       method: depositMethodToUrlParam(paymentMethod),
       channel: selectedChannel,
+      promo: promoCode,
     });
     router.push(`/${locale}/member/deposit/quick/verify?${q.toString()}`);
   };
@@ -135,6 +154,12 @@ export default function QuickDepositPage() {
       />
 
       <section className={`${memberContainerNarrow} ${memberPagePaddingNarrow} space-y-4`}>
+        <DepositPromotionPicker
+          isBn={isBn}
+          selectedCode={promoCode}
+          onChange={handlePromoChange}
+        />
+
         <div>
           <p className="mb-2 text-[13px] text-[#9ca3af]">{isBn ? "পেমেন্ট নির্বাচন করুন" : "Select payment"}</p>
           <div className="grid grid-cols-3 gap-2">
@@ -186,7 +211,13 @@ export default function QuickDepositPage() {
 
         <div>
           <p className="mb-2 text-[13px] text-[#9ca3af]">
-            {isBn ? "এভেইলেবল ব্যালেন্স ৳ ১০০.০০-৳ ৩০,০০০.০০" : "Available balance ৳ 100.00-৳ 30,000.00"}
+            {promoSelected && promoMinDeposit > 0
+              ? isBn
+                ? `ন্যূনতম ডিপোজিট ৳ ${promoMinDeposit.toLocaleString("en-US")} (প্রমোশন)`
+                : `Minimum deposit ৳ ${promoMinDeposit.toLocaleString("en-US")} (promotion)`
+              : isBn
+                ? "এভেইলেবল ব্যালেন্স ৳ ১০০.০০-৳ ৩০,০০০.০০"
+                : "Available balance ৳ 100.00-৳ 30,000.00"}
           </p>
           <div
             className={`flex min-h-[58px] items-center rounded-sm border bg-[#1f2326] px-3 transition-colors ${
@@ -209,6 +240,13 @@ export default function QuickDepositPage() {
               className="ml-auto w-28 bg-transparent text-right text-[40px] leading-none text-white outline-none placeholder:text-[#8b8b8b]"
             />
           </div>
+          {amountTooLowForPromo ? (
+            <p className="mt-1 text-[12px] text-[#f87171]">
+              {isBn
+                ? `এই প্রমোশনের জন্য ন্যূনতম ৳ ${minDepositRequired.toLocaleString("en-US")} ডিপোজিট প্রয়োজন`
+                : `This promotion requires a minimum deposit of ৳ ${minDepositRequired.toLocaleString("en-US")}`}
+            </p>
+          ) : null}
           {amountFocused ? (
             <div className="mt-1 rounded-b-sm border border-t-0 border-[#2d2d2d] bg-[#1f2326] p-2 shadow-[0_6px_18px_rgba(0,0,0,0.45)]">
               <div className="mb-2 grid grid-cols-5 gap-2">

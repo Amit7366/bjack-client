@@ -11,6 +11,8 @@ export type BettingMessages = {
   filterApply: string;
   filterDate: string;
   noData: string;
+  loading: string;
+  loadError: string;
   recordsCount: (from: number, to: number, total: number) => string;
   dateGroupToday: (date: string) => string;
   dateGroupYesterday: (date: string) => string;
@@ -32,6 +34,8 @@ const en: BettingMessages = {
   filterApply: "Apply filters",
   filterDate: "Date",
   noData: "No data",
+  loading: "Loading…",
+  loadError: "Could not load betting records. Please try again.",
   recordsCount: (from, to, total) => `${from} - ${to} of ${total} records`,
   dateGroupToday: (date) => `Today ${date}`,
   dateGroupYesterday: (date) => `Yesterday ${date}`,
@@ -57,6 +61,8 @@ const bn: BettingMessages = {
   filterApply: "ফিল্টার প্রয়োগ করুন",
   filterDate: "তারিখ",
   noData: "কোনো ডেটা নেই",
+  loading: "লোড হচ্ছে…",
+  loadError: "বেটিং রেকর্ড লোড করা যায়নি। আবার চেষ্টা করুন।",
   recordsCount: (from, to, total) => `${total} রেকর্ডের মধ্যে ${from} - ${to}`,
   dateGroupToday: (date) => `আজ ${date}`,
   dateGroupYesterday: (date) => `গতকাল ${date}`,
@@ -82,6 +88,8 @@ const hi: BettingMessages = {
   filterApply: "फ़िल्टर लागू करें",
   filterDate: "तारीख",
   noData: "कोई डेटा नहीं",
+  loading: "लोड हो रहा है…",
+  loadError: "बेटिंग रिकॉर्ड लोड नहीं हो सके। पुनः प्रयास करें।",
   recordsCount: (from, to, total) => `${total} रिकॉर्ड में से ${from} - ${to}`,
   dateGroupToday: (date) => `आज ${date}`,
   dateGroupYesterday: (date) => `कल ${date}`,
