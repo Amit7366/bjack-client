@@ -50,7 +50,7 @@ export default function ProfileMobileSheet({ open, onClose }: ProfileMobileSheet
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]">
-          <ProfileMenuPanel onClose={onClose} />
+          <ProfileMenuPanel onClose={onClose} showWalletSection />
         </div>
       </div>
     </div>

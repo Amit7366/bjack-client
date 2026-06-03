@@ -6,35 +6,48 @@ import { useCallback, useState } from "react";
 import { memberSectionHref } from "@/lib/member-routes";
 import { getProfileMessages, PROFILE_MENU_ITEMS } from "@/lib/i18n/profile-messages";
 import { useAuth } from "@/components/AuthProvider";
+import { useToast } from "@/components/ToastProvider";
+import { copyTextToClipboard } from "@/lib/copy-text";
 import { getProfileUser } from "@/lib/profile-user";
 import { useLocale } from "@/components/LocaleProvider";
 import { ChevronRight, CopyIcon, ProfileMenuIcon, ProfileNavIcon } from "./ProfileMenuIcons";
+import ProfileWalletSection from "./ProfileWalletSection";
 
 type ProfileMenuPanelProps = {
   onClose: () => void;
+  /** Deposit/withdraw wallet block — mobile profile sheet only */
+  showWalletSection?: boolean;
 };
 
-export default function ProfileMenuPanel({ onClose }: ProfileMenuPanelProps) {
+export default function ProfileMenuPanel({
+  onClose,
+  showWalletSection = false,
+}: ProfileMenuPanelProps) {
   const { preferences } = useLocale();
   const locale = preferences.locale;
   const p = getProfileMessages(locale);
   const router = useRouter();
   const { logout } = useAuth();
+  const { showToast } = useToast();
   const base = `/${locale}`;
 
   const profileUser = getProfileUser();
   const [copied, setCopied] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
-  const copyUsername = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(profileUser.username);
+  const displayId = profileUser.memberId || "—";
+
+  const copyMemberId = useCallback(async () => {
+    if (!profileUser.memberId) return;
+    const ok = await copyTextToClipboard(profileUser.memberId);
+    if (ok) {
       setCopied(true);
+      showToast(p.memberIdCopiedToast, { variant: "success" });
       window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* ignore */
+    } else {
+      showToast(p.copyFailedToast, { variant: "error" });
     }
-  }, [profileUser.username]);
+  }, [profileUser.memberId, p.memberIdCopiedToast, p.copyFailedToast, showToast]);
 
   return (
     <>
@@ -47,16 +60,17 @@ export default function ProfileMenuPanel({ onClose }: ProfileMenuPanelProps) {
             <ProfileNavIcon />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] text-[#9ca3af]">{p.usernameLabel}</p>
+            <p className="text-[11px] text-[#9ca3af]">{p.memberIdLabel}</p>
             <div className="mt-0.5 flex items-center gap-2">
-              <span className="truncate text-[15px] font-bold text-white">
-                {profileUser.username}
+              <span className="truncate font-mono text-[15px] font-bold text-white" title={displayId}>
+                {displayId}
               </span>
               <button
                 type="button"
-                onClick={copyUsername}
-                aria-label={copied ? p.copied : p.copyUsername}
-                className="focus-ring touch-target shrink-0 rounded p-1 text-[#d4d4d4] transition-colors hover:bg-white/10 hover:text-white"
+                onClick={() => void copyMemberId()}
+                disabled={!profileUser.memberId}
+                aria-label={copied ? p.copied : p.copyMemberId}
+                className="focus-ring touch-target shrink-0 rounded p-1 text-[#d4d4d4] transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <CopyIcon />
               </button>
@@ -67,6 +81,8 @@ export default function ProfileMenuPanel({ onClose }: ProfileMenuPanelProps) {
           </div>
         </div>
       </div>
+
+      {showWalletSection ? <ProfileWalletSection onNavigate={onClose} /> : null}
 
       <ul className="py-1">
         {PROFILE_MENU_ITEMS.map(({ id, icon }) => (

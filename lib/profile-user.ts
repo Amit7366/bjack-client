@@ -4,6 +4,7 @@ import { readMemberProfileCache } from "@/lib/member/profile-cache";
 /** Demo logged-in user when no session exists. */
 export const MOCK_PROFILE_USER = {
   username: "mukles12345",
+  memberId: "sbm00000",
   signUpDate: "2026-05-19",
   phone: "+880 1896453033",
   phoneNeedsAttention: true,
@@ -11,6 +12,7 @@ export const MOCK_PROFILE_USER = {
 
 export type ProfileUser = {
   username: string;
+  memberId: string;
   legalName?: string;
   dateOfBirth?: string;
   email?: string;
@@ -26,6 +28,7 @@ export function getProfileUser(): ProfileUser {
   if (!session?.userName) {
     return {
       ...MOCK_PROFILE_USER,
+      memberId: session?.memberId ?? MOCK_PROFILE_USER.memberId,
       legalName: cache.legalName,
       dateOfBirth: cache.dateOfBirth,
       email: cache.email,
@@ -33,6 +36,7 @@ export function getProfileUser(): ProfileUser {
   }
   return {
     username: session.userName,
+    memberId: session.memberId ?? "",
     legalName: cache.legalName,
     dateOfBirth: cache.dateOfBirth,
     email: cache.email,

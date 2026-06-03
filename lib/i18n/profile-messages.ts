@@ -6,9 +6,18 @@ export type ProfileMenuItemId = MemberSection;
 export type ProfileMessages = {
   navLabel: string;
   usernameLabel: string;
+  memberIdLabel: string;
   signUpDateLabel: string;
   copyUsername: string;
+  copyMemberId: string;
+  memberIdCopiedToast: string;
+  copyFailedToast: string;
   copied: string;
+  mainWallet: string;
+  vipPoints: string;
+  vipStatusNormal: string;
+  deposit: string;
+  withdraw: string;
   logout: string;
   menu: Record<ProfileMenuItemId, string>;
   sectionTitles: Record<ProfileMenuItemId, string>;
@@ -30,9 +39,18 @@ const menuEn: ProfileMessages["menu"] = {
 const en: ProfileMessages = {
   navLabel: "Profile",
   usernameLabel: "Username",
+  memberIdLabel: "Member ID",
   signUpDateLabel: "Sign up date",
   copyUsername: "Copy username",
+  copyMemberId: "Copy member ID",
+  memberIdCopiedToast: "Member ID copied to clipboard",
+  copyFailedToast: "Could not copy. Please try again.",
   copied: "Copied",
+  mainWallet: "Main wallet",
+  vipPoints: "VIP points",
+  vipStatusNormal: "Normal",
+  deposit: "Deposit",
+  withdraw: "Withdraw",
   logout: "Log out",
   menu: menuEn,
   sectionTitles: menuEn,
@@ -42,9 +60,18 @@ const en: ProfileMessages = {
 const bn: ProfileMessages = {
   navLabel: "প্রোফাইল",
   usernameLabel: "ব্যবহারকারীর নাম",
+  memberIdLabel: "আইডি",
   signUpDateLabel: "সাইন আপ এর তারিখ",
   copyUsername: "ব্যবহারকারীর নাম কপি করুন",
+  copyMemberId: "আইডি কপি করুন",
+  memberIdCopiedToast: "আইডি ক্লিপবোর্ডে কপি হয়েছে",
+  copyFailedToast: "কপি করা যায়নি। আবার চেষ্টা করুন।",
   copied: "কপি হয়েছে",
+  mainWallet: "মেইন ওয়ালেট",
+  vipPoints: "ভিআইপি পয়েন্ট",
+  vipStatusNormal: "নরমাল",
+  deposit: "ডিপোজিট",
+  withdraw: "উইথড্র",
   logout: "লগ আউট",
   menu: {
     notification: "নোটিফিকেশন",
@@ -74,9 +101,18 @@ const bn: ProfileMessages = {
 const hi: ProfileMessages = {
   navLabel: "प्रोफ़ाइल",
   usernameLabel: "उपयोगकर्ता नाम",
+  memberIdLabel: "सदस्य ID",
   signUpDateLabel: "साइन अप की तारीख",
   copyUsername: "उपयोगकर्ता नाम कॉपी करें",
+  copyMemberId: "सदस्य ID कॉपी करें",
+  memberIdCopiedToast: "सदस्य ID क्लिपबोर्ड पर कॉपी हो गया",
+  copyFailedToast: "कॉपी नहीं हो सका। पुनः प्रयास करें।",
   copied: "कॉपी हो गया",
+  mainWallet: "मुख्य वॉलेट",
+  vipPoints: "VIP अंक",
+  vipStatusNormal: "सामान्य",
+  deposit: "जमा",
+  withdraw: "निकासी",
   logout: "लॉग आउट",
   menu: {
     notification: "सूचनाएँ",
