@@ -97,6 +97,29 @@ function DepositPlusIcon() {
   );
 }
 
+function WithdrawMinusIcon() {
+  return (
+    <span
+      className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-[#3a3a3a] to-[#1a1a1a] shadow-md ring-1 ring-[#555]"
+      aria-hidden
+    >
+      <span className="text-[22px] font-bold leading-none text-[#f5c518]">−</span>
+      <svg
+        className="absolute -top-0.5 left-1/2 h-3 w-5 -translate-x-1/2 rotate-180"
+        viewBox="0 0 20 8"
+        fill="none"
+      >
+        <path
+          d="M2 6c4-4 12-4 16 0"
+          stroke="#f5c518"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    </span>
+  );
+}
+
 function maskValue(value: string, hidden: boolean): string {
   if (!hidden) return value;
   return "***********";
@@ -190,15 +213,23 @@ export default function LoggedInWalletBar() {
       </Link>
 
       <Link
+        href={withdrawHref}
+        className="focus-ring flex shrink-0 sm:hidden"
+        aria-label={t.navbar.withdraw}
+      >
+        <WithdrawMinusIcon />
+      </Link>
+
+      <Link
         href={depositHref}
-        className="focus-ring flex h-8 shrink-0 items-center justify-center rounded-md bg-[#178358] px-2.5 text-[11px] font-semibold text-white transition-colors hover:bg-[#1a9664] sm:h-9 sm:px-3 sm:text-[13px]"
+        className="focus-ring hidden h-8 shrink-0 items-center justify-center rounded-md bg-[#178358] px-2.5 text-[11px] font-semibold text-white transition-colors hover:bg-[#1a9664] sm:flex sm:h-9 sm:px-3 sm:text-[13px]"
       >
         {t.navbar.deposit}
       </Link>
 
       <Link
         href={withdrawHref}
-        className="focus-ring flex h-8 shrink-0 items-center justify-center rounded-md bg-[#2a2a2a] px-2.5 text-[11px] font-semibold text-white transition-colors hover:bg-[#333] sm:h-9 sm:px-3 sm:text-[13px]"
+        className="focus-ring hidden h-8 shrink-0 items-center justify-center rounded-md bg-[#2a2a2a] px-2.5 text-[11px] font-semibold text-white transition-colors hover:bg-[#333] sm:flex sm:h-9 sm:px-3 sm:text-[13px]"
       >
         {t.navbar.withdraw}
       </Link>
