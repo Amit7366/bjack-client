@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { authInputClass } from "@/components/auth/AuthField";
 import {
   DOCUMENT_TYPE_IDS,
@@ -12,6 +12,7 @@ import {
 } from "@/lib/documents-data";
 import { validateDocumentFile } from "@/lib/documents-upload";
 import { getDocumentsMessages } from "@/lib/i18n/documents-messages";
+import { fetchMyKycStatus, submitKycDocuments } from "@/lib/kyc-api";
 import { memberSectionHref } from "@/lib/member-routes";
 import {
   memberBtnPrimary,
@@ -89,13 +90,45 @@ export default function DocumentsPageContent() {
   const [reminderOpen, setReminderOpen] = useState(true);
   const [formError, setFormError] = useState<string | null>(null);
   const [slotError, setSlotError] = useState<Partial<Record<DocumentUploadSlot, string>>>({});
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [kycStatus, setKycStatus] = useState<string | null>(null);
+  const [loadingStatus, setLoadingStatus] = useState(true);
 
   const fileRefs = useRef<Record<DocumentUploadSlot, HTMLInputElement | null>>({
     front: null,
     back: null,
     selfie: null,
   });
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const status = await fetchMyKycStatus();
+        if (cancelled) return;
+        setKycStatus(status.kycStatus);
+        if (status.documentType) {
+          setDocType(status.documentType as DocumentTypeId);
+        }
+        if (status.documentNo) {
+          setDocNo(status.documentNo);
+        }
+        if (status.documentExpiry) {
+          setExpiry(status.documentExpiry);
+        }
+      } catch {
+        /* first visit or not logged in — form stays empty */
+      } finally {
+        if (!cancelled) setLoadingStatus(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const submissionLocked = kycStatus === "pending" || kycStatus === "approved";
 
   const handleFile = useCallback(
     (slot: DocumentUploadSlot, file: File | null) => {
@@ -133,6 +166,20 @@ export default function DocumentsPageContent() {
     e.preventDefault();
     setFormError(null);
 
+    if (kycStatus === "pending") {
+      setFormError(d.errors.pendingReview);
+      return;
+    }
+    if (kycStatus === "approved") {
+      setFormError(d.errors.alreadyApproved);
+      return;
+    }
+
+    if (docType === "") {
+      setFormError(d.errors.required);
+      return;
+    }
+
     if (!EXPIRY_PATTERN.test(expiry)) {
       setFormError(d.errors.expiryFormat);
       return;
@@ -142,10 +189,30 @@ export default function DocumentsPageContent() {
       return;
     }
 
-    setSubmitted(true);
-    window.setTimeout(() => {
-      router.push(memberSectionHref(locale, "verification"));
-    }, 700);
+    const front = uploads.front.file!;
+    const back = uploads.back.file!;
+    const selfie = uploads.selfie.file!;
+
+    setSubmitting(true);
+    void submitKycDocuments({
+      documentType: docType,
+      documentNo: docNo.trim(),
+      documentExpiry: expiry,
+      files: { front, back, selfie },
+    })
+      .then(() => {
+        setSubmitted(true);
+        setKycStatus("pending");
+        window.setTimeout(() => {
+          router.push(memberSectionHref(locale, "verification"));
+        }, 700);
+      })
+      .catch((err) => {
+        setFormError(err instanceof Error ? err.message : d.errors.submitFailed);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
   }
 
   return (
@@ -157,7 +224,23 @@ export default function DocumentsPageContent() {
       />
 
       <form onSubmit={handleSubmit} className={`${memberContainerNarrow} ${memberPagePaddingFormSticky}`}>
-        <div className="space-y-5">
+        {loadingStatus ? (
+          <p className="py-8 text-center text-[14px] text-[#9ca3af]">{d.submitting}</p>
+        ) : null}
+
+        {!loadingStatus && kycStatus === "pending" ? (
+          <p className="mb-4 rounded-md border border-[#3a3a3a] bg-[#1a1a1a] px-3 py-2 text-[13px] text-[#f5c518]">
+            {d.errors.pendingReview}
+          </p>
+        ) : null}
+
+        {!loadingStatus && kycStatus === "approved" ? (
+          <p className="mb-4 rounded-md border border-[#1f4d38] bg-[#0d3d2b]/50 px-3 py-2 text-[13px] text-[#4ade80]">
+            {d.errors.alreadyApproved}
+          </p>
+        ) : null}
+
+        <div className={`space-y-5 ${loadingStatus || submissionLocked ? "pointer-events-none opacity-60" : ""}`}>
           <label className="block">
             <MemberFieldLabel>{d.documentTypeLabel}</MemberFieldLabel>
             <div className="relative">
@@ -300,8 +383,12 @@ export default function DocumentsPageContent() {
         </div>
 
         <MemberStickyFooter>
-          <button type="submit" disabled={!canSubmit || submitted} className={memberBtnPrimary}>
-            {submitted ? d.submitted : d.submit}
+          <button
+            type="submit"
+            disabled={!canSubmit || submitted || submitting || submissionLocked || loadingStatus}
+            className={memberBtnPrimary}
+          >
+            {submitted ? d.submitted : submitting ? d.submitting : d.submit}
           </button>
         </MemberStickyFooter>
       </form>

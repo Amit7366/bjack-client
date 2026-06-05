@@ -20,12 +20,16 @@ export type DocumentsMessages = {
   contactCs: string;
   submit: string;
   submitted: string;
+  submitting: string;
   documentTypes: Record<DocumentTypeId, string>;
   errors: {
     required: string;
     fileType: string;
     fileSize: string;
     expiryFormat: string;
+    submitFailed: string;
+    pendingReview: string;
+    alreadyApproved: string;
   };
 };
 
@@ -57,6 +61,7 @@ const en: DocumentsMessages = {
   contactCs: "Contact CS",
   submit: "Submit",
   submitted: "Documents submitted successfully.",
+  submitting: "Submitting…",
   documentTypes: {
     nid: "National ID (NID)",
     passport: "Passport",
@@ -67,6 +72,9 @@ const en: DocumentsMessages = {
     fileType: "Only JPG, JPEG, or PNG files are allowed.",
     fileSize: "File must be 3 MB or smaller.",
     expiryFormat: "Use date format YYYY-MM-DD.",
+    submitFailed: "Could not submit documents. Please try again.",
+    pendingReview: "Your documents are already pending review.",
+    alreadyApproved: "Your KYC is already approved.",
   },
 };
 
@@ -98,6 +106,7 @@ const bn: DocumentsMessages = {
   contactCs: "CS এর সাথে যোগাযোগ",
   submit: "জমা দিন",
   submitted: "ডকুমেন্ট সফলভাবে জমা দেওয়া হয়েছে।",
+  submitting: "জমা দেওয়া হচ্ছে…",
   documentTypes: {
     nid: "জাতীয় পরিচয়পত্র (NID)",
     passport: "পাসপোর্ট",
@@ -108,6 +117,9 @@ const bn: DocumentsMessages = {
     fileType: "শুধুমাত্র JPG, JPEG, বা PNG ফাইল অনুমোদিত।",
     fileSize: "ফাইল ৩ এমবি বা তার চেয়ে ছোট হতে হবে।",
     expiryFormat: "YYYY-MM-DD তারিখ ফরম্যাট ব্যবহার করুন।",
+    submitFailed: "ডকুমেন্ট জমা দেওয়া যায়নি। আবার চেষ্টা করুন।",
+    pendingReview: "আপনার ডকুমেন্ট ইতিমধ্যে পর্যালোচনার অপেক্ষায় আছে।",
+    alreadyApproved: "আপনার KYC ইতিমধ্যে অনুমোদিত।",
   },
 };
 
@@ -139,6 +151,7 @@ const hi: DocumentsMessages = {
   contactCs: "CS से संपर्क करें",
   submit: "जमा करें",
   submitted: "दस्तावेज़ सफलतापूर्वक जमा किए गए।",
+  submitting: "जमा हो रहा है…",
   documentTypes: {
     nid: "राष्ट्रीय पहचान पत्र (NID)",
     passport: "पासपोर्ट",
@@ -149,6 +162,9 @@ const hi: DocumentsMessages = {
     fileType: "केवल JPG, JPEG, या PNG फ़ाइलें अनुमत हैं।",
     fileSize: "फ़ाइल 3 MB या उससे छोटी होनी चाहिए।",
     expiryFormat: "YYYY-MM-DD तिथि प्रारूप का उपयोग करें।",
+    submitFailed: "दस्तावेज़ जमा नहीं हो सके। फिर से कोशिश करें।",
+    pendingReview: "आपके दस्तावेज़ पहले से समीक्षा के लिए लंबित हैं।",
+    alreadyApproved: "आपका KYC पहले से स्वीकृत है।",
   },
 };
 
