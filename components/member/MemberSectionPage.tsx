@@ -2,7 +2,9 @@
 
 import NotificationsPageContent from "@/components/member/notifications/NotificationsPageContent";
 import BettingRecordsPageContent from "@/components/member/betting/BettingRecordsPageContent";
+import TurnoverPageContent from "@/components/member/turnover/TurnoverPageContent";
 import TransactionRecordsPageContent from "@/components/member/transactions/TransactionRecordsPageContent";
+import MyReferralPageContent from "@/components/member/referral/MyReferralPageContent";
 import MemberProfilePage from "@/components/member/profile/MemberProfilePage";
 import { MemberSectionPlaceholder } from "@/components/member/shared/member-ui";
 import { getProfileMessages } from "@/lib/i18n/profile-messages";
@@ -25,6 +27,14 @@ export default function MemberSectionPage({ section }: { section: MemberSection 
 
   if (section === "betting-records") {
     return <BettingRecordsPageContent />;
+  }
+
+  if (section === "turnover") {
+    return <TurnoverPageContent />;
+  }
+
+  if (section === "my-referral") {
+    return <MyReferralPageContent />;
   }
 
   if (isProfileTab(section)) {

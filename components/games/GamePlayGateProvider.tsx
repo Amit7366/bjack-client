@@ -13,9 +13,9 @@ import { useAuth } from "@/components/AuthProvider";
 import GameLoginPromptModal from "@/components/GameLoginPromptModal";
 import { useToast } from "@/components/ToastProvider";
 import {
-  refreshBalanceAfterGameReturn,
-  shouldRefreshBalanceAfterGame,
-} from "@/lib/game-balance-sync";
+  syncVendorTransactionsBeforeLaunch,
+  useVendorTransactionSync,
+} from "@/lib/use-vendor-transaction-sync";
 import { GAME_RETURN_EVENT } from "@/lib/game-return-events";
 import { launchGameInBrowser } from "@/lib/game-launch";
 import GameLaunchOverlay from "./GameLaunchOverlay";
@@ -59,6 +59,8 @@ const GamePlayGateContext = createContext<GamePlayGateContextValue | null>(null)
 export function GamePlayGateProvider({ children }: { children: ReactNode }) {
   const { isUser, authReady, session, refreshSession } = useAuth();
   const { showToast } = useToast();
+
+  useVendorTransactionSync(isUser && authReady);
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [launching, setLaunching] = useState(false);
   const [launchingTitle, setLaunchingTitle] = useState<string | undefined>();
@@ -99,14 +101,8 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
         });
 
         try {
-          if (shouldRefreshBalanceAfterGame()) {
-            try {
-              await refreshBalanceAfterGameReturn();
-              refreshSession();
-            } catch {
-              /* GameReturnHandler will retry */
-            }
-          }
+          await syncVendorTransactionsBeforeLaunch();
+          refreshSession();
 
           await launchGameInBrowser(gameCode, session);
           return;

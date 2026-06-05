@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
 import { registerAndLogin } from "@/lib/auth/api";
 import { getAuthMessages } from "@/lib/i18n/auth-messages";
@@ -74,6 +74,8 @@ function authErrorMessage(err: unknown, fallback: string, networkFallback: strin
 
 export default function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const refIdFromURL = searchParams.get("refId") || "";
   const { preferences } = useLocale();
   const a = getAuthMessages(preferences.locale);
   const base = `/${preferences.locale}`;
@@ -130,6 +132,7 @@ export default function RegisterForm() {
         password,
         contactNo: phone,
         currency,
+        ...(refIdFromURL ? { referredBy: refIdFromURL } : {}),
       });
       router.push(base);
       router.refresh();

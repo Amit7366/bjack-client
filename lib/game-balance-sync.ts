@@ -1,6 +1,7 @@
 import type { ApiResponse } from "@/lib/api/types";
 import { formatWalletBalance, refreshWalletBalance } from "@/lib/auth/api";
 import { readAuthSession, saveAuthSession } from "@/lib/auth/session";
+import { notifyTurnoverRefresh } from "@/lib/game-return-events";
 
 const API_PREFIX = "/api/v1";
 const SYNC_TIMEOUT_MS = 20_000;
@@ -9,6 +10,8 @@ export const NEEDS_BALANCE_REFRESH_KEY = "needsBalanceRefresh";
 
 export type GameSyncResult = {
   providerTotal: number;
+  newRecords?: number;
+  skippedReason?: "no_provider_records" | "no_new_records";
   stats: {
     accepted: number;
     duplicates: number;
@@ -90,6 +93,7 @@ export async function syncGameTransactionsAndBalance(): Promise<GameSyncResult |
   }
 
   clearNeedsBalanceRefresh();
+  notifyTurnoverRefresh();
   return body.data;
 }
 

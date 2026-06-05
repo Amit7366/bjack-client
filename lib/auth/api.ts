@@ -84,6 +84,7 @@ export async function registerUser(input: {
   password: string;
   contactNo: string;
   currency: "BDT" | "INR";
+  referredBy?: string;
 }): Promise<{ message: string }> {
   const contactNo = formatContactNo(input.contactNo, input.currency);
   const userName = input.userName.trim();
@@ -97,6 +98,7 @@ export async function registerUser(input: {
         userName,
         contactNo,
         country: input.currency === "INR" ? "India" : "Bangladesh",
+        ...(input.referredBy ? { referredBy: input.referredBy } : {}),
       },
     }),
   });
@@ -113,6 +115,7 @@ export async function registerAndLogin(input: {
   password: string;
   contactNo: string;
   currency: "BDT" | "INR";
+  referredBy?: string;
 }): Promise<{ session: AuthSession; message: string }> {
   const registerResult = await registerUser(input);
   const loginResult = await loginWithUsername(input.userName, input.password);
