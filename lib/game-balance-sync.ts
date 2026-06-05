@@ -6,6 +6,8 @@ import { notifyTurnoverRefresh } from "@/lib/game-return-events";
 const API_PREFIX = "/api/v1";
 const SYNC_TIMEOUT_MS = 20_000;
 
+let inflightSync: Promise<GameSyncResult | null> | null = null;
+
 export const NEEDS_BALANCE_REFRESH_KEY = "needsBalanceRefresh";
 
 export type GameSyncResult = {
@@ -63,7 +65,7 @@ async function fetchWithTimeout(
  * Pulls pending bet rows from txserver for this user, ingests only new txnIds,
  * updates wallet balance on server, returns fresh balance (fast — no history load).
  */
-export async function syncGameTransactionsAndBalance(): Promise<GameSyncResult | null> {
+async function performGameSync(): Promise<GameSyncResult | null> {
   const session = readAuthSession();
   if (!session?.accessToken) return null;
 
@@ -95,6 +97,17 @@ export async function syncGameTransactionsAndBalance(): Promise<GameSyncResult |
   clearNeedsBalanceRefresh();
   notifyTurnoverRefresh();
   return body.data;
+}
+
+/** Single in-flight sync — avoids double ingest when focus + return fire together. */
+export async function syncGameTransactionsAndBalance(): Promise<GameSyncResult | null> {
+  if (inflightSync) return inflightSync;
+
+  inflightSync = performGameSync().finally(() => {
+    inflightSync = null;
+  });
+
+  return inflightSync;
 }
 
 /**
