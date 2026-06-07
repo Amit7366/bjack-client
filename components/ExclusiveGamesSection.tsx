@@ -1,16 +1,16 @@
 "use client";
 
 import ImageCarouselSection from "./ImageCarouselSection";
-import { exclusiveCarouselSlides } from "@/lib/home-carousel-data";
+import type { CarouselSlide } from "@/lib/home-carousel-data";
 import { useLocale } from "./LocaleProvider";
 
-export default function ExclusiveGamesSection() {
+export default function ExclusiveGamesSection({ slides }: { slides: CarouselSlide[] }) {
   const { t } = useLocale();
 
   return (
     <ImageCarouselSection
       title={t.home.exclusiveGamesTitle}
-      slides={exclusiveCarouselSlides}
+      slides={slides}
       variant="card"
       autoSlideMs={4000}
     />

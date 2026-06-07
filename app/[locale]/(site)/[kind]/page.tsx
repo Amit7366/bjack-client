@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import VendorGamesLobby from "@/components/VendorGamesLobby";
-import { filterGamesByLobbyTypes } from "@/lib/lobby-game-types";
+import { fetchVendorGames } from "@/lib/games-api";
+import { filterGamesByLobbyTypes, inferLobbyGameTypes } from "@/lib/lobby-game-types";
 import { allLobbyVendorCodes } from "@/lib/lobby-filter-providers";
 import {
   defaultLobbyVendorParam,
@@ -10,7 +11,7 @@ import {
   type LobbyKind,
 } from "@/lib/vendor-routes";
 import { expandLobbyCatalog, LOBBY_DEMO_CATALOG_SIZE } from "@/lib/lobby-pagination";
-import { mergeGamesFromVendors } from "@/lib/vendor-games-data";
+import { mergeGamesFromVendors, normalizeGameImage } from "@/lib/vendor-games-data";
 
 type PageProps = {
   params: Promise<{ locale: string; kind: string }>;
@@ -20,6 +21,20 @@ type PageProps = {
 function splitCsv(param: string | string[] | undefined): string[] {
   if (typeof param !== "string" || !param.trim()) return [];
   return [...new Set(param.split(",").map((s) => s.trim()).filter(Boolean))];
+}
+
+async function loadVendorGames(vendorCodes: string[]) {
+  try {
+    const games = await fetchVendorGames(vendorCodes);
+    return games.map((g) => ({
+      ...g,
+      image: normalizeGameImage(g.image),
+      types: g.types?.length ? g.types : inferLobbyGameTypes(g.title),
+    }));
+  } catch (error) {
+    console.error("Failed to load vendor games from API, using fallback:", error);
+    return mergeGamesFromVendors(vendorCodes);
+  }
 }
 
 export default async function LobbyByKindPage({ params, searchParams }: PageProps) {
@@ -38,7 +53,7 @@ export default async function LobbyByKindPage({ params, searchParams }: PageProp
     ? allLobbyVendorCodes(kind)
     : vendorsResolved.filter((v) => v !== LOBBY_VENDOR_ALL);
 
-  let merged = mergeGamesFromVendors(vendorCodesForMerge);
+  let merged = await loadVendorGames(vendorCodesForMerge);
   if (isAllLobbyVendors(vendorsResolved)) {
     merged = expandLobbyCatalog(merged, LOBBY_DEMO_CATALOG_SIZE);
   }

@@ -5,8 +5,8 @@ import { useState } from "react";
 import {
   categoryProviders,
   homeTabIds,
-  popularGames,
   type HomeTabId,
+  type PopularGame,
 } from "@/lib/home-games-data";
 import { categoryProviderHref, lobbyCategoryHref } from "@/lib/vendor-routes";
 import { menuIconFor } from "./SidebarIcons";
@@ -74,7 +74,7 @@ function ProviderCard({
   );
 }
 
-export default function HomeGameTabs() {
+export default function HomeGameTabs({ popularGames }: { popularGames: PopularGame[] }) {
   const { t, preferences } = useLocale();
   const [activeTab, setActiveTab] = useState<HomeTabId>("popular");
 

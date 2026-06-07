@@ -128,13 +128,16 @@ function NavbarAuthActions() {
 export default function TopNavbar({
   onMenuClick,
   menuOpen,
+  variant = "full",
 }: {
-  onMenuClick: () => void;
+  onMenuClick?: () => void;
   menuOpen?: boolean;
+  variant?: "full" | "auth";
 }) {
   const { preferences, t } = useLocale();
   const { isUser, authReady } = useAuth();
   const locale = preferences.locale;
+  const isAuthVariant = variant === "auth";
   const navHrefs: { kind: LobbyKind; icon: React.ReactNode; label: string }[] = [
     { kind: "sports", icon: <SportsIcon />, label: t.sidebar.sports },
     { kind: "slot", icon: <SlotIcon />, label: t.slots },
@@ -145,17 +148,19 @@ export default function TopNavbar({
     <header className="sticky top-0 z-50 w-full shrink-0 border-b border-[#2a2a2a] bg-[#121212] pt-[env(safe-area-inset-top)]">
       <nav className="flex h-[52px] w-full items-center justify-between gap-2 px-3 sm:px-4 lg:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 lg:gap-4">
-          <button
-            type="button"
-            aria-label={t.ui.openMenu}
-            aria-expanded={menuOpen}
-            onClick={onMenuClick}
-            className={`focus-ring hidden h-10 w-10 shrink-0 items-center justify-center rounded-md transition-colors lg:flex ${
-              menuOpen ? "bg-[#333333]" : "bg-[#2a2a2a] hover:bg-[#333333]"
-            }`}
-          >
-            <MenuIcon />
-          </button>
+          {!isAuthVariant ? (
+            <button
+              type="button"
+              aria-label={t.ui.openMenu}
+              aria-expanded={menuOpen}
+              onClick={onMenuClick}
+              className={`focus-ring hidden h-10 w-10 shrink-0 items-center justify-center rounded-md transition-colors lg:flex ${
+                menuOpen ? "bg-[#333333]" : "bg-[#2a2a2a] hover:bg-[#333333]"
+              }`}
+            >
+              <MenuIcon />
+            </button>
+          ) : null}
 
           <Link
             href={`/${locale}`}
@@ -165,18 +170,20 @@ export default function TopNavbar({
             <span className="text-[#ed1c24]">Baji</span>
           </Link>
 
-          <div
-            className={`hidden min-w-0 items-center gap-0.5 ${authReady && isUser ? "lg:flex" : "md:flex"}`}
-          >
-            {navHrefs.map(({ kind, icon, label }) => (
-              <NavLink key={kind} href={lobbyCategoryHref(locale, kind)} icon={icon} label={label} />
-            ))}
-            {authReady && isUser ? <ProfileDropdown menuAlign="start" /> : null}
-          </div>
+          {!isAuthVariant ? (
+            <div
+              className={`hidden min-w-0 items-center gap-0.5 ${authReady && isUser ? "lg:flex" : "md:flex"}`}
+            >
+              {navHrefs.map(({ kind, icon, label }) => (
+                <NavLink key={kind} href={lobbyCategoryHref(locale, kind)} icon={icon} label={label} />
+              ))}
+              {authReady && isUser ? <ProfileDropdown menuAlign="start" /> : null}
+            </div>
+          ) : null}
         </div>
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-1.5 lg:gap-3">
-          <NavbarAuthActions />
+          {isAuthVariant ? null : <NavbarAuthActions />}
           <LocaleMenuButton />
         </div>
       </nav>
