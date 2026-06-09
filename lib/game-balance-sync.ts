@@ -7,6 +7,8 @@ import {
   clearGameSession,
   ensureWalletReady,
   markPersistComplete,
+  needsReanchor,
+  readLocalWallet,
   reanchorWalletFromDb,
 } from "@/lib/wallet-local-state";
 
@@ -121,9 +123,11 @@ function firePersistSilent(syncToken: string): void {
     },
   ).catch(() => undefined);
 
-  window.setTimeout(() => {
-    void checkPersistDrift(syncToken);
-  }, 15_000);
+  for (const delayMs of [15_000, 45_000, 90_000]) {
+    window.setTimeout(() => {
+      void checkPersistDrift(syncToken);
+    }, delayMs);
+  }
 }
 
 async function checkPersistDrift(syncToken: string): Promise<void> {
@@ -208,10 +212,13 @@ export async function syncGameTransactionsAndBalance(): Promise<GameSyncResult |
   };
 }
 
-export async function prepareBalanceForGameLaunch(): Promise<void> {
+/** Uses local preview balance immediately — no blocking DB/persist wait. */
+export function prepareBalanceForGameLaunch(): void {
   const session = readAuthSession();
   if (!session?.memberId) return;
-  await ensureWalletReady(session.memberId);
+  const local = readLocalWallet(session.memberId);
+  if (local && !needsReanchor(local)) return;
+  void ensureWalletReady(session.memberId);
 }
 
 export async function refreshBalanceAfterGameReturn(): Promise<string | undefined> {

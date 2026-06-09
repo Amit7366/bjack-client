@@ -26,6 +26,7 @@ import {
 import {
   ensureWalletReady,
   mergeFromStorageEvent,
+  readLocalWallet,
   reanchorIfServerAhead,
   subscribeWalletLocalChange,
 } from "@/lib/wallet-local-state";
@@ -71,6 +72,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else if (opts?.forceDb) {
           await manualReanchorBalance();
         } else {
+          const local = readLocalWallet(current.memberId);
+          if (local?.pendingPersist) {
+            refreshSession();
+            return;
+          }
           const meta = await fetchWalletMeta();
           if (meta?.walletRevision != null) {
             await reanchorIfServerAhead(current.memberId, meta.walletRevision);

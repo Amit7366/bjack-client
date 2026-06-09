@@ -257,6 +257,7 @@ export async function reanchorIfServerAhead(
   if (serverRevision == null || !Number.isFinite(serverRevision)) return false;
   const local = readLocalWallet(memberId);
   if (!local) return false;
+  if (local.pendingPersist) return false;
   if (serverRevision <= (local.serverWalletRevision ?? local.revision)) return false;
   await reanchorWalletFromDb(memberId);
   const updated = readLocalWallet(memberId);

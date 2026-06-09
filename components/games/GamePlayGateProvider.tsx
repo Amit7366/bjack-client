@@ -12,12 +12,11 @@ import {
 import { useAuth } from "@/components/AuthProvider";
 import GameLoginPromptModal from "@/components/GameLoginPromptModal";
 import { useToast } from "@/components/ToastProvider";
+import { useVendorTransactionSync } from "@/lib/use-vendor-transaction-sync";
 import {
-  syncVendorTransactionsBeforeLaunch,
-  useVendorTransactionSync,
-} from "@/lib/use-vendor-transaction-sync";
-import { readLocalWallet } from "@/lib/wallet-local-state";
-import { shouldRefreshBalanceAfterGame } from "@/lib/game-balance-sync";
+  handleGameReturnBalance,
+  shouldRefreshBalanceAfterGame,
+} from "@/lib/game-balance-sync";
 import { GAME_RETURN_EVENT } from "@/lib/game-return-events";
 import { launchGameInBrowser } from "@/lib/game-launch";
 import GameLaunchOverlay from "./GameLaunchOverlay";
@@ -94,25 +93,20 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
       }
 
       if (gameCode) {
-        const memberId = session?.memberId;
-        const localWallet = memberId ? readLocalWallet(memberId) : null;
-        if (shouldRefreshBalanceAfterGame() || localWallet?.pendingPersist) {
-          showToast("Updating balance, please wait…");
-          return;
+        // Background preview if return sync still pending — never block play.
+        if (shouldRefreshBalanceAfterGame()) {
+          void handleGameReturnBalance().then(() => refreshSession());
         }
 
         setLaunching(true);
         setLaunchingTitle(title);
 
-        // Let React paint the loader before any async work (desktop + mobile).
         await new Promise<void>((resolve) => {
           requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
         });
 
         try {
-          await syncVendorTransactionsBeforeLaunch();
           refreshSession();
-
           await launchGameInBrowser(gameCode, session);
           return;
         } catch (error: unknown) {

@@ -3,7 +3,12 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { fetchWalletMeta } from "@/lib/auth/api";
-import { ensureWalletReady, reanchorIfServerAhead } from "@/lib/wallet-local-state";
+import { prepareBalanceForGameLaunch } from "@/lib/game-balance-sync";
+import {
+  ensureWalletReady,
+  readLocalWallet,
+  reanchorIfServerAhead,
+} from "@/lib/wallet-local-state";
 
 /**
  * Lightweight wallet alignment on mount/focus — no blocking full ingest.
@@ -18,6 +23,12 @@ export function useVendorTransactionSync(enabled = true) {
 
     runningRef.current = true;
     try {
+      const local = readLocalWallet(session.memberId);
+      // While silent persist runs, keep showing preview balance — do not pull stale DB.
+      if (local?.pendingPersist) {
+        refreshSession();
+        return;
+      }
       await ensureWalletReady(session.memberId);
       const meta = await fetchWalletMeta();
       if (meta?.walletRevision != null) {
@@ -48,7 +59,6 @@ export function useVendorTransactionSync(enabled = true) {
 }
 
 /** Ensure local wallet is ready before launching — no blocking vendor ingest. */
-export async function syncVendorTransactionsBeforeLaunch(): Promise<void> {
-  const { prepareBalanceForGameLaunch } = await import("@/lib/game-balance-sync");
-  await prepareBalanceForGameLaunch();
+export function syncVendorTransactionsBeforeLaunch(): void {
+  prepareBalanceForGameLaunch();
 }
