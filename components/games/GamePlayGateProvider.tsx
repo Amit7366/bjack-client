@@ -11,10 +11,12 @@ import {
 } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import GameLoginPromptModal from "@/components/GameLoginPromptModal";
+import { useLocale } from "@/components/LocaleProvider";
 import { useToast } from "@/components/ToastProvider";
 import { useVendorTransactionSync } from "@/lib/use-vendor-transaction-sync";
 import {
   handleGameReturnBalance,
+  isBalanceUpdatePending,
   shouldRefreshBalanceAfterGame,
 } from "@/lib/game-balance-sync";
 import { GAME_RETURN_EVENT } from "@/lib/game-return-events";
@@ -57,8 +59,15 @@ type GamePlayGateContextValue = {
 
 const GamePlayGateContext = createContext<GamePlayGateContextValue | null>(null);
 
+function balanceUpdatingMessage(locale: string): string {
+  if (locale === "bn") return "ব্যালেন্স আপডেট হচ্ছে…";
+  if (locale === "hi") return "बैलेंस अपडेट हो रहा है…";
+  return "Balance updating…";
+}
+
 export function GamePlayGateProvider({ children }: { children: ReactNode }) {
   const { isUser, authReady, session, refreshSession } = useAuth();
+  const { preferences } = useLocale();
   const { showToast } = useToast();
 
   useVendorTransactionSync(isUser && authReady);
@@ -93,6 +102,12 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
       }
 
       if (gameCode) {
+        const balanceStillUpdating = isBalanceUpdatePending();
+
+        if (balanceStillUpdating) {
+          showToast(balanceUpdatingMessage(preferences.locale));
+        }
+
         // Background preview if return sync still pending — never block play.
         if (shouldRefreshBalanceAfterGame()) {
           void handleGameReturnBalance().then(() => refreshSession());
@@ -122,7 +137,16 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
       if (message) showToast(message);
       onAuthorized?.();
     },
-    [authReady, isUser, launching, session, showToast, refreshSession, clearLaunchState],
+    [
+      authReady,
+      isUser,
+      launching,
+      session,
+      preferences.locale,
+      showToast,
+      refreshSession,
+      clearLaunchState,
+    ],
   );
 
   const value = useMemo(() => ({ handleGameClick }), [handleGameClick]);
