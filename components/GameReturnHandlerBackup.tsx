@@ -6,13 +6,14 @@ import {
   dispatchGameReturn,
 } from "@/lib/game-return-events";
 import {
-  handleGameReturnBalance,
+  refreshBalanceAfterGameReturn,
   shouldRefreshBalanceAfterGame,
 } from "@/lib/game-balance-sync";
 import { AUTH_CHANGE_EVENT, readAuthSession } from "@/lib/auth/session";
 
 /**
- * After a game session: fast preview → local balance update → silent DB persist.
+ * Runs only after a game session: syncs bets + balance when the user lands back on the site.
+ * Kept separate so pageshow / bfcache recovery always runs even if other state is stale.
  */
 export default function GameReturnHandler() {
   const runningRef = useRef(false);
@@ -27,7 +28,7 @@ export default function GameReturnHandler() {
       dispatchGameReturn();
 
       try {
-        await handleGameReturnBalance();
+        await refreshBalanceAfterGameReturn();
         window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
       } catch {
         /* flag stays set; user can tap refresh */

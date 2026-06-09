@@ -1,5 +1,6 @@
 import type { ApiResponse } from "@/lib/api/types";
 import { readAuthSession, saveAuthSession } from "@/lib/auth/session";
+import { reanchorWalletFromDb } from "@/lib/wallet-local-state";
 
 const API_PREFIX = "/api/v1";
 
@@ -137,11 +138,13 @@ export async function failAutoPayDeposit(depositTransactionId: string): Promise<
 }
 
 export function syncSessionBalance(currentBalance?: number) {
-  if (currentBalance == null) return;
   const session = readAuthSession();
-  if (!session) return;
-  saveAuthSession({
-    ...session,
-    balance: Number(currentBalance).toFixed(2),
+  if (!session?.memberId) return;
+  void reanchorWalletFromDb(session.memberId).catch(() => {
+    if (currentBalance == null) return;
+    saveAuthSession({
+      ...session,
+      balance: Number(currentBalance).toFixed(2),
+    });
   });
 }

@@ -2,13 +2,32 @@ import type { ApiResponse } from "@/lib/api/types";
 import { formatWalletBalance, refreshWalletBalance } from "@/lib/auth/api";
 import { readAuthSession, saveAuthSession } from "@/lib/auth/session";
 import { notifyTurnoverRefresh } from "@/lib/game-return-events";
+import {
+  applyPreviewBalance,
+  clearGameSession,
+  ensureWalletReady,
+  markPersistComplete,
+  reanchorWalletFromDb,
+} from "@/lib/wallet-local-state";
 
 const API_PREFIX = "/api/v1";
 const SYNC_TIMEOUT_MS = 20_000;
 
-let inflightSync: Promise<GameSyncResult | null> | null = null;
+let inflightPreview: Promise<GamePreviewResult | null> | null = null;
 
 export const NEEDS_BALANCE_REFRESH_KEY = "needsBalanceRefresh";
+
+export type GamePreviewResult = {
+  estimatedBalance: number;
+  netDelta: number;
+  newRecords: number;
+  providerTotal: number;
+  currentBalance: number;
+  syncToken: string;
+  walletRevision: number;
+  syncedAt: string;
+  skippedReason?: "no_provider_records" | "no_new_records";
+};
 
 export type GameSyncResult = {
   providerTotal: number;
@@ -61,16 +80,12 @@ async function fetchWithTimeout(
   }
 }
 
-/**
- * Pulls pending bet rows from txserver for this user, ingests only new txnIds,
- * updates wallet balance on server, returns fresh balance (fast — no history load).
- */
-async function performGameSync(): Promise<GameSyncResult | null> {
+async function previewGameBalance(): Promise<GamePreviewResult | null> {
   const session = readAuthSession();
-  if (!session?.accessToken) return null;
+  if (!session?.accessToken || !session.memberId) return null;
 
   const res = await fetchWithTimeout(
-    `${API_PREFIX}/gameRecords-txns/api/transactions/sync-user`,
+    `${API_PREFIX}/gameRecords-txns/api/transactions/sync-user/preview`,
     {
       method: "POST",
       headers: {
@@ -81,58 +96,151 @@ async function performGameSync(): Promise<GameSyncResult | null> {
     },
   );
 
-  const body = (await res.json()) as ApiResponse<GameSyncResult>;
+  const body = (await res.json()) as ApiResponse<GamePreviewResult>;
   if (!res.ok || !body.success || !body.data) {
-    throw new Error(body.message || "Failed to sync game balance");
+    throw new Error(body.message || "Failed to preview game balance");
   }
 
-  const formatted = formatWalletBalance(body.data.currentBalance);
-  if (formatted) {
-    saveAuthSession({
-      ...session,
-      balance: formatted,
-    });
-  }
-
-  clearNeedsBalanceRefresh();
-  notifyTurnoverRefresh();
   return body.data;
 }
 
-/** Single in-flight sync — avoids double ingest when focus + return fire together. */
-export async function syncGameTransactionsAndBalance(): Promise<GameSyncResult | null> {
-  if (inflightSync) return inflightSync;
+function firePersistSilent(syncToken: string): void {
+  const session = readAuthSession();
+  if (!session?.accessToken) return;
 
-  inflightSync = performGameSync().finally(() => {
-    inflightSync = null;
-  });
+  void fetchWithTimeout(
+    `${API_PREFIX}/gameRecords-txns/api/transactions/sync-user/persist`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+      credentials: "include",
+      body: JSON.stringify({ syncToken }),
+    },
+  ).catch(() => undefined);
 
-  return inflightSync;
+  window.setTimeout(() => {
+    void checkPersistDrift(syncToken);
+  }, 15_000);
 }
 
-/**
- * After returning from an external game: sync bets then always confirm balance from API.
- */
+async function checkPersistDrift(syncToken: string): Promise<void> {
+  const session = readAuthSession();
+  if (!session?.accessToken || !session.memberId) return;
+
+  try {
+    const res = await fetchWithTimeout(
+      `${API_PREFIX}/gameRecords-txns/api/transactions/sync-user/persist-status?syncToken=${encodeURIComponent(syncToken)}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        credentials: "include",
+      },
+      8_000,
+    );
+    const body = (await res.json()) as ApiResponse<{
+      status: string;
+      dbBalance?: number;
+      drift?: number;
+    }>;
+    if (!res.ok || !body.success || !body.data) return;
+    if (body.data.status === "completed") {
+      markPersistComplete(session.memberId!, body.data.dbBalance);
+    }
+  } catch {
+    /* silent */
+  }
+}
+
+/** Preview + local apply + silent background persist. */
+export async function handleGameReturnBalance(): Promise<GamePreviewResult | null> {
+  if (inflightPreview) return inflightPreview;
+
+  inflightPreview = (async () => {
+    const session = readAuthSession();
+    if (!session?.accessToken || !session.memberId) return null;
+
+    await ensureWalletReady(session.memberId);
+
+    const preview = await previewGameBalance();
+    if (!preview) return null;
+
+    applyPreviewBalance(session.memberId, preview.estimatedBalance, preview.syncToken);
+
+    if (session.memberId) {
+      clearGameSession(session.memberId);
+    }
+
+    clearNeedsBalanceRefresh();
+    notifyTurnoverRefresh();
+
+    if (preview.newRecords > 0) {
+      firePersistSilent(preview.syncToken);
+    }
+
+    return preview;
+  })().finally(() => {
+    inflightPreview = null;
+  });
+
+  return inflightPreview;
+}
+
+/** @deprecated Use handleGameReturnBalance — kept for compatibility. */
+export async function syncGameTransactionsAndBalance(): Promise<GameSyncResult | null> {
+  const preview = await handleGameReturnBalance();
+  if (!preview) return null;
+  return {
+    providerTotal: preview.providerTotal,
+    newRecords: preview.newRecords,
+    skippedReason: preview.skippedReason,
+    stats: {
+      accepted: 0,
+      duplicates: 0,
+      errors: 0,
+      balancesUpdated: 0,
+      skippedNoBalance: 0,
+    },
+    currentBalance: preview.estimatedBalance,
+    syncedAt: preview.syncedAt,
+  };
+}
+
+export async function prepareBalanceForGameLaunch(): Promise<void> {
+  const session = readAuthSession();
+  if (!session?.memberId) return;
+  await ensureWalletReady(session.memberId);
+}
+
 export async function refreshBalanceAfterGameReturn(): Promise<string | undefined> {
   const session = readAuthSession();
-  if (!session?.accessToken) return undefined;
+  if (!session?.accessToken || !session.memberId) return undefined;
 
   if (shouldRefreshBalanceAfterGame()) {
     try {
-      const result = await syncGameTransactionsAndBalance();
-      if (result && Number.isFinite(result.currentBalance)) {
-        return result.currentBalance.toFixed(2);
+      const result = await handleGameReturnBalance();
+      if (result && Number.isFinite(result.estimatedBalance)) {
+        return result.estimatedBalance.toFixed(2);
       }
     } catch {
-      /* game sync failed — still fetch wallet below */
+      /* fall through to DB re-anchor */
     }
   }
 
   try {
-    const balance = await refreshWalletBalance();
+    const balance = await reanchorWalletFromDb(session.memberId);
     clearNeedsBalanceRefresh();
-    return balance;
+    return balance.toFixed(2);
   } catch {
     return readAuthSession()?.balance;
   }
+}
+
+export async function manualReanchorBalance(): Promise<string | undefined> {
+  const session = readAuthSession();
+  if (!session?.memberId) return session?.balance;
+  const balance = await reanchorWalletFromDb(session.memberId);
+  return balance.toFixed(2);
 }

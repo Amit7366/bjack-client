@@ -16,8 +16,6 @@ import {
   syncVendorTransactionsBeforeLaunch,
   useVendorTransactionSync,
 } from "@/lib/use-vendor-transaction-sync";
-import { readLocalWallet } from "@/lib/wallet-local-state";
-import { shouldRefreshBalanceAfterGame } from "@/lib/game-balance-sync";
 import { GAME_RETURN_EVENT } from "@/lib/game-return-events";
 import { launchGameInBrowser } from "@/lib/game-launch";
 import GameLaunchOverlay from "./GameLaunchOverlay";
@@ -94,13 +92,6 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
       }
 
       if (gameCode) {
-        const memberId = session?.memberId;
-        const localWallet = memberId ? readLocalWallet(memberId) : null;
-        if (shouldRefreshBalanceAfterGame() || localWallet?.pendingPersist) {
-          showToast("Updating balance, please wait…");
-          return;
-        }
-
         setLaunching(true);
         setLaunchingTitle(title);
 

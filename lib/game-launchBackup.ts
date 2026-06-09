@@ -1,6 +1,5 @@
 import type { AuthSession } from "@/lib/auth/session";
 import { markNeedsBalanceRefresh } from "@/lib/game-balance-sync";
-import { getLocalBalance, saveGameSessionSnapshot } from "@/lib/wallet-local-state";
 import { dispatchGameDeparting } from "@/lib/game-return-events";
 
 /** bm24api-20251210 — public launch settings (secrets stay server-side / PHP). */
@@ -53,13 +52,6 @@ export function buildGameMemberAccount(memberId: string): string {
 }
 
 export function resolveGameCreditAmount(session: AuthSession | null): number {
-  const memberId = session?.memberId;
-  if (memberId) {
-    const local = getLocalBalance(memberId);
-    if (local != null && local >= 0) {
-      return parseFloat(local.toFixed(1));
-    }
-  }
   if (session?.balance) {
     const parsed = parseFloat(session.balance);
     if (!Number.isNaN(parsed) && parsed >= 0) {
@@ -128,14 +120,6 @@ export async function launchGameInBrowser(
 ): Promise<void> {
   const launchUrl = await requestGameLaunch(gameCode, session);
   if (typeof window !== "undefined") {
-    const transferId = buildGameLaunchPayload(gameCode, session).transfer_id;
-    if (session?.memberId) {
-      saveGameSessionSnapshot({
-        memberId: session.memberId,
-        gameCode,
-        transferId,
-      });
-    }
     markNeedsBalanceRefresh();
     dispatchGameDeparting();
     window.location.assign(launchUrl);

@@ -10,11 +10,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { logoutUser as logoutApi, fetchWalletMeta } from "@/lib/auth/api";
+import { logoutUser as logoutApi, refreshWalletBalance } from "@/lib/auth/api";
 import {
   refreshBalanceAfterGameReturn,
   shouldRefreshBalanceAfterGame,
-  manualReanchorBalance,
 } from "@/lib/game-balance-sync";
 import { USER_ROLE } from "@/lib/auth/constants";
 import {
@@ -23,12 +22,6 @@ import {
   saveAuthSession,
   type AuthSession,
 } from "@/lib/auth/session";
-import {
-  ensureWalletReady,
-  mergeFromStorageEvent,
-  reanchorIfServerAhead,
-  subscribeWalletLocalChange,
-} from "@/lib/wallet-local-state";
 
 type AuthContextValue = {
   session: AuthSession | null;
@@ -44,7 +37,6 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const WALLET_FOCUS_DEBOUNCE_MS = 1500;
-const ANCHOR_CHECK_INTERVAL_MS = 2 * 60 * 60 * 1000;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(null);
@@ -58,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const syncWalletFromServer = useCallback(
-    async (opts?: { gameReturn?: boolean; forceDb?: boolean }) => {
+    async (opts?: { gameReturn?: boolean }) => {
       const current = readAuthSession();
       if (!current?.accessToken || !current.memberId) return;
       if (walletSyncRef.current) return;
@@ -68,15 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         if (opts?.gameReturn && shouldRefreshBalanceAfterGame()) {
           await refreshBalanceAfterGameReturn();
-        } else if (opts?.forceDb) {
-          await manualReanchorBalance();
         } else {
-          const meta = await fetchWalletMeta();
-          if (meta?.walletRevision != null) {
-            await reanchorIfServerAhead(current.memberId, meta.walletRevision);
-          } else {
-            await ensureWalletReady(current.memberId);
-          }
+          await refreshWalletBalance();
         }
         refreshSession();
       } finally {
@@ -107,48 +92,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [refreshSession]);
 
-  useEffect(() => {
-    return subscribeWalletLocalChange(refreshSession);
-  }, [refreshSession]);
-
-  /** On load: init local wallet from DB if missing or expired. */
+  /** On load: always pull currentBalance from MongoDB (fixes stale localStorage). */
   useEffect(() => {
     if (!authReady || !session?.accessToken || !session.memberId) return;
-    void (async () => {
-      await ensureWalletReady(session.memberId!);
-      refreshSession();
-    })();
-  }, [authReady, session?.accessToken, session?.memberId, refreshSession]);
+    void syncWalletFromServer();
+  }, [authReady, session?.accessToken, session?.memberId, syncWalletFromServer]);
 
-  /** Multi-tab: merge wallet state when another tab writes localStorage. */
+  /** When user returns to tab: refresh wallet so all devices stay aligned. */
   useEffect(() => {
-    if (!session?.memberId) return;
-
-    const onStorage = (e: StorageEvent) => {
-      if (!e.key?.startsWith("walletLocal:")) return;
-      if (mergeFromStorageEvent(session.memberId!)) {
-        refreshSession();
-      }
-    };
-
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [session?.memberId, refreshSession]);
-
-  /** Tab focus: cross-device revision check (debounced). */
-  useEffect(() => {
-    if (!authReady || !session?.accessToken || !session.memberId) return;
+    if (!authReady || !session?.accessToken) return;
 
     const onVisible = () => {
       if (document.visibilityState !== "visible") return;
       const elapsed = Date.now() - lastWalletSyncRef.current;
       if (elapsed < WALLET_FOCUS_DEBOUNCE_MS) return;
-
-      if (shouldRefreshBalanceAfterGame()) {
-        void syncWalletFromServer({ gameReturn: true });
-        return;
-      }
-
       void syncWalletFromServer();
     };
 
@@ -158,23 +115,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("focus", onVisible);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [authReady, session?.accessToken, session?.memberId, syncWalletFromServer]);
-
-  /** Every 2 hours: re-anchor from DB while logged in. */
-  useEffect(() => {
-    if (!authReady || !session?.memberId) return;
-
-    const id = window.setInterval(() => {
-      void syncWalletFromServer({ forceDb: true });
-    }, ANCHOR_CHECK_INTERVAL_MS);
-
-    return () => window.clearInterval(id);
-  }, [authReady, session?.memberId, syncWalletFromServer]);
+  }, [authReady, session?.accessToken, syncWalletFromServer]);
 
   const refreshBalance = useCallback(async () => {
     await syncWalletFromServer({
       gameReturn: shouldRefreshBalanceAfterGame(),
-      forceDb: true,
     });
   }, [syncWalletFromServer]);
 

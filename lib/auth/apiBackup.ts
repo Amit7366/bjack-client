@@ -1,7 +1,6 @@
 import type { ApiResponse, LoginResponseData, RegisterResponseData } from "@/lib/api/types";
 import { clearMemberProfileCache } from "@/lib/member/profile-cache";
 import { clearAuthSession, enrichSession, saveAuthSession, type AuthSession } from "./session";
-import { clearLocalWallet, initWalletFromDb, reanchorWalletFromDb } from "@/lib/wallet-local-state";
 
 const API_PREFIX = "/api/v1";
 
@@ -66,11 +65,10 @@ export async function loginWithUsername(
   saveAuthSession(session);
 
   try {
-    const memberId = session.memberId ?? body.data.memberId;
-    if (memberId) {
-      const freshBalance = await initWalletFromDb(memberId);
+    const fresh = await refreshWalletBalance();
+    if (fresh) {
       return {
-        session: { ...session, balance: freshBalance.toFixed(2) },
+        session: { ...session, balance: fresh },
         message: body.message ?? "Logged in",
       };
     }
@@ -131,14 +129,6 @@ type BalancePayload = {
   currentBalance?: number;
   balance?: string;
   id?: string;
-  walletRevision?: number;
-  lastGameSyncAt?: string;
-};
-
-export type WalletMeta = {
-  balance: string;
-  walletRevision?: number;
-  lastGameSyncAt?: string;
 };
 
 /** Normalize wallet amount from API / login payload. */
@@ -151,22 +141,16 @@ export function formatWalletBalance(value: number | string | undefined | null): 
 
 /** Authoritative balance from UserBalance collection (by member id). */
 export async function refreshWalletBalance(): Promise<string | undefined> {
-  const meta = await fetchWalletMeta();
-  return meta?.balance;
-}
-
-/** DB balance + revision for cross-device / re-anchor checks. */
-export async function fetchWalletMeta(): Promise<WalletMeta | undefined> {
   const current = readAuthSessionForRequest();
   const memberId = current?.memberId;
-  if (!current?.accessToken || !memberId) return undefined;
+  if (!current?.accessToken || !memberId) return current?.balance;
 
   const { ok, body } = await requestJson<BalancePayload>(
     `/transaction/balance/${encodeURIComponent(memberId)}`,
     { method: "GET" },
   );
 
-  if (!ok || !body.data) return undefined;
+  if (!ok || !body.data) return current.balance;
 
   const formatted = formatWalletBalance(
     body.data.currentBalance ?? body.data.balance,
@@ -174,19 +158,9 @@ export async function fetchWalletMeta(): Promise<WalletMeta | undefined> {
 
   if (formatted !== undefined) {
     saveAuthSession({ ...current, balance: formatted });
-    return {
-      balance: formatted,
-      walletRevision: body.data.walletRevision,
-      lastGameSyncAt: body.data.lastGameSyncAt,
-    };
+    return formatted;
   }
-  return undefined;
-}
-
-/** Force DB re-anchor into local wallet cache. */
-export async function reanchorWalletFromApi(memberId: string): Promise<string | undefined> {
-  const balance = await reanchorWalletFromDb(memberId);
-  return balance.toFixed(2);
+  return current.balance;
 }
 
 /** Invalidate refresh cookie on server and clear local session */
@@ -196,8 +170,6 @@ export async function logoutUser(): Promise<void> {
   } catch {
     /* still clear client session if network fails */
   } finally {
-    const memberId = readAuthSessionForRequest()?.memberId;
-    if (memberId) clearLocalWallet(memberId);
     clearMemberProfileCache();
     clearAuthSession();
   }

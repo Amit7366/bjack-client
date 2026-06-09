@@ -2,30 +2,34 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { useAuth } from "@/components/AuthProvider";
-import { syncGameTransactionsAndBalance } from "@/lib/game-balance-sync";
+import { fetchWalletMeta } from "@/lib/auth/api";
+import { ensureWalletReady, reanchorIfServerAhead } from "@/lib/wallet-local-state";
 
 /**
- * Mirrors legacy useNewVendorTransactions: on mount + window focus, pull vendor
- * rows via authenticated sync-user → server ingest (turnover + bulk insert).
+ * Lightweight wallet alignment on mount/focus — no blocking full ingest.
  */
 export function useVendorTransactionSync(enabled = true) {
-  const { isUser, authReady, refreshSession } = useAuth();
+  const { isUser, authReady, refreshSession, session } = useAuth();
   const runningRef = useRef(false);
 
   const sync = useCallback(async () => {
-    if (!enabled || !authReady || !isUser) return;
+    if (!enabled || !authReady || !isUser || !session?.memberId) return;
     if (runningRef.current) return;
 
     runningRef.current = true;
     try {
-      await syncGameTransactionsAndBalance();
+      await ensureWalletReady(session.memberId);
+      const meta = await fetchWalletMeta();
+      if (meta?.walletRevision != null) {
+        await reanchorIfServerAhead(session.memberId, meta.walletRevision);
+      }
       refreshSession();
     } catch {
-      /* non-blocking — GameReturnHandler / manual refresh can retry */
+      /* non-blocking */
     } finally {
       runningRef.current = false;
     }
-  }, [authReady, enabled, isUser, refreshSession]);
+  }, [authReady, enabled, isUser, refreshSession, session?.memberId]);
 
   useEffect(() => {
     if (!enabled || !authReady || !isUser) return;
@@ -43,11 +47,8 @@ export function useVendorTransactionSync(enabled = true) {
   return { sync };
 }
 
-/** One-shot sync before launching a game (await in click handler). */
+/** Ensure local wallet is ready before launching — no blocking vendor ingest. */
 export async function syncVendorTransactionsBeforeLaunch(): Promise<void> {
-  try {
-    await syncGameTransactionsAndBalance();
-  } catch {
-    /* launch still proceeds; return handler will retry */
-  }
+  const { prepareBalanceForGameLaunch } = await import("@/lib/game-balance-sync");
+  await prepareBalanceForGameLaunch();
 }
