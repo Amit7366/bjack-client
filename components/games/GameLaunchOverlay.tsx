@@ -6,9 +6,16 @@ import { useEffect, useState } from "react";
 type GameLaunchOverlayProps = {
   open: boolean;
   gameTitle?: string;
+  /** balance = waiting for PHP preview; launch = opening game URL */
+  phase?: "balance" | "launch";
 };
 
-export default function GameLaunchOverlay({ open, gameTitle }: GameLaunchOverlayProps) {
+export default function GameLaunchOverlay({
+  open,
+  gameTitle,
+  phase = "launch",
+}: GameLaunchOverlayProps) {
+  const updatingBalance = phase === "balance";
   const [mounted, setMounted] = useState(
     () => typeof document !== "undefined",
   );
@@ -52,12 +59,20 @@ export default function GameLaunchOverlay({ open, gameTitle }: GameLaunchOverlay
         </div>
 
         <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#178358]">
-          Please wait
+          {updatingBalance ? "Balance sync" : "Please wait"}
         </p>
         <h2 className="mt-2 max-w-[min(90vw,320px)] text-[18px] font-semibold text-white sm:text-[20px]">
-          {gameTitle ? `Launching ${gameTitle}` : "Launching your game"}
+          {updatingBalance
+            ? "Updating your balance"
+            : gameTitle
+              ? `Launching ${gameTitle}`
+              : "Launching your game"}
         </h2>
-        <p className="mt-2 text-[13px] text-[#9ca3af]">Connecting to the game server…</p>
+        <p className="mt-2 text-[13px] text-[#9ca3af]">
+          {updatingBalance
+            ? "Fetching your latest game results…"
+            : "Connecting to the game server…"}
+        </p>
 
         <div className="mt-8 flex h-1 w-48 overflow-hidden rounded-full bg-[#1f1f1f]">
           <span className="h-full w-1/3 animate-game-launch-bar rounded-full bg-gradient-to-r from-[#178358] via-[#22c55e] to-[#178358]" />

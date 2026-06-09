@@ -15,12 +15,12 @@ import { useLocale } from "@/components/LocaleProvider";
 import { useToast } from "@/components/ToastProvider";
 import { useVendorTransactionSync } from "@/lib/use-vendor-transaction-sync";
 import {
-  handleGameReturnBalance,
+  awaitBalancePreviewForLaunch,
   isBalanceUpdatePending,
-  shouldRefreshBalanceAfterGame,
 } from "@/lib/game-balance-sync";
 import { GAME_RETURN_EVENT } from "@/lib/game-return-events";
 import { launchGameInBrowser } from "@/lib/game-launch";
+import { readAuthSession } from "@/lib/auth/session";
 import GameLaunchOverlay from "./GameLaunchOverlay";
 
 export type GameClickOptions = {
@@ -65,6 +65,12 @@ function balanceUpdatingMessage(locale: string): string {
   return "Balance updating…";
 }
 
+function balanceUpdateFailedMessage(locale: string): string {
+  if (locale === "bn") return "ব্যালেন্স আপডেট ব্যর্থ। আবার চেষ্টা করুন।";
+  if (locale === "hi") return "बैलेंस अपडेट विफल। पुनः प्रयास करें।";
+  return "Balance update failed. Please try again.";
+}
+
 export function GamePlayGateProvider({ children }: { children: ReactNode }) {
   const { isUser, authReady, session, refreshSession } = useAuth();
   const { preferences } = useLocale();
@@ -74,10 +80,12 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [launching, setLaunching] = useState(false);
   const [launchingTitle, setLaunchingTitle] = useState<string | undefined>();
+  const [launchPhase, setLaunchPhase] = useState<"balance" | "launch">("launch");
 
   const clearLaunchState = useCallback(() => {
     setLaunching(false);
     setLaunchingTitle(undefined);
+    setLaunchPhase("launch");
   }, []);
 
   useEffect(() => {
@@ -104,25 +112,30 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
       if (gameCode) {
         const balanceStillUpdating = isBalanceUpdatePending();
 
-        if (balanceStillUpdating) {
-          showToast(balanceUpdatingMessage(preferences.locale));
-        }
-
-        // Background preview if return sync still pending — never block play.
-        if (shouldRefreshBalanceAfterGame()) {
-          void handleGameReturnBalance().then(() => refreshSession());
-        }
-
         setLaunching(true);
         setLaunchingTitle(title);
+        setLaunchPhase(balanceStillUpdating ? "balance" : "launch");
 
         await new Promise<void>((resolve) => {
           requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
         });
 
-        try {
+        if (balanceStillUpdating) {
+          showToast(balanceUpdatingMessage(preferences.locale));
+          const previewOk = await awaitBalancePreviewForLaunch();
+          if (!previewOk) {
+            showToast(balanceUpdateFailedMessage(preferences.locale));
+            clearLaunchState();
+            return;
+          }
           refreshSession();
-          await launchGameInBrowser(gameCode, session);
+        }
+
+        setLaunchPhase("launch");
+
+        try {
+          const currentSession = readAuthSession() ?? session;
+          await launchGameInBrowser(gameCode, currentSession);
           return;
         } catch (error: unknown) {
           const msg =
@@ -158,7 +171,11 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
         open={loginPromptOpen}
         onClose={() => setLoginPromptOpen(false)}
       />
-      <GameLaunchOverlay open={launching} gameTitle={launchingTitle} />
+      <GameLaunchOverlay
+        open={launching}
+        gameTitle={launchingTitle}
+        phase={launchPhase}
+      />
     </GamePlayGateContext.Provider>
   );
 }

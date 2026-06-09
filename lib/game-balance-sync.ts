@@ -77,6 +77,20 @@ export function isBalanceUpdatePending(): boolean {
   return shouldRefreshBalanceAfterGame() || isBalancePreviewInflight();
 }
 
+/**
+ * Waits for PHP preview + UI balance apply before launching a game.
+ * Returns false if preview failed (caller should not launch with stale balance).
+ */
+export async function awaitBalancePreviewForLaunch(): Promise<boolean> {
+  if (!isBalanceUpdatePending()) return true;
+  try {
+    const result = await handleGameReturnBalance();
+    return result != null;
+  } catch {
+    return false;
+  }
+}
+
 async function fetchWithTimeout(
   input: RequestInfo | URL,
   init: RequestInit,
