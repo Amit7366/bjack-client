@@ -8,6 +8,7 @@ import SiteFooter from "./SiteFooter";
 import MobileBottomNav from "./MobileBottomNav";
 import CurrencyLanguageModal from "./CurrencyLanguageModal";
 import { ToastProvider } from "./ToastProvider";
+import BalanceUpdateNotifier from "./BalanceUpdateNotifier";
 import GameReturnHandler from "./GameReturnHandler";
 import { GamePlayGateProvider } from "./games/GamePlayGateProvider";
 
@@ -54,6 +55,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     <ToastProvider>
     <GamePlayGateProvider>
     <GameReturnHandler />
+    <BalanceUpdateNotifier />
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-[#0a0a0a]">
       <TopNavbar onMenuClick={toggleSidebar} menuOpen={sidebarExpanded} />
 

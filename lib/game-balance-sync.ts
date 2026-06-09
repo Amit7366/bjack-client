@@ -1,7 +1,10 @@
 import type { ApiResponse } from "@/lib/api/types";
 import { formatWalletBalance, refreshWalletBalance } from "@/lib/auth/api";
 import { readAuthSession, saveAuthSession } from "@/lib/auth/session";
-import { notifyTurnoverRefresh } from "@/lib/game-return-events";
+import {
+  dispatchBalancePreviewApplied,
+  notifyTurnoverRefresh,
+} from "@/lib/game-return-events";
 import {
   applyPreviewBalance,
   clearGameSession,
@@ -14,6 +17,9 @@ import {
 
 const API_PREFIX = "/api/v1";
 const SYNC_TIMEOUT_MS = 20_000;
+/** Preview slower than this → show balance-updated toast (navbar may lag behind). */
+const PREVIEW_NOTIFY_DELAY_MS = 600;
+const BALANCE_CHANGE_EPSILON = 0.01;
 
 let inflightPreview: Promise<GamePreviewResult | null> | null = null;
 
@@ -168,10 +174,31 @@ export async function handleGameReturnBalance(): Promise<GamePreviewResult | nul
 
     await ensureWalletReady(session.memberId);
 
+    const previewStartedAt = Date.now();
+    const localBefore = readLocalWallet(session.memberId);
+    const sessionBefore = Number.parseFloat(session.balance ?? "");
+    const balanceBefore = Number.isFinite(localBefore?.balance)
+      ? localBefore!.balance
+      : Number.isFinite(sessionBefore)
+        ? sessionBefore
+        : 0;
+
     const preview = await previewGameBalance();
     if (!preview) return null;
 
+    const delayedMs = Date.now() - previewStartedAt;
+    const balanceChanged =
+      Math.abs(preview.estimatedBalance - balanceBefore) > BALANCE_CHANGE_EPSILON;
+
     applyPreviewBalance(session.memberId, preview.estimatedBalance, preview.syncToken);
+
+    dispatchBalancePreviewApplied({
+      balance: preview.estimatedBalance,
+      previousBalance: balanceBefore,
+      netDelta: preview.netDelta,
+      delayedMs,
+      showNotification: balanceChanged && delayedMs >= PREVIEW_NOTIFY_DELAY_MS,
+    });
 
     if (session.memberId) {
       clearGameSession(session.memberId);
