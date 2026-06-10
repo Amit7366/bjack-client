@@ -61,14 +61,21 @@ function BottomMemberIcon() {
           <stop offset="100%" stopColor="#157a47" />
         </linearGradient>
       </defs>
-      <circle cx="14" cy="14" r="10.5" stroke="url(#bnMemberG)" strokeWidth="2" />
-      <circle cx="14" cy="11.5" r="3.5" fill="url(#bnMemberG)" />
       <path
-        d="M7.5 21.5c1.4-3.2 3.8-4.8 6.5-4.8s5.1 1.6 6.5 4.8"
+        d="M8 5h12l5 7-11 11L3 12l5-7z"
+        fill="url(#bnMemberG)"
         stroke="url(#bnMemberG)"
-        strokeWidth="2"
-        strokeLinecap="round"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
       />
+      <path
+        d="M3.6 12h20.8M8 5l3 7 3 10.5M20 5l-3 7-3 10.5M11 12l3-7 3 7"
+        stroke="#0a0a0a"
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+        opacity="0.55"
+      />
+      <path d="M9 7.5l2.5-1.5" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" opacity="0.8" />
     </svg>
   );
 }
@@ -167,12 +174,12 @@ export default function MobileBottomNav({
             onClick={onMenuClick}
             ariaExpanded={menuOpen}
           />
-          <NavItem
+          {/* <NavItem
             active={isCasino}
             label={t.casino}
             icon={<CasinoSpadeIcon />}
             href={lobbyCategoryHref(locale, "casino")}
-          />
+          /> */}
           <NavItem
             active={isSlot}
             label={t.slots}

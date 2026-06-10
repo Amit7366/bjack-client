@@ -24,6 +24,18 @@ export function memberWithdrawHref(locale: string): string {
   return `/${locale}/member/withdraw`;
 }
 
+export function memberRewardCenterHref(locale: string): string {
+  return `/${locale}/member/reward-center`;
+}
+
+export function memberSignInRewardHref(locale: string): string {
+  return `/${locale}/member/reward-center/sign-in`;
+}
+
+export function memberBonusRewardHref(locale: string): string {
+  return `/${locale}/member/reward-center/bonus`;
+}
+
 export function isMemberSection(value: string): value is MemberSection {
   return (MEMBER_SECTIONS as readonly string[]).includes(value);
 }

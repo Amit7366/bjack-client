@@ -11,7 +11,13 @@ import {
   getMemberCenterMessages,
   type MemberCenterItemId,
 } from "@/lib/i18n/member-center-messages";
-import { memberDepositHref, memberSectionHref, memberWithdrawHref } from "@/lib/member-routes";
+import {
+  memberDepositHref,
+  memberRewardCenterHref,
+  memberSectionHref,
+  memberSignInRewardHref,
+  memberWithdrawHref,
+} from "@/lib/member-routes";
 import {
   fetchMyNormalUserProfile,
   type NormalUserProfile,
@@ -141,6 +147,8 @@ export default function MemberCenterPage() {
   const itemHref = useCallback(
     (id: MemberCenterItemId): string | null => {
       switch (id) {
+        case "reward-center":
+          return memberRewardCenterHref(locale);
         case "betting-record":
           return memberSectionHref(locale, "betting-records");
         case "deposit-record":
@@ -183,9 +191,8 @@ export default function MemberCenterPage() {
         <div className="relative z-10 -mt-14 px-3">
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-white to-[#eef1f5] shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
             {/* Sign-in ribbon */}
-            <button
-              type="button"
-              onClick={onComingSoon}
+            <Link
+              href={memberSignInRewardHref(locale)}
               className="focus-ring absolute right-0 top-0 z-20 flex items-center gap-1.5 rounded-tr-2xl rounded-bl-xl bg-gradient-to-r from-[#e02b1d] to-[#c01a0e] py-1.5 pl-5 pr-2.5 text-[13px] font-semibold text-white [clip-path:polygon(14px_0,100%_0,100%_100%,0_100%)]"
             >
               <SignInEnvelopeIcon />
@@ -193,7 +200,7 @@ export default function MemberCenterPage() {
               <span aria-hidden className="text-white/90">
                 ›
               </span>
-            </button>
+            </Link>
 
             {/* Silver badge watermark */}
             <div className="pointer-events-none absolute -right-2 top-8 z-0" aria-hidden>
