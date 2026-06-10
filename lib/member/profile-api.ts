@@ -11,6 +11,8 @@ export type NormalUserProfile = {
   contactNo?: string;
   email?: string;
   dateOfBirth?: string;
+  profileImg?: string;
+  createdAt?: string;
 };
 
 async function requestJson<T>(

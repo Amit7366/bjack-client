@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { lobbyCategoryHref } from "@/lib/vendor-routes";
 import { getProfileMessages } from "@/lib/i18n/profile-messages";
+import { getMemberCenterMessages } from "@/lib/i18n/member-center-messages";
 import { BottomProfileNavIcon } from "./profile/ProfileMenuIcons";
 import ProfileMobileSheet from "./profile/ProfileMobileSheet";
 import { CasinoSpadeIcon, Slots777Icon } from "./SidebarIcons";
@@ -47,6 +48,27 @@ function BottomGiftIcon() {
         fill="url(#bnGiftGold)"
       />
       <ellipse cx="10" cy="14" rx="3" ry="2" fill="#fff" opacity="0.2" />
+    </svg>
+  );
+}
+
+function BottomMemberIcon() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
+      <defs>
+        <linearGradient id="bnMemberG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8ef0b4" />
+          <stop offset="100%" stopColor="#157a47" />
+        </linearGradient>
+      </defs>
+      <circle cx="14" cy="14" r="10.5" stroke="url(#bnMemberG)" strokeWidth="2" />
+      <circle cx="14" cy="11.5" r="3.5" fill="url(#bnMemberG)" />
+      <path
+        d="M7.5 21.5c1.4-3.2 3.8-4.8 6.5-4.8s5.1 1.6 6.5 4.8"
+        stroke="url(#bnMemberG)"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -122,13 +144,14 @@ export default function MobileBottomNav({
   const locale = preferences.locale;
   const base = `/${locale}`;
   const p = getProfileMessages(locale);
+  const mc = getMemberCenterMessages(locale);
 
   const isCasino = pathname === `${base}/casino` || pathname.startsWith(`${base}/casino?`);
   const isSlot = pathname === `${base}/slot` || pathname.startsWith(`${base}/slot?`);
   const isPromotion =
     pathname === `${base}/promotion` || pathname.startsWith(`${base}/promotion?`);
   const isMember = pathname === `${base}/member` || pathname.startsWith(`${base}/member/`);
-  const isProfileActive = profileOpen || isMember;
+  const isProfileActive = !!profileOpen;
 
   return (
     <>
@@ -162,6 +185,14 @@ export default function MobileBottomNav({
             icon={<BottomGiftIcon />}
             href={`${base}/promotion`}
           />
+          {authReady && isUser ? (
+            <NavItem
+              active={isMember}
+              label={mc.navLabel}
+              icon={<BottomMemberIcon />}
+              href={`${base}/member`}
+            />
+          ) : null}
           {authReady && isUser ? (
             <NavItem
               active={isProfileActive}
