@@ -148,8 +148,8 @@ export default function FooterBottomSection() {
 
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
         <a href="#" className="text-[26px] font-bold tracking-tight">
-          <span className="text-white">ba</span>
-          <span className="text-[#ed1c24]">ji</span>
+          <span className="text-white">bk</span>
+          <span className="text-[#ed1c24]">baji</span>
         </a>
         <div>
           <p className="text-[13px] font-semibold text-[#4ade80]">{b.winLikeAKing}</p>
@@ -161,7 +161,7 @@ export default function FooterBottomSection() {
 
       <div className="space-y-3 text-[11px] leading-[1.7] text-[#6b7280]">
         <p>
-          <span className="text-[#4ade80]">Baji.com</span> {b.legalOwnership}
+          <span className="text-[#4ade80]">bkbaji.com</span> {b.legalOwnership}
         </p>
         <p>
           {b.legalContactPrefix}{" "}
@@ -171,10 +171,10 @@ export default function FooterBottomSection() {
           .
         </p>
         <p>
-          <span className="text-[#4ade80]">Baji.com</span> {b.legalLicense}
+          <span className="text-[#4ade80]">bkbaji.com</span> {b.legalLicense}
         </p>
         <p>
-          <span className="text-[#4ade80]">Baji.com</span> {b.legalCompliance}
+          <span className="text-[#4ade80]">bkbaji.com</span> {b.legalCompliance}
         </p>
       </div>
     </>

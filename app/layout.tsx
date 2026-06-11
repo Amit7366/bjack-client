@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { isValidLocale, type Locale } from "@/lib/locale";
 import DisablePinchZoom from "@/components/DisablePinchZoom";
 import { localeFontClass } from "@/lib/locale-font";
+import { defaultSiteMetadata } from "@/lib/seo/default-metadata";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,22 +29,7 @@ const notoSansDevanagari = Noto_Sans_Devanagari({
   weight: ["400", "500", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "Baji",
-  description: "Bangladesh's leading online gaming and betting platform",
-  icons: {
-    icon: "https://img.b112j.com/images/bj/bj-favicon.ico",
-    apple: [
-      { url: "https://img.b112j.com/bj/h5/assets/images/icons/PWAicon-192px.png?v=1778659269258", sizes: "192x192" },
-    ],
-  },
-  manifest: "/manifest.webmanifest",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black",
-    title: "Baji",
-  },
-};
+export const metadata: Metadata = defaultSiteMetadata;
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -52,7 +38,11 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: "cover",
-  themeColor: "#111111",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#111111" },
+    { media: "(prefers-color-scheme: dark)", color: "#111111" },
+  ],
+  colorScheme: "dark",
 };
 
 export default async function RootLayout({
@@ -71,12 +61,6 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${notoSansBengali.variable} ${notoSansDevanagari.variable} h-full antialiased`}
     >
-      <head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-        />
-      </head>
       <body
         suppressHydrationWarning
         className={`flex h-dvh flex-col overflow-hidden bg-[#0a0a0a] ${localeFontClass(locale)}`}

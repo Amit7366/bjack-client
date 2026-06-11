@@ -120,7 +120,7 @@ const en: Messages = {
   vip: "VIP",
   viewAll: "View all",
   gameLoginPrompt: {
-    title: "Become a BJ Member",
+    title: "Become a BKBaji Member",
     description: "Log in to play the game. If you don't have an account, sign up for free!",
     close: "Close",
   },
@@ -164,7 +164,7 @@ const en: Messages = {
     appDownload: "APP Download",
     contactUs: "Contact Us",
     newMemberGuide: "New Member Guide",
-    bjForum: "BJ Forum",
+    bjForum: "BKBaji Forum",
   },
   sub: {
     all: "All",
@@ -195,7 +195,7 @@ const en: Messages = {
   },
   home: {
     announcement:
-      "Download our official app: https://bjbaji7.live/download/bj/bj.apk — Dear customers, please use the given link to access our website and enjoy uninterrupted service.",
+      "Download our official app: https://bkbaji.com/download/bkbaji/bkbaji.apk — Dear customers, please use the given link to access our website and enjoy uninterrupted service.",
     slides: [
       {
         brand: "JILI",
@@ -210,7 +210,7 @@ const en: Messages = {
         confirm: "Confirm",
       },
       {
-        brand: "BAJI",
+        brand: "BKB",
         code: "WELCOME100",
         title: "WELCOME BONUS",
         ctaLabel: "CLAIM CODE",
@@ -382,7 +382,7 @@ const bn: Messages = {
   vip: "ভিআইপি",
   viewAll: "সব দেখুন",
   gameLoginPrompt: {
-    title: "একজন BJ সদস্য হন",
+    title: "একজন BKBaji সদস্য হন",
     description: "গেমটি খেলতে লগ ইন করুন। আপনার যদি অ্যাকাউন্ট না থাকে তবে ফ্রি সাইন আপ করুন!",
     close: "বন্ধ করুন",
   },
@@ -426,7 +426,7 @@ const bn: Messages = {
     appDownload: "অ্যাপ ডাউনলোড",
     contactUs: "যোগাযোগ করুন",
     newMemberGuide: "নতুন সদস্য নির্দেশিকা",
-    bjForum: "বিজে ফোরাম",
+    bjForum: "BKBaji ফোরাম",
   },
   sub: {
     all: "সব",
@@ -457,7 +457,7 @@ const bn: Messages = {
   },
   home: {
     announcement:
-      "আমাদের অফিসিয়াল অ্যাপ ডাউনলোড করুন: https://bjbaji7.live/download/bj/bj.apk — প্রিয় গ্রাহক, আমাদের ওয়েবসাইটে অবিচ্ছিন্ন সেবা পেতে দেওয়া লিংক ব্যবহার করুন।",
+      "আমাদের অফিসিয়াল অ্যাপ ডাউনলোড করুন: https://bkbaji.com/download/bkbaji/bkbaji.apk — প্রিয় গ্রাহক, আমাদের ওয়েবসাইটে অবিচ্ছিন্ন সেবা পেতে দেওয়া লিংক ব্যবহার করুন।",
     slides: [
       {
         brand: "JILI",
@@ -472,7 +472,7 @@ const bn: Messages = {
         confirm: "নিশ্চিত করুন",
       },
       {
-        brand: "BAJI",
+        brand: "BKB",
         code: "WELCOME100",
         title: "ওয়েলকাম বোনাস",
         ctaLabel: "কোড ক্লেইম করুন",
@@ -644,7 +644,7 @@ const hi: Messages = {
   vip: "वीआईपी",
   viewAll: "सभी देखें",
   gameLoginPrompt: {
-    title: "BJ सदस्य बनें",
+    title: "BKBaji सदस्य बनें",
     description: "गेम खेलने के लिए लॉग इन करें। अकाउंट नहीं है तो मुफ्त में साइन अप करें!",
     close: "बंद करें",
   },
@@ -688,7 +688,7 @@ const hi: Messages = {
     appDownload: "ऐप डाउनलोड",
     contactUs: "संपर्क करें",
     newMemberGuide: "नए सदस्य गाइड",
-    bjForum: "BJ फोरम",
+    bjForum: "BKBaji फोरम",
   },
   sub: {
     all: "सभी",
@@ -719,7 +719,7 @@ const hi: Messages = {
   },
   home: {
     announcement:
-      "हमारा आधिकारिक ऐप डाउनलोड करें: https://bjbaji7.live/download/bj/bj.apk — प्रिय ग्राहक, निर्बाध सेवा के लिए दिए गए लिंक का उपयोग करें।",
+      "हमारा आधिकारिक ऐप डाउनलोड करें: https://bkbaji.com/download/bkbaji/bkbaji.apk — प्रिय ग्राहक, निर्बाध सेवा के लिए दिए गए लिंक का उपयोग करें।",
     slides: [
       {
         brand: "JILI",
@@ -734,7 +734,7 @@ const hi: Messages = {
         confirm: "पुष्टि करें",
       },
       {
-        brand: "BAJI",
+        brand: "BKB",
         code: "WELCOME100",
         title: "वेलकम बोनस",
         ctaLabel: "कोड क्लेम करें",
