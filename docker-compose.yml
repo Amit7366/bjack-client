@@ -8,9 +8,9 @@ services:
     environment:
       NODE_ENV: production
       API_URL: https://bkbajiapi.xyz
-      GAME_LAUNCH_PROXY_URL: https://txserver.site/testGameLaunch.php
-      GAME_AGENCY_UID: 0b98f74aa493413ce882a9edef9f9ede
-      NEXT_PUBLIC_GAME_PLAYER_PREFIX: h037ad
+      GAME_LAUNCH_PROXY_URL: https://txserver.site/newGameLaunch.php
+      GAME_AGENCY_UID: 214391ef6669df671affeb79414d400e
+      NEXT_PUBLIC_GAME_PLAYER_PREFIX: h94044
       NEXT_PUBLIC_SITE_URL: https://bkbaji.com
     restart: unless-stopped
 
