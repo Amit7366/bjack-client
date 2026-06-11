@@ -34,6 +34,7 @@ const menuEn: ProfileMessages["menu"] = {
   turnover: "Turnover",
   "my-vip": "My VIP",
   "my-referral": "My Referral",
+  "add-wallet": "Add Wallet",
 };
 
 const en: ProfileMessages = {
@@ -83,6 +84,7 @@ const bn: ProfileMessages = {
     turnover: "টার্নওভার",
     "my-vip": "মাই ভিআইপি",
     "my-referral": "মাই রেফারেল",
+    "add-wallet": "ওয়ালেট যুক্ত করুন",
   },
   sectionTitles: {
     notification: "নোটিফিকেশন",
@@ -94,6 +96,7 @@ const bn: ProfileMessages = {
     turnover: "টার্নওভার",
     "my-vip": "মাই ভিআইপি",
     "my-referral": "মাই রেফারেল",
+    "add-wallet": "ওয়ালেট যুক্ত করুন",
   },
   sectionPlaceholder: "সদস্য এলাকার বিষয়বস্তু শীঘ্রই এখানে উপলব্ধ হবে।",
 };
@@ -124,6 +127,7 @@ const hi: ProfileMessages = {
     turnover: "टर्नओवर",
     "my-vip": "मेरा VIP",
     "my-referral": "मेरा रेफरल",
+    "add-wallet": "वॉलेट जोड़ें",
   },
   sectionTitles: {
     notification: "सूचनाएँ",
@@ -135,6 +139,7 @@ const hi: ProfileMessages = {
     turnover: "टर्नओवर",
     "my-vip": "मेरा VIP",
     "my-referral": "मेरा रेफरल",
+    "add-wallet": "वॉलेट जोड़ें",
   },
   sectionPlaceholder: "सदस्य क्षेत्र की सामग्री जल्द यहाँ उपलब्ध होगी।",
 };
@@ -150,6 +155,7 @@ export const PROFILE_MENU_ITEMS: { id: ProfileMenuItemId; icon: string }[] = [
   { id: "personal-info", icon: "user" },
   { id: "login-security", icon: "lock" },
   { id: "verification", icon: "shield" },
+  { id: "add-wallet", icon: "wallet" },
   { id: "transaction-records", icon: "transaction" },
   { id: "betting-records", icon: "betting" },
   { id: "turnover", icon: "chart" },

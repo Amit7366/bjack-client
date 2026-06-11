@@ -8,6 +8,7 @@ export const MEMBER_SECTIONS = [
   "turnover",
   "my-vip",
   "my-referral",
+  "add-wallet",
 ] as const;
 
 export type MemberSection = (typeof MEMBER_SECTIONS)[number];

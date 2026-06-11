@@ -148,6 +148,15 @@ export function ProfileMenuIcon({ name }: { name: string }) {
           <path d="M8.5 8.5l1 2M11.5 8.5l-1 2M8.8 11.2l2.4.8" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
         </svg>
       );
+    case "wallet":
+      return (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden className={common}>
+          <rect x="3" y="5.5" width="14" height="10" rx="1.8" stroke="currentColor" strokeWidth="1.2" />
+          <path d="M3 8h14" stroke="currentColor" strokeWidth="1.1" />
+          <path d="M13 11.5h2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M6 3.5h8" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+        </svg>
+      );
     default:
       return null;
   }
