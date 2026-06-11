@@ -5,9 +5,9 @@ import { dispatchGameDeparting } from "@/lib/game-return-events";
 
 /** bm24api-20251210 — public launch settings (secrets stay server-side / PHP). */
 export const GAME_LAUNCH_PLAYER_PREFIX =
-  process.env.NEXT_PUBLIC_GAME_PLAYER_PREFIX ?? "h037ad";
+  process.env.NEXT_PUBLIC_GAME_PLAYER_PREFIX ?? "h94044";
 
-export const GAME_LAUNCH_MEMBER_SUFFIX = "sbm24";
+export const GAME_LAUNCH_MEMBER_SUFFIX = "bkb777";
 
 export type GameLaunchClientPayload = {
   game_uid: string;
