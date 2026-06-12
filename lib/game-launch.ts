@@ -1,4 +1,5 @@
 import type { AuthSession } from "@/lib/auth/session";
+import { checkGameLaunchEligibility } from "@/lib/game-eligibility-api";
 import { markNeedsBalanceRefresh } from "@/lib/game-balance-sync";
 import { getLocalBalance, saveGameSessionSnapshot } from "@/lib/wallet-local-state";
 import { dispatchGameDeparting } from "@/lib/game-return-events";
@@ -96,6 +97,13 @@ export async function requestGameLaunch(
   gameCode: string,
   session: AuthSession | null,
 ): Promise<string> {
+  const eligibility = await checkGameLaunchEligibility(gameCode);
+  if (!eligibility.allowed) {
+    throw new Error(
+      eligibility.reason ?? "This game is not allowed under your deposit promotion"
+    );
+  }
+
   const body = buildGameLaunchPayload(gameCode, session);
 
   const response = await fetch("/api/game-launch", {

@@ -140,7 +140,9 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
         } catch (error: unknown) {
           const msg =
             error instanceof Error ? error.message : "Failed to launch game";
-          showToast(`API Error: ${msg}`);
+          const isPromoBlock =
+            /deposit promotion|promo|প্রমো|प्रोमो/i.test(msg);
+          showToast(isPromoBlock ? msg : `API Error: ${msg}`);
           clearLaunchState();
           return;
         }
