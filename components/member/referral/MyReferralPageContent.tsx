@@ -30,6 +30,7 @@ import {
   buildReferralRegisterLink,
   fetchMyReferralSummary,
   type MyReferralSummary,
+  type ReferredUserRow,
 } from "@/lib/referral-api";
 
 function CopyIcon() {
@@ -132,6 +133,69 @@ function ReferralSidebar({
       </div>
       <p className="mt-3 w-full break-all text-center text-[11px] text-[#6b7280]">{referralLink}</p>
     </aside>
+  );
+}
+
+function formatReferredDate(iso: string, locale: Locale): string {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString(locale === "bn" ? "bn-BD" : locale === "hi" ? "hi-IN" : "en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return "—";
+  }
+}
+
+function ReferredUsersList({
+  users,
+  locale,
+  labels,
+}: {
+  users: ReferredUserRow[];
+  locale: Locale;
+  labels: ReturnType<typeof getMyReferralMessages>;
+}) {
+  return (
+    <section className={`${memberPanelBorder} p-4 sm:p-5`}>
+      <h2 className="text-[15px] font-bold text-white sm:text-[16px]">{labels.referredUsersTitle}</h2>
+
+      {users.length === 0 ? (
+        <p className="mt-4 text-center text-[13px] text-[#9ca3af]">{labels.noReferredUsers}</p>
+      ) : (
+        <div className="mt-4 overflow-x-auto rounded-lg border border-[#2f2f2f]">
+          <table className="w-full min-w-[320px] border-collapse text-left text-[13px]">
+            <thead>
+              <tr className="border-b border-[#2f2f2f] bg-[#141414] text-[#9ca3af]">
+                <th className="px-3 py-2.5 font-medium sm:px-4">{labels.usernameColumn}</th>
+                <th className="px-3 py-2.5 font-medium sm:px-4">{labels.totalDepositColumn}</th>
+                <th className="hidden px-3 py-2.5 font-medium sm:table-cell sm:px-4">
+                  {labels.referredAtColumn}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((row) => (
+                <tr
+                  key={row.userId}
+                  className="border-b border-[#2a2a2a] last:border-b-0 hover:bg-white/[0.02]"
+                >
+                  <td className="px-3 py-3 font-medium text-white sm:px-4">{row.username}</td>
+                  <td className="px-3 py-3 tabular-nums text-[#f5c518] sm:px-4">
+                    ৳ {formatMyReferralAmount(locale, row.totalDeposit)}
+                  </td>
+                  <td className="hidden px-3 py-3 text-[#9ca3af] sm:table-cell sm:px-4">
+                    {formatReferredDate(row.referredAt, locale)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -417,6 +481,8 @@ export default function MyReferralPageContent() {
 
                 <MonthlyMilestones inviteCount={summary.inviteCount} locale={locale} labels={m} />
               </section>
+
+              <ReferredUsersList users={summary.referredUsers ?? []} locale={locale} labels={m} />
             </div>
           </div>
         ) : null}

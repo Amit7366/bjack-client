@@ -1,13 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { useToast } from "@/components/ToastProvider";
 import { getBonusRewardMessages } from "@/lib/i18n/bonus-reward-messages";
-import { getMemberCenterMessages } from "@/lib/i18n/member-center-messages";
 import { memberRewardCenterHref } from "@/lib/member-routes";
+import {
+  claimMemberBonusReward,
+  fetchMemberBonusRewardStatus,
+  remainingFromMs,
+  type MemberBonusRewardStatus,
+} from "@/lib/member-bonus-reward-api";
 import {
   fetchMyNormalUserProfile,
   type NormalUserProfile,
@@ -24,6 +29,30 @@ function formatBalance(amount: string | undefined, locale: string): string {
     }).format(num);
   } catch {
     return num.toFixed(2);
+  }
+}
+
+function formatBonus(value: number, locale: string): string {
+  try {
+    return new Intl.NumberFormat(locale === "bn" ? "bn-BD" : locale === "hi" ? "hi-IN" : "en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    return value.toFixed(2);
+  }
+}
+
+function formatDueDate(iso: string | null, locale: string): string {
+  if (!iso) return "—";
+  try {
+    const d = new Date(iso);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}.${m}.${day}`;
+  } catch {
+    return "—";
   }
 }
 
@@ -61,54 +90,43 @@ function DonutDecor({ className }: { className: string }) {
   );
 }
 
-type BonusVoucher = {
-  id: string;
-  /** Campaign labels as provided by the promotion (not UI copy). */
-  reward: string;
-  dueDate: string; // YYYY.MM.DD
-};
-
-/** Placeholder vouchers until a bonus/voucher API exists on the backend. */
-const VOUCHERS: BonusVoucher[] = [
-  { id: "v1", reward: "B-সিরিয়াল রিচার্জ টাস্ক", dueDate: "2026.06.15" },
-  { id: "v2", reward: "A-সংযোগের কাজগুলি", dueDate: "2026.06.16" },
-];
-
-type Remaining = { days: number; clock: string };
-
-function remainingUntil(dueDate: string, now: number): Remaining {
-  const [y, m, d] = dueDate.split(".").map((v) => Number.parseInt(v, 10));
-  const end = new Date(y, (m ?? 1) - 1, d ?? 1, 23, 59, 59).getTime();
-  const diff = Math.max(0, end - now);
-  const days = Math.floor(diff / 86_400_000);
-  const rest = diff - days * 86_400_000;
-  const h = Math.floor(rest / 3_600_000);
-  const mn = Math.floor((rest % 3_600_000) / 60_000);
-  const s = Math.floor((rest % 60_000) / 1000);
-  const pad = (v: number) => String(v).padStart(2, "0");
-  return { days, clock: `${pad(h)}:${pad(mn)}:${pad(s)}` };
-}
-
 export default function BonusRewardPage() {
-  const { session } = useAuth();
+  const { session, refreshBalance, refreshSession } = useAuth();
   const { preferences } = useLocale();
   const { showToast } = useToast();
   const locale = preferences.locale;
   const b = getBonusRewardMessages(locale);
-  const mc = getMemberCenterMessages(locale);
 
   const [mounted, setMounted] = useState(false);
   const [profile, setProfile] = useState<NormalUserProfile | null>(null);
-  const [now, setNow] = useState(() => Date.now());
+  const [status, setStatus] = useState<MemberBonusRewardStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [claiming, setClaiming] = useState(false);
+  const [tick, setTick] = useState(() => Date.now());
+
+  const loadStatus = useCallback(async () => {
+    setLoading(true);
+    try {
+      setStatus(await fetchMemberBonusRewardStatus());
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : "Failed to load bonus", { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
+  }, [showToast]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    const id = window.setInterval(() => setTick(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    void loadStatus();
+  }, [loadStatus]);
 
   useEffect(() => {
     let cancelled = false;
@@ -128,14 +146,56 @@ export default function BonusRewardPage() {
   const balanceDisplay = mounted ? formatBalance(session?.balance, locale) : "0.00";
   const avatarSrc = profile?.profileImg;
 
-  const onComingSoon = useCallback(() => {
-    showToast(mc.comingSoonToast, { variant: "default" });
-  }, [showToast, mc.comingSoonToast]);
+  const countdown = useMemo(() => {
+    if (!status || status.canClaim) {
+      return { days: 0, clock: "00:00:00" };
+    }
+    if (status.nextClaimAt) {
+      const remaining = Math.max(0, new Date(status.nextClaimAt).getTime() - tick);
+      return remainingFromMs(remaining);
+    }
+    return remainingFromMs(status.remainingMs);
+  }, [status, tick]);
+
+  const dueDateLabel = useMemo(() => {
+    if (!status) return "—";
+    if (status.canClaim) return formatDueDate(new Date().toISOString(), locale);
+    return formatDueDate(status.nextClaimAt, locale);
+  }, [status, locale]);
+
+  const onClaim = useCallback(async () => {
+    if (claiming || !status?.canClaim) return;
+    setClaiming(true);
+    try {
+      const result = await claimMemberBonusReward();
+      showToast(
+        `${b.claimSuccess} (+৳${formatBonus(result.bonusAmount, locale)})`,
+        { variant: "success" },
+      );
+      await Promise.all([refreshBalance(), refreshSession()]);
+      await loadStatus();
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : "Claim failed", { variant: "error" });
+    } finally {
+      setClaiming(false);
+    }
+  }, [
+    claiming,
+    status?.canClaim,
+    showToast,
+    b.claimSuccess,
+    locale,
+    refreshBalance,
+    refreshSession,
+    loadStatus,
+  ]);
+
+  const canClaim = status?.canClaim ?? false;
+  const bonusAmount = status?.bonusAmount ?? 10;
 
   return (
     <div className="min-h-full bg-[#eef0f2]">
       <div className="mx-auto w-full max-w-lg">
-        {/* Teal header */}
         <header className="sticky top-0 z-30 bg-[#0e4c4c]">
           <div className="relative flex min-h-[52px] items-center justify-center px-3">
             <Link
@@ -146,18 +206,12 @@ export default function BonusRewardPage() {
               <HeaderBackIcon />
             </Link>
             <h1 className="text-[18px] font-bold text-[#f5c542]">{b.pageTitle}</h1>
-            <button
-              type="button"
-              onClick={onComingSoon}
-              aria-label={b.voucherTitle}
-              className="focus-ring absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 transition-colors hover:bg-white/10"
-            >
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 opacity-80">
               <VoucherTicketIcon />
-            </button>
+            </span>
           </div>
         </header>
 
-        {/* Blue hero */}
         <div className="relative overflow-hidden bg-gradient-to-br from-[#1f8fef] to-[#36a8f5] pb-10 pt-5">
           <span
             aria-hidden
@@ -193,65 +247,67 @@ export default function BonusRewardPage() {
           </div>
         </div>
 
-        {/* Voucher cards */}
         <div className="space-y-3 px-0 pb-mobile-nav pt-2 lg:pb-10">
-          {VOUCHERS.map(({ id, reward, dueDate }) => {
-            const { days, clock } = remainingUntil(dueDate, now);
-            return (
-              <div
-                key={id}
-                className="relative flex overflow-hidden bg-gradient-to-r from-[#fdf1e7] via-[#fbeadd] to-white shadow-sm"
-              >
-                <DonutDecor className="left-[42%] -top-5 h-12 w-12" />
-                <DonutDecor className="left-[55%] bottom-1 h-7 w-7 border-[5px]" />
-                <DonutDecor className="left-2 -bottom-4 h-9 w-9 border-[6px]" />
+          {loading && !status ? (
+            <p className="px-4 py-8 text-center text-[14px] text-[#6b7280]">…</p>
+          ) : status ? (
+            <div className="relative flex overflow-hidden bg-gradient-to-r from-[#fdf1e7] via-[#fbeadd] to-white shadow-sm">
+              <DonutDecor className="left-[42%] -top-5 h-12 w-12" />
+              <DonutDecor className="left-[55%] bottom-1 h-7 w-7 border-[5px]" />
+              <DonutDecor className="left-2 -bottom-4 h-9 w-9 border-[6px]" />
 
-                {/* Red voucher tag */}
-                <div className="relative z-10 my-4 ml-3 flex w-[124px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg bg-gradient-to-b from-[#ff5f3d] to-[#ef2722] px-2 py-3.5 text-center text-white shadow-md">
-                  <span className="text-[12px] font-bold leading-tight">{b.voucherTitle}</span>
-                  <span className="text-[12px] font-semibold leading-tight">
-                    {b.voucherSubtitle}
-                  </span>
-                  <span className="text-[12px] font-semibold leading-tight">{dueDate}</span>
-                </div>
-
-                {/* Reward info */}
-                <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-center gap-1 px-3 py-4">
-                  <p className="text-[13px] text-[#6b7280]">{b.rewardLabel}</p>
-                  <p className="truncate text-[14px] font-semibold text-[#1c1c1c]">{reward}</p>
-                  <button
-                    type="button"
-                    onClick={onComingSoon}
-                    className="focus-ring mt-0.5 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#eceef1] px-2.5 py-1 text-[12px] text-[#4b5563] transition-colors hover:bg-[#e2e5e9]"
-                  >
-                    {b.description}
-                    <InfoBadge />
-                  </button>
-                </div>
-
-                {/* Due date / claim panel */}
-                <div className="relative z-10 flex w-[104px] shrink-0 flex-col items-center justify-center gap-0.5 bg-white px-2 py-3">
-                  <span className="text-[12px] text-[#9ca3af]">{b.dueDate}</span>
-                  <span className="text-[#1c1c1c]">
-                    <span className="text-[26px] font-extrabold leading-none tabular-nums">
-                      {days}
-                    </span>
-                    <span className="ml-0.5 text-[11px] font-semibold">{b.dayUnit}</span>
-                  </span>
-                  <span className="text-[12px] font-medium tabular-nums text-[#374151]">
-                    {clock}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={onComingSoon}
-                    className="focus-ring mt-1.5 w-full rounded-full bg-gradient-to-b from-[#52d61f] to-[#2fae0a] py-1.5 text-[13px] font-semibold text-white shadow-sm transition-transform active:scale-[0.97]"
-                  >
-                    {b.claim}
-                  </button>
-                </div>
+              <div className="relative z-10 my-4 ml-3 flex w-[124px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg bg-gradient-to-b from-[#ff5f3d] to-[#ef2722] px-2 py-3.5 text-center text-white shadow-md">
+                <span className="text-[12px] font-bold leading-tight">{b.voucherTitle}</span>
+                <span className="text-[12px] font-semibold leading-tight">
+                  ৳ {formatBonus(bonusAmount, locale)}
+                </span>
+                <span className="text-[12px] font-semibold leading-tight">{dueDateLabel}</span>
               </div>
-            );
-          })}
+
+              <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-center gap-1 px-3 py-4">
+                <p className="text-[13px] text-[#6b7280]">{b.rewardLabel}</p>
+                <p className="truncate text-[14px] font-semibold text-[#1c1c1c]">{b.rewardTitle}</p>
+                <p className="mt-0.5 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#eceef1] px-2.5 py-1 text-[12px] text-[#4b5563]">
+                  {b.rewardDescription}
+                  <InfoBadge />
+                </p>
+                {status.totalBonusClaimed > 0 ? (
+                  <p className="mt-1 text-[12px] text-[#6b7280]">
+                    Total claimed: ৳ {formatBonus(status.totalBonusClaimed, locale)}
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="relative z-10 flex w-[104px] shrink-0 flex-col items-center justify-center gap-0.5 bg-white px-2 py-3">
+                <span className="text-[12px] text-[#9ca3af]">
+                  {canClaim ? b.dueDate : b.cooldownNote}
+                </span>
+                <span className="text-[#1c1c1c]">
+                  <span className="text-[26px] font-extrabold leading-none tabular-nums">
+                    {canClaim ? 0 : countdown.days}
+                  </span>
+                  <span className="ml-0.5 text-[11px] font-semibold">{b.dayUnit}</span>
+                </span>
+                <span className="text-[12px] font-medium tabular-nums text-[#374151]">
+                  {canClaim ? "00:00:00" : countdown.clock}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => void onClaim()}
+                  disabled={!canClaim || claiming}
+                  className={`focus-ring mt-1.5 w-full rounded-full py-1.5 text-[13px] font-semibold text-white shadow-sm transition-transform ${
+                    canClaim && !claiming
+                      ? "bg-gradient-to-b from-[#52d61f] to-[#2fae0a] active:scale-[0.97]"
+                      : "cursor-not-allowed bg-[#c9ccd1]"
+                  }`}
+                >
+                  {claiming ? "…" : canClaim ? b.claim : b.claimed}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="px-4 py-8 text-center text-[14px] text-[#6b7280]">{b.noBonus}</p>
+          )}
         </div>
       </div>
     </div>

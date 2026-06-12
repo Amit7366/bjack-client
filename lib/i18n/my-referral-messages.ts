@@ -34,6 +34,11 @@ export type MyReferralMessages = {
   loading: string;
   loadError: string;
   retry: string;
+  referredUsersTitle: string;
+  usernameColumn: string;
+  totalDepositColumn: string;
+  referredAtColumn: string;
+  noReferredUsers: string;
 };
 
 const en: MyReferralMessages = {
@@ -69,6 +74,11 @@ const en: MyReferralMessages = {
   loading: "Loading referral data…",
   loadError: "Could not load referral data.",
   retry: "Try again",
+  referredUsersTitle: "Referred members",
+  usernameColumn: "Username",
+  totalDepositColumn: "Total deposit",
+  referredAtColumn: "Joined",
+  noReferredUsers: "No referred members yet.",
 };
 
 const bn: MyReferralMessages = {
@@ -104,6 +114,11 @@ const bn: MyReferralMessages = {
   loading: "রেফারেল ডেটা লোড হচ্ছে…",
   loadError: "রেফারেল ডেটা লোড করা যায়নি।",
   retry: "আবার চেষ্টা করুন",
+  referredUsersTitle: "রেফার করা সদস্য",
+  usernameColumn: "ইউজারনেম",
+  totalDepositColumn: "মোট ডিপোজিট",
+  referredAtColumn: "যোগদান",
+  noReferredUsers: "এখনও কোনো রেফার করা সদস্য নেই।",
 };
 
 const hi: MyReferralMessages = {
@@ -139,6 +154,11 @@ const hi: MyReferralMessages = {
   loading: "रेफरल डेटा लोड हो रहा है…",
   loadError: "रेफरल डेटा लोड नहीं हो सका।",
   retry: "फिर से कोशिश करें",
+  referredUsersTitle: "रेफर किए गए सदस्य",
+  usernameColumn: "उपयोगकर्ता नाम",
+  totalDepositColumn: "कुल जमा",
+  referredAtColumn: "शामिल हुए",
+  noReferredUsers: "अभी कोई रेफर सदस्य नहीं।",
 };
 
 const catalogs: Record<Locale, MyReferralMessages> = { en, bn, hi };

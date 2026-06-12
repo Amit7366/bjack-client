@@ -6,10 +6,15 @@ export type SignInRewardMessages = {
   signInTotalBonus: string;
   planTitle: string;
   notCheckedInToday: string;
+  checkedInToday: string;
   minimumDepositAmount: string;
   dayPrefix: string;
   bonusLabel: string;
   signInButton: string;
+  claimedButton: string;
+  depositRequired: string;
+  claimSuccess: string;
+  streakResetNote: string;
   redEnvelopeNote: string;
   goldenEggNote: string;
   rulesTitle: string;
@@ -22,10 +27,15 @@ const en: SignInRewardMessages = {
   signInTotalBonus: "Sign in total bonus",
   planTitle: "New Member Growth Plan",
   notCheckedInToday: "Not checked in today",
+  checkedInToday: "Checked in today",
   minimumDepositAmount: "Minimum deposit amount：",
   dayPrefix: "Day",
   bonusLabel: "Bonus",
   signInButton: "Sign In",
+  claimedButton: "Claimed",
+  depositRequired: "Total deposit must be at least ৳100 to claim",
+  claimSuccess: "Sign-in bonus added to your balance",
+  streakResetNote: "Miss a day and your streak resets to Day 1",
   redEnvelopeNote: "(5*/-)Red envelope",
   goldenEggNote: "20 GoldenEgg",
   rulesTitle: "Sign-in rules",
@@ -39,10 +49,15 @@ const bn: SignInRewardMessages = {
   signInTotalBonus: "সাইন ইন মোট বোনাস",
   planTitle: "নতুন সদস্য বৃদ্ধির পরিকল্পনা",
   notCheckedInToday: "আজ চেক ইন করা হয়নি",
+  checkedInToday: "আজ চেক ইন সম্পন্ন",
   minimumDepositAmount: "সর্বনিম্ন ডিপোজিটের পরিমাণ：",
   dayPrefix: "Day",
   bonusLabel: "Bonus",
   signInButton: "Sign In",
+  claimedButton: "Claimed",
+  depositRequired: "ক্লেইম করতে মোট ডিপোজিট কমপক্ষে ৳১০০ হতে হবে",
+  claimSuccess: "সাইন-ইন বোনাস ব্যালেন্সে যোগ হয়েছে",
+  streakResetNote: "এক দিন মিস করলে স্ট্রিক Day 1 থেকে শুরু হবে",
   redEnvelopeNote: "(5*/-)Red envelope",
   goldenEggNote: "20 GoldenEgg",
   rulesTitle: "Sign-in rules",
@@ -56,10 +71,15 @@ const hi: SignInRewardMessages = {
   signInTotalBonus: "साइन इन कुल बोनस",
   planTitle: "नए सदस्य विकास योजना",
   notCheckedInToday: "आज चेक इन नहीं किया",
+  checkedInToday: "आज चेक इन पूरा",
   minimumDepositAmount: "न्यूनतम जमा राशि：",
   dayPrefix: "Day",
   bonusLabel: "Bonus",
   signInButton: "Sign In",
+  claimedButton: "Claimed",
+  depositRequired: "क्लेम के लिए कुल जमा कम से कम ৳100 होनी चाहिए",
+  claimSuccess: "साइन-इन बोनस बैलेंस में जोड़ा गया",
+  streakResetNote: "एक दिन छूटने पर स्ट्रीक Day 1 से शुरू होगी",
   redEnvelopeNote: "(5*/-)Red envelope",
   goldenEggNote: "20 GoldenEgg",
   rulesTitle: "Sign-in rules",

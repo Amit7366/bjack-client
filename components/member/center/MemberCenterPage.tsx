@@ -281,13 +281,12 @@ export default function MemberCenterPage() {
                 >
                   {m.withdrawal}
                 </Link>
-                <button
-                  type="button"
-                  onClick={onComingSoon}
+                <Link
+                  href={memberSectionHref(locale, "add-wallet")}
                   className="focus-ring flex min-h-10 flex-1 items-center justify-center rounded-full border border-[#dfe3e8] bg-gradient-to-b from-white to-[#e8ebef] text-[14px] font-semibold text-[#1f2937] shadow-sm transition-colors hover:to-[#dde1e6]"
                 >
                   {m.myCards}
-                </button>
+                </Link>
               </div>
             </div>
           </div>

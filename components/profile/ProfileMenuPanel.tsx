@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { memberSectionHref } from "@/lib/member-routes";
+import { getMemberCenterMessages } from "@/lib/i18n/member-center-messages";
 import { getProfileMessages, PROFILE_MENU_ITEMS } from "@/lib/i18n/profile-messages";
 import { useAuth } from "@/components/AuthProvider";
 import { useToast } from "@/components/ToastProvider";
@@ -17,15 +18,19 @@ type ProfileMenuPanelProps = {
   onClose: () => void;
   /** Deposit/withdraw wallet block — mobile profile sheet only */
   showWalletSection?: boolean;
+  /** Desktop profile dropdown — link to /member hub at top of menu */
+  showMemberHubLink?: boolean;
 };
 
 export default function ProfileMenuPanel({
   onClose,
   showWalletSection = false,
+  showMemberHubLink = false,
 }: ProfileMenuPanelProps) {
   const { preferences } = useLocale();
   const locale = preferences.locale;
   const p = getProfileMessages(locale);
+  const mc = getMemberCenterMessages(locale);
   const router = useRouter();
   const { logout } = useAuth();
   const { showToast } = useToast();
@@ -85,6 +90,19 @@ export default function ProfileMenuPanel({
       {showWalletSection ? <ProfileWalletSection onNavigate={onClose} /> : null}
 
       <ul className="py-1">
+        {showMemberHubLink ? (
+          <li>
+            <Link
+              href={`/${locale}/member`}
+              className="focus-ring flex min-h-[44px] items-center gap-3 px-4 py-2.5 text-[13px] text-white transition-colors hover:bg-[#2a2a2a] active:bg-[#333]"
+              onClick={onClose}
+            >
+              <ProfileMenuIcon name="member" />
+              <span className="min-w-0 flex-1">{mc.navLabel}</span>
+              <ChevronRight />
+            </Link>
+          </li>
+        ) : null}
         {PROFILE_MENU_ITEMS.map(({ id, icon }) => (
           <li key={id}>
             <Link

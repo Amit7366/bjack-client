@@ -116,7 +116,7 @@ export default function ProfileDropdown({
         onMouseLeave={handleLeave}
       >
         <div className="overflow-hidden rounded-lg border border-[#333] bg-[#1e1e1e] shadow-[0_16px_48px_rgba(0,0,0,0.55)]">
-          <ProfileMenuPanel onClose={() => setOpen(false)} />
+          <ProfileMenuPanel onClose={() => setOpen(false)} showMemberHubLink />
         </div>
       </div>
     </div>

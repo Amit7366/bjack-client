@@ -3,6 +3,13 @@ import { readAuthSession } from "@/lib/auth/session";
 
 const API_PREFIX = "/api/v1";
 
+export type ReferredUserRow = {
+  userId: string;
+  username: string;
+  totalDeposit: number;
+  referredAt: string;
+};
+
 export type MyReferralSummary = {
   referralId: string;
   activeDownline: number;
@@ -11,6 +18,7 @@ export type MyReferralSummary = {
   downlineTurnover: number;
   rewards: number;
   earnedReward: number;
+  referredUsers: ReferredUserRow[];
 };
 
 export function buildReferralRegisterLink(locale: string, referralId: string): string {

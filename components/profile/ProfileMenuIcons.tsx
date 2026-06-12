@@ -157,6 +157,24 @@ export function ProfileMenuIcon({ name }: { name: string }) {
           <path d="M6 3.5h8" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
         </svg>
       );
+    case "member":
+      return (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden className={common}>
+          <path
+            d="M6 4.5h8l4.5 6.5-8.5 8.5L2 11 6 4.5z"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M2.8 11h14.4M6 4.5l2.5 6.5 2.5-3 2.5 3L14 4.5"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinejoin="round"
+            opacity="0.85"
+          />
+        </svg>
+      );
     default:
       return null;
   }
