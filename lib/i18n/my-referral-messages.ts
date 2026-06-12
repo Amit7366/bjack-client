@@ -38,6 +38,10 @@ export type MyReferralMessages = {
   usernameColumn: string;
   totalDepositColumn: string;
   referredAtColumn: string;
+  turnoverColumn: string;
+  rewardStatusColumn: string;
+  rewardPaid: string;
+  rewardPending: string;
   noReferredUsers: string;
 };
 
@@ -78,6 +82,10 @@ const en: MyReferralMessages = {
   usernameColumn: "Username",
   totalDepositColumn: "Total deposit",
   referredAtColumn: "Joined",
+  turnoverColumn: "Turnover",
+  rewardStatusColumn: "Reward",
+  rewardPaid: "৳300 paid",
+  rewardPending: "In progress",
   noReferredUsers: "No referred members yet.",
 };
 
@@ -118,6 +126,10 @@ const bn: MyReferralMessages = {
   usernameColumn: "ইউজারনেম",
   totalDepositColumn: "মোট ডিপোজিট",
   referredAtColumn: "যোগদান",
+  turnoverColumn: "টার্নওভার",
+  rewardStatusColumn: "পুরস্কার",
+  rewardPaid: "৳৩০০ প্রদত্ত",
+  rewardPending: "চলমান",
   noReferredUsers: "এখনও কোনো রেফার করা সদস্য নেই।",
 };
 
@@ -158,6 +170,10 @@ const hi: MyReferralMessages = {
   usernameColumn: "उपयोगकर्ता नाम",
   totalDepositColumn: "कुल जमा",
   referredAtColumn: "शामिल हुए",
+  turnoverColumn: "टर्नओवर",
+  rewardStatusColumn: "पुरस्कार",
+  rewardPaid: "৳300 भुगतान",
+  rewardPending: "प्रगति में",
   noReferredUsers: "अभी कोई रेफर सदस्य नहीं।",
 };
 

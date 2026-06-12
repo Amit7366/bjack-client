@@ -171,6 +171,8 @@ function ReferredUsersList({
               <tr className="border-b border-[#2f2f2f] bg-[#141414] text-[#9ca3af]">
                 <th className="px-3 py-2.5 font-medium sm:px-4">{labels.usernameColumn}</th>
                 <th className="px-3 py-2.5 font-medium sm:px-4">{labels.totalDepositColumn}</th>
+                <th className="px-3 py-2.5 font-medium sm:px-4">{labels.turnoverColumn}</th>
+                <th className="px-3 py-2.5 font-medium sm:px-4">{labels.rewardStatusColumn}</th>
                 <th className="hidden px-3 py-2.5 font-medium sm:table-cell sm:px-4">
                   {labels.referredAtColumn}
                 </th>
@@ -185,6 +187,21 @@ function ReferredUsersList({
                   <td className="px-3 py-3 font-medium text-white sm:px-4">{row.username}</td>
                   <td className="px-3 py-3 tabular-nums text-[#f5c518] sm:px-4">
                     ৳ {formatMyReferralAmount(locale, row.totalDeposit)}
+                  </td>
+                  <td className="px-3 py-3 tabular-nums text-white sm:px-4">
+                    {formatMyReferralAmount(locale, row.turnoverCompleted)} /{" "}
+                    {formatMyReferralAmount(locale, row.turnoverRequired)}
+                  </td>
+                  <td className="px-3 py-3 sm:px-4">
+                    <span
+                      className={
+                        row.rewardPaid
+                          ? "font-medium text-[#4ade80]"
+                          : "text-[#9ca3af]"
+                      }
+                    >
+                      {row.rewardPaid ? labels.rewardPaid : labels.rewardPending}
+                    </span>
                   </td>
                   <td className="hidden px-3 py-3 text-[#9ca3af] sm:table-cell sm:px-4">
                     {formatReferredDate(row.referredAt, locale)}

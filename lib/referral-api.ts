@@ -8,6 +8,9 @@ export type ReferredUserRow = {
   username: string;
   totalDeposit: number;
   referredAt: string;
+  turnoverCompleted: number;
+  turnoverRequired: number;
+  rewardPaid: boolean;
 };
 
 export type MyReferralSummary = {
