@@ -226,6 +226,20 @@
   animation: game-launch-bar 1.2s ease-in-out infinite;
 }
 
+@keyframes spin-ticker {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-spin-ticker {
+  display: inline-block;
+  animation: spin-ticker 12s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-float-slow,
   .animate-float-medium,
@@ -236,7 +250,8 @@
   .animate-game-launch-spin,
   .animate-game-launch-spin-slow,
   .animate-game-launch-ping,
-  .animate-game-launch-bar {
+  .animate-game-launch-bar,
+  .animate-spin-ticker {
     animation: none;
   }
 

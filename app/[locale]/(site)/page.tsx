@@ -4,6 +4,7 @@ import EventSection from "@/components/EventSection";
 import ExclusiveGamesSection from "@/components/ExclusiveGamesSection";
 import HeroSlider from "@/components/HeroSlider";
 import HomeGameTabs from "@/components/HomeGameTabs";
+import HomeSpinWheelGate from "@/components/spin-wheel/HomeSpinWheelGate";
 import ProviderSection from "@/components/ProviderSection";
 import HomeJsonLd from "@/components/seo/HomeJsonLd";
 import { fetchExclusiveSlides, fetchPopularGames } from "@/lib/games-api";
@@ -41,6 +42,7 @@ export default async function Home({ params }: PageProps) {
   return (
     <>
       <HomeJsonLd locale={locale} />
+      <HomeSpinWheelGate />
       <HeroSlider />
       <AnnouncementBar />
       <HomeGameTabs popularGames={popularGames} />
