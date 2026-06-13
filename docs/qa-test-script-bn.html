@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <title>BKBaji QA Test Script (BN)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+@page { size: A4; margin: 12mm 10mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "Noto Sans Bengali", "Helvetica Neue", Arial, sans-serif;
+  font-size: 9.5pt;
+  line-height: 1.45;
+  color: #111;
+  max-width: 100%;
+}
+h1 { font-size: 18pt; margin: 0 0 8pt; color: #0d4a2e; border-bottom: 2px solid #178358; padding-bottom: 6pt; }
+h2 { font-size: 12pt; margin: 14pt 0 6pt; color: #178358; page-break-after: avoid; }
+p, li { margin: 4pt 0; }
+hr { border: none; border-top: 1px solid #ccc; margin: 10pt 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 6pt 0 10pt;
+  font-size: 8.5pt;
+  page-break-inside: avoid;
+}
+th, td {
+  border: 1px solid #bbb;
+  padding: 4pt 5pt;
+  vertical-align: top;
+  text-align: left;
+}
+th { background: #e8f5ee; font-weight: 700; }
+tr:nth-child(even) td { background: #fafafa; }
+code { font-size: 8pt; background: #f0f0f0; padding: 1pt 3pt; border-radius: 2pt; }
+strong { font-weight: 700; }
+em { font-style: italic; color: #555; }
+.meta { margin-bottom: 10pt; }
+.meta p { margin: 2pt 0; }
+</style>
+</head>
+<body>
+<h1>BKBaji ক্লায়েন্ট — QA টেস্ট স্ক্রিপ্ট (বাংলা)</h1>
+<p><strong>সংস্করণ:</strong> 1.0<br />
+<strong>তারিখ:</strong> ১৩ জুন ২০২৬<br />
+<strong>পরিবেশ:</strong> <strong><em>_</em></strong><strong><em>_</em></strong><em><br />
+<strong>টেস্টার:</strong> <strong><em>_</em></strong><strong><em>_</em></strong></em><br />
+<strong>ব্রাউজার/ডিভাইস:</strong> <strong><em>_</em></strong><strong><em>_</em></strong>_</p>
+<hr />
+<h2>ব্যবহার নির্দেশনা</h2>
+<ul>
+<li>প্রতিটি টেস্ট কেস সম্পন্ন করার পর <strong>ফলাফল</strong> কলামে ✓ চিহ্ন দিন।</li>
+<li>ব্যর্থ হলে <strong>মন্তব্য</strong> কলামে সমস্যার বিবরণ লিখুন।</li>
+<li><strong>Coming soon</strong> চিহ্নিত আইটেমগুলো UI আছে কিনা যাচাই করুন; কাজ না করলে N/A চিহ্নিত করুন।</li>
+<li>লগইন প্রয়োজন এমন টেস্টের জন্য আগে একটি টেস্ট অ্যাকাউন্ট তৈরি করুন।</li>
+</ul>
+<p><strong>ফলাফল চিহ্ন:</strong> ✓ Pass | ✗ Fail | — N/A | ☐ পরীক্ষা বাকি</p>
+<hr />
+<h2>১. সাইট সেটিংস ও ভাষা</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L-01</td>
+<td>ভাষা ও মুদ্রা পরিবর্তন</td>
+<td>১. টপ বারে <strong>Currency and Language</strong> ক্লিক করুন<br>২. <strong>Bangladesh (BDT)</strong> বা <strong>India (INR)</strong> নির্বাচন করুন<br>৩. <strong>English / Bengali / Hindi</strong> ভাষা বেছে নিন</td>
+<td>সাইট নির্বাচিত ভাষা ও মুদ্রায় রিলোড হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>L-02</td>
+<td>URL লোকেল রিডাইরেক্ট</td>
+<td>১. <code>/</code> খুলুন</td>
+<td>সেভ করা লোকেলে (যেমন <code>/bn</code>) রিডাইরেক্ট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>L-03</td>
+<td>অবৈধ লোকেল</td>
+<td>১. <code>/xx</code> বা অবৈধ লোকেল URL খুলুন</td>
+<td>ডিফল্ট লোকেলে (<code>/bn</code>) রিডাইরেক্ট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>২. নিবন্ধন, লগইন ও লগআউট</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A-01</td>
+<td>নতুন অ্যাকাউন্ট তৈরি — ধাপ ১</td>
+<td>১. <strong>Sign Up</strong> ক্লিক করুন<br>২. মুদ্রা (BDT/INR) ও ফোন নম্বর দিন<br>৩. <strong>Continue</strong> ক্লিক করুন</td>
+<td>ধাপ ২ (Username)-এ যায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-02</td>
+<td>নতুন অ্যাকাউন্ট — ধাপ ২</td>
+<td>১. ইউজারনেম দিন<br>২. <strong>Continue</strong> ক্লিক করুন</td>
+<td>ধাপ ৩ (Password)-এ যায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-03</td>
+<td>নতুন অ্যাকাউন্ট — ধাপ ৩</td>
+<td>১. পাসওয়ার্ড দিন (ন্যূনতম ৬ অক্ষর)<br>২. <strong>Sign Up</strong> ক্লিক করুন</td>
+<td>রেজিস্ট্রেশন সফল; হোম পেজে লগইন অবস্থায় যায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-04</td>
+<td>খালি ফিল্ড ভ্যালিডেশন (রেজিস্টার)</td>
+<td>১. প্রতিটি ধাপে খালি ফিল্ড রেখে সাবমিট করুন</td>
+<td>উপযুক্ত ত্রুটি বার্তা দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-05</td>
+<td>রেফারেল লিংক দিয়ে রেজিস্টার</td>
+<td>১. <code>?refId=TEST123</code> সহ রেজিস্টার URL খুলুন<br>২. সম্পূর্ণ রেজিস্ট্রেশন করুন</td>
+<td>রেজিস্ট্রেশন সফল; referredBy পাঠানো হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-06</td>
+<td>লগইন — সফল</td>
+<td>১. <strong>Login</strong> → ইউজারনেম ও পাসওয়ার্ড দিন<br>২. <strong>Log In</strong> ক্লিক করুন</td>
+<td>হোম বা <code>next</code> URL-এ যায়; ন্যাভবারে ব্যালেন্স দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-07</td>
+<td>লগইন — ভুল তথ্য</td>
+<td>১. ভুল পাসওয়ার্ড দিয়ে লগইন চেষ্টা করুন</td>
+<td>ত্রুটি বার্তা দেখায়; লগইন হয় না</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-08</td>
+<td>সুরক্ষিত পেজ — গেস্ট</td>
+<td>১. লগআউট অবস্থায় <code>/bn/member</code> খুলুন</td>
+<td>লগইন পেজে রিডাইরেক্ট; <code>next</code> প্যারামিটার সেট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-09</td>
+<td>লগআউট — প্রোফাইল মেনু</td>
+<td>১. প্রোফাইল মেনু খুলুন<br>২. <strong>Log out</strong> ক্লিক করুন</td>
+<td>লগআউট হয়; লগইন পেজে যায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-10</td>
+<td>লগআউট — মেম্বার সেন্টার</td>
+<td>১. Member Center → <strong>Logout</strong> টাইল ক্লিক করুন</td>
+<td>লগআউট হয়; লগইন পেজে যায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>A-11</td>
+<td>Forgot Password (UI)</td>
+<td>১. লগইন পেজে <strong>Forgot Password</strong> বাটন দেখুন</td>
+<td>বাটন দেখা যায় <em>(কার্যকরী নয় — N/A চিহ্নিত করুন)</em></td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>৩. হোম পেজ</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H-01</td>
+<td>হোম পেজ লোড</td>
+<td>১. <code>/bn</code> (বা <code>/en</code>, <code>/hi</code>) খুলুন</td>
+<td>Hero slider, announcement, game tabs, providers, events, exclusive games দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>H-02</td>
+<td>গেম ট্যাব — Popular</td>
+<td>১. <strong>Popular</strong> ট্যাব নির্বাচন করুন</td>
+<td>জনপ্রিয় গেম কার্ড দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>H-03</td>
+<td>গেম ট্যাব — অন্যান্য</td>
+<td>১. Sports, Casino, Slots, Crash, Table, Fishing, Arcade, Lottery ট্যাব পরীক্ষা করুন</td>
+<td>প্রতিটিতে প্রোভাইডার/গেম দেখায় বা View all লিংক কাজ করে</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>H-04</td>
+<td>Hero slider</td>
+<td>১. স্লাইডারের previous/next বাটন ব্যবহার করুন</td>
+<td>স্লাইড পরিবর্তন হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>H-05</td>
+<td>Exclusive games</td>
+<td>১. Exclusive games সেকশন স্ক্রল করুন</td>
+<td>গেম স্লাইড/কার্ড দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>৪. স্পিন হুইল (লগইন প্রয়োজন)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S-01</td>
+<td>স্পিন হুইল পপআপ</td>
+<td>১. লগইন করে হোম পেজ খুলুন (প্রথমবার আজ)</td>
+<td>স্পিন হুইল মোডাল খোলে (যদি canSpin=true)</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>S-02</td>
+<td>স্পিন করা</td>
+<td>১. স্পিন বাটন চাপুন</td>
+<td>হুইল ঘোরে; পুরস্কার দেখায়; ব্যালেন্স আপডেট হতে পারে</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>S-03</td>
+<td>দৈনিক dismiss</td>
+<td>১. মোডাল বন্ধ করুন<br>২. পেজ রিলোড করুন</td>
+<td>একই দিনে আর পপআপ হয় না</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>S-04</td>
+<td>গেস্ট — স্পিন</td>
+<td>১. লগআউট অবস্থায় হোম খুলুন</td>
+<td>স্পিন হুইল পপআপ হয় না</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>৫. গেম ব্রাউজ ও খেলা</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G-01</td>
+<td>লobbies — Slots</td>
+<td>১. সাইডবার/বটম ন্যাভ থেকে <strong>Slots</strong> খুলুন</td>
+<td><code>/bn/slot</code> লobbies পেজ লোড হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-02</td>
+<td>লobbies — Casino</td>
+<td>১. <strong>Casino</strong> খুলুন</td>
+<td>ক্যাসিনো গেম তালিকা দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-03</td>
+<td>লobbies — Sports</td>
+<td>১. <strong>Sports</strong> → sub-item (Cricket/Football/Tennis)</td>
+<td>ফিল্টার করা গেম/লobbies দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-04</td>
+<td>লobbies — অন্যান্য</td>
+<td>১. Exclusive, Crash, Table, Fishing, Arcade, Lottery পরীক্ষা করুন</td>
+<td>প্রতিটি ক্যাটাগরি লোড হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-05</td>
+<td>সার্চ</td>
+<td>১. লobbies-এ সার্চ বক্সে গেমের নাম টাইপ করুন</td>
+<td>মিলে যাওয়া গেম ফিল্টার হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-06</td>
+<td>ফিল্টার — প্রোভাইডার</td>
+<td>১. Filter → প্রোভাইডার নির্বাচন করুন</td>
+<td>URL ও গেম তালিকা আপডেট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-07</td>
+<td>ফিল্টার — গেম টাইপ</td>
+<td>১. Filter → গেম টাইপ নির্বাচন করুন</td>
+<td>ফিল্টার করা ফলাফল দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-08</td>
+<td>সর্ট</td>
+<td>১. Sort → Recommend, A-Z, Z-A, New-Old, Old-New পরীক্ষা করুন</td>
+<td>গেম ক্রম সঠিকভাবে পরিবর্তন হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-09</td>
+<td>পেজিনেশন</td>
+<td>১. লobbies-এ নিচে স্ক্রল করুন</td>
+<td>আরও গেম লোড হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-10</td>
+<td>গেম খেলা — গেস্ট</td>
+<td>১. লগআউট অবস্থায় গেম কার্ড ক্লিক করুন</td>
+<td>"Become a BKBaji Member" মোডাল; Login/Sign Up অপশন</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-11</td>
+<td>গেম খেলা — লগইন</td>
+<td>১. লগইন অবস্থায় গেম ক্লিক করুন</td>
+<td>গেম ব্রাউজারে লঞ্চ হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>G-12</td>
+<td>গেম থেকে ফিরে আসা</td>
+<td>১. গেম খেলে সাইটে ফিরুন</td>
+<td>ব্যালেন্স সিঙ্ক/আপডেট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>৬. প্রমোশন ও VIP (পাবলিক)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P-01</td>
+<td>প্রমোশন পেজ</td>
+<td>১. <code>/bn/promotion</code> বা সাইডবার <strong>Promotions</strong> খুলুন</td>
+<td>প্রমোশন কার্ড গ্রিড দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>P-02</td>
+<td>প্রমোশন ফিল্টার</td>
+<td>১. All, Welcome, Cashback ফিল্টার ক্লিক করুন</td>
+<td>ফিল্টার অনুযায়ী কার্ড দেখায়/লুকায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>P-03</td>
+<td>VIP Club</td>
+<td>১. <code>/bn/vip</code> বা সাইডবার <strong>VIP Club</strong> খুলুন</td>
+<td>VIP সুবিধা ও Join Now বাটন দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>P-04</td>
+<td>পাবলিক Referral</td>
+<td>১. <code>/bn/referral</code> খুলুন</td>
+<td>Invite→Register→Earn, লিডারবোর্ড, রুলস দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>৭. ন্যাভিগেশন ও ওয়ালেট বার (লগইন)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N-01</td>
+<td>টপ ওয়ালেট বার</td>
+<td>১. লগইন অবস্থায় ন্যাভবার দেখুন</td>
+<td>VIP পয়েন্ট, ব্যালেন্স, Deposit (+), Withdraw (−) দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>N-02</td>
+<td>ব্যালেন্স লুকানো</td>
+<td>১. চোখ আইকন ক্লিক করুন</td>
+<td>ব্যালেন্স মাস্ক হয় (<strong>*</strong>)</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>N-03</td>
+<td>ব্যালেন্স রিফ্রেশ</td>
+<td>১. রিফ্রেশ আইকন ক্লিক করুন</td>
+<td>ব্যালেন্স API থেকে আপডেট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>N-04</td>
+<td>ডেস্কটপ প্রোফাইল ড্রপডাউন</td>
+<td>১. প্রোফাইল আইকন ক্লিক করুন</td>
+<td>মেনু: Notifications, Personal Info, ইত্যাদি</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>N-05</td>
+<td>মোবাইল বটম ন্যাভ</td>
+<td>১. মোবাইল ভিউতে Menu, Slots, Promotions, Member, Profile পরীক্ষা করুন</td>
+<td>প্রতিটি লিংক/অ্যাকশন কাজ করে</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>N-06</td>
+<td>মোবাইল প্রোফাইল শীট</td>
+<td>১. Profile ট্যাপ করুন</td>
+<td>Deposit/Withdraw সহ প্রোফাইল মেনু খোলে</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>N-07</td>
+<td>সাইডবার মেনু</td>
+<td>১. Menu বাটন → সাইডবার খুলুন</td>
+<td>গেম ক্যাটাগরি, Promotions, VIP, Referral দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>N-08</td>
+<td>সাইডবার ড্রপডাউন</td>
+<td>১. Sports/Slots ইত্যাদির sub-menu খুলুন</td>
+<td>প্রোভাইডার লিংক কাজ করে</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>৮. মেম্বার সেন্টার (<code>/member</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M-01</td>
+<td>ড্যাশবোর্ড</td>
+<td>১. Member Center খুলুন</td>
+<td>ID, nickname, join date, balance, VIP0 দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-02</td>
+<td>ID কপি</td>
+<td>১. Copy আইকন ক্লিক করুন</td>
+<td>"Member ID copied" টোস্ট; ক্লিপবোর্ডে কপি</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-03</td>
+<td>ব্যালেন্স রিফ্রেশ</td>
+<td>১. রিফ্রেশ বাটন ক্লিক করুন</td>
+<td>ব্যালেন্স আপডেট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-04</td>
+<td>দ্রুত Deposit/Withdraw/My Cards</td>
+<td>১. তিনটি বাটন ক্লিক করুন</td>
+<td>সঠিক পেজে যায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-05</td>
+<td>Sign In রিবন</td>
+<td>১. Sign In রিবন ক্লিক করুন</td>
+<td>Sign-in reward পেজে যায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-06</td>
+<td>Reward Center টাইল</td>
+<td>১. Reward Center ক্লিক করুন</td>
+<td>Reward Center পেজ খোলে</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-07</td>
+<td>Betting Record টাইল</td>
+<td>১. Betting Record ক্লিক করুন</td>
+<td>Betting records পেজ</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-08</td>
+<td>Deposit/Withdrawal/Account Record</td>
+<td>১. প্রতিটি টাইল ক্লিক করুন</td>
+<td>Transaction records পেজ</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-09</td>
+<td>My Account টাইল</td>
+<td>১. My Account ক্লিক করুন</td>
+<td>Personal info পেজ</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-10</td>
+<td>Security Center টাইল</td>
+<td>১. Security Center ক্লিক করুন</td>
+<td>Login &amp; Security পেজ</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-11</td>
+<td>Invite Friends টাইল</td>
+<td>১. Invite Friends ক্লিক করুন</td>
+<td>My Referral পেজ</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-12</td>
+<td>Internal Message টাইল</td>
+<td>১. Internal Message ক্লিক করুন</td>
+<td>Notifications পেজ</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>M-13</td>
+<td>Coming soon টাইল</td>
+<td>১. Mission, Rebate, Profit &amp; Loss, Suggestion, Download APP, Customer Service ক্লিক করুন</td>
+<td>"Coming soon" টোস্ট দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>৯. ডিপোজিট</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D-01</td>
+<td>ডিপোজিট মেথড পেজ</td>
+<td>১. Deposit খুলুন</td>
+<td>Quick deposit অপশন দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-02</td>
+<td>Quick deposit — প্রমো</td>
+<td>১. Quick deposit → প্রমোশন নির্বাচন/পরিবর্তন করুন</td>
+<td>ন্যূনতম ডিপোজিট রিকোয়ারমেন্ট আপডেট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-03</td>
+<td>Quick deposit — পেমেন্ট</td>
+<td>১. bKash / Nagad / Rocket নির্বাচন করুন</td>
+<td>নির্বাচিত মেথড হাইলাইট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-04</td>
+<td>Quick deposit — চ্যানেল</td>
+<td>১. SG-Cashout / Send Money / TM-CashOut নির্বাচন করুন</td>
+<td>চ্যানেল সিলেক্ট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-05</td>
+<td>Quick deposit — পরিমাণ</td>
+<td>১. কীপ্যাড দিয়ে পরিমাণ দিন<br>২. +100, +500 preset ব্যবহার করুন</td>
+<td>পরিমাণ ইনপুট হয়; ভ্যালিডেশন (min/max) কাজ করে</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-06</td>
+<td>Quick deposit — সাবমিট</td>
+<td>১. বৈধ পরিমাণ দিয়ে Submit করুন</td>
+<td>Verify পেজে redirect (<code>/deposit/quick/verify</code>)</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-07</td>
+<td>Verify — পেমেন্ট তথ্য</td>
+<td>১. Verify পেজে amount, method, cashout number দেখুন</td>
+<td>সঠিক তথ্য ও কাউন্টডাউন (১০ মিনিট) দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-08</td>
+<td>Verify — নম্বর কপি</td>
+<td>১. Cashout number Copy করুন</td>
+<td>ক্লিপবোর্ডে কপি; টোস্ট/ফিডব্যাক</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-09</td>
+<td>Verify — txn ID জমা</td>
+<td>১. Transaction ID দিন<br>২. Submit করুন</td>
+<td>ভেরিফিকেশন শুরু; সফল হলে ব্যালেন্স আপডেট</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-10</td>
+<td>Verify — অবৈধ txn</td>
+<td>১. ভুল txn ID দিন</td>
+<td>ত্রুটি বার্তা; ব্যালেন্স আপডেট হয় না</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>D-11</td>
+<td>Verify — টাইমআউট</td>
+<td>১. কাউন্টডাউন শেষ হওয়া পর্যন্ত অপেক্ষা করুন</td>
+<td>টাইমআউট/ব্যর্থ হ্যান্ডলিং</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১০. উইথড্রয়াল</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W-01</td>
+<td>উইথড্রয়াল — ওয়ালেট নেই</td>
+<td>১. কোনো ওয়ালেট ছাড়া Withdraw খুলুন</td>
+<td>"Add wallet first" মেসেজ; Add wallet বাটন</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>W-02</td>
+<td>ওয়ালেট নির্বাচন</td>
+<td>১. সংরক্ষিত ওয়ালেট থেকে একটি বেছে নিন</td>
+<td>সিলেক্টেড ওয়ালেট হাইলাইট</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>W-03</td>
+<td>পরিমাণ — ন্যূনতম</td>
+<td>১. ৳100-এর কম পরিমাণ দিন</td>
+<td>ভ্যালিডেশন ত্রুটি</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>W-04</td>
+<td>পরিমাণ — ব্যালেন্সের বেশি</td>
+<td>১. ব্যালেন্সের বেশি পরিমাণ দিন</td>
+<td>"Amount exceeds balance" ত্রুটি</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>W-05</td>
+<td>উইথড্রয়াল সাবমিট</td>
+<td>১. বৈধ ওয়ালেট + পরিমাণ দিয়ে Submit করুন</td>
+<td>"Request submitted" সফলতা স্ক্রিন</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>W-06</td>
+<td>সফলতার পর</td>
+<td>১. Transaction records বা Home বাটন ক্লিক করুন</td>
+<td>সঠিক পেজে যায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>W-07</td>
+<td>Add wallet লিংক</td>
+<td>১. Withdraw পেজ থেকে "+ Add wallet" ক্লিক করুন</td>
+<td>Add Wallet পেজ</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১১. ওয়ালেট ব্যবস্থাপনা (My Cards)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WL-01</td>
+<td>ওয়ালেট যোগ</td>
+<td>১. Add Wallet → bKash/Nagad/Rocket<br>২. নাম ও নম্বর দিন<br>৩. Add wallet</td>
+<td>"Wallet added" টোস্ট; তালিকায় দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>WL-02</td>
+<td>ওয়ালেট মুছুন</td>
+<td>১. সংরক্ষিত ওয়ালেটে trash আইকন ক্লিক করুন</td>
+<td>"Wallet removed" টোস্ট; তালিকা থেকে সরে</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>WL-03</td>
+<td>সর্বোচ্চ সীমা</td>
+<td>১. MAX ওয়ালেট যোগ করার পর আরও যোগের চেষ্টা করুন</td>
+<td>সীমা বার্তা; ফর্ম disabled</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>WL-04</td>
+<td>ভ্যালিডেশন</td>
+<td>১. খালি/অল্প নম্বর দিয়ে সাবমিট করুন</td>
+<td>সাবমিট disabled বা ত্রুটি</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১২. রিওয়ার্ড সেন্টার</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R-01</td>
+<td>Reward Center লোড</td>
+<td>১. <code>/member/reward-center</code> খুলুন</td>
+<td>ব্যালেন্স, VIP progress, reward tiles</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>R-02</td>
+<td>Daily Sign-in — স্ট্যাটাস</td>
+<td>১. Sign-in reward পেজ খুলুন</td>
+<td>৭-দিনের ক্যালেন্ডার ও আজকের স্ট্যাটাস</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>R-03</td>
+<td>Daily Sign-in — ক্লেইম</td>
+<td>১. eligible অবস্থায় Claim ক্লিক করুন</td>
+<td>বোনাস ক্রেডিট; success টোস্ট</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>R-04</td>
+<td>Sign-in — ডিপোজিট প্রয়োজন</td>
+<td>১. min deposit না থাকলে Claim চেষ্টা করুন</td>
+<td>deposit required ত্রুটি</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>R-05</td>
+<td>Member Bonus</td>
+<td>১. Bonus reward পেজ খুলুন</td>
+<td>বোনাস পরিমাণ ও countdown দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>R-06</td>
+<td>Member Bonus — ক্লেইম</td>
+<td>১. canClaim=true হলে Claim করুন</td>
+<td>বোনাস ক্রেডিট; countdown রিসেট</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>R-07</td>
+<td>Invite Friends টাইল</td>
+<td>১. Invite Friends ক্লিক করুন</td>
+<td>My Referral পেজ</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>R-08</td>
+<td>Coming soon টাইল</td>
+<td>১. Rescue Fund, Promo Code ক্লিক করুন</td>
+<td>"Coming soon" টোস্ট</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১৩. ব্যক্তিগত তথ্য</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PI-01</td>
+<td>Personal Info ট্যাব</td>
+<td>১. Profile → Personal Information</td>
+<td>Username, Legal name, DOB, Phone, Email দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>PI-02</td>
+<td>Username কপি</td>
+<td>১. Copy বাটন ক্লিক করুন</td>
+<td>ক্লিপবোর্ডে কপি; টোস্ট</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>PI-03</td>
+<td>Full legal name</td>
+<td>১. Manage → নাম দিন → Save</td>
+<td>Personal info-তে নাম দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>PI-04</td>
+<td>Date of birth</td>
+<td>১. Manage → YYYY-MM-DD → Save</td>
+<td>DOB সংরক্ষিত</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>PI-05</td>
+<td>Phone — OTP</td>
+<td>১. Phone → নম্বর → Verify → ৬-অঙ্ক OTP</td>
+<td>সফল হলে personal info-তে ফিরে যায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>PI-06</td>
+<td>Phone — ভুল OTP</td>
+<td>১. ভুল OTP দিন</td>
+<td>invalid code ত্রুটি</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>PI-07</td>
+<td>Email — OTP</td>
+<td>১. Email → ইমেইল → Verify → OTP</td>
+<td>সফল ভেরিফিকেশন</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>PI-08</td>
+<td>Login &amp; Security ট্যাব</td>
+<td>১. Login &amp; Security ট্যাব</td>
+<td>Password → Manage লিংক</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>PI-09</td>
+<td>Verification ট্যাব</td>
+<td>১. Verification ট্যাব</td>
+<td>Documents → Manage লিংক</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১৪. পাসওয়ার্ড পরিবর্তন</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CP-01</td>
+<td>Change password — সফল</td>
+<td>১. Current + new + confirm password দিন<br>২. Submit</td>
+<td>সফল; লগআউট; নতুন পাসওয়ার্ডে লগইন</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>CP-02</td>
+<td>পাসওয়ার্ড নিয়ম</td>
+<td>১. দুর্বল নতুন পাসওয়ার্ড দিন</td>
+<td>নিয়ম চেকলিস্ট; submit disabled</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>CP-03</td>
+<td>Confirm mismatch</td>
+<td>১. new ≠ confirm</td>
+<td>mismatch ত্রুটি</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>CP-04</td>
+<td>ভুল current password</td>
+<td>১. ভুল current password দিন</td>
+<td>API ত্রুটি বার্তা</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১৫. KYC / ডকুমেন্ট ভেরিফিকেশন</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>K-01</td>
+<td>Documents পেজ</td>
+<td>১. Verification → Documents → Manage</td>
+<td>ফর্ম: doc type, number, expiry, uploads</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>K-02</td>
+<td>ফাইল আপলোড</td>
+<td>১. Front, Back, Selfie ইমেজ আপলোড করুন</td>
+<td>ফাইল নাম/প্রিভিউ দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>K-03</td>
+<td>জমা দেওয়া</td>
+<td>১. সব ফিল্ড পূরণ → Submit</td>
+<td>KYC status আপডেট; success ফিডব্যাক</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>K-04</td>
+<td>ভ্যালিডেশন</td>
+<td>১. খালি/অবৈধ expiry দিয়ে সাবমিট</td>
+<td>ত্রুটি; জমা হয় না</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১৬. রেকর্ড ও ইতিহাস</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TR-01</td>
+<td>Transaction records লোড</td>
+<td>১. Transaction Records খুলুন</td>
+<td>API থেকে লেনদেন তালিকা</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>TR-02</td>
+<td>Status ফিল্টার</td>
+<td>১. Pending/Approved/Rejected ফিল্টার</td>
+<td>ফিল্টার করা ফলাফল</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>TR-03</td>
+<td>Payment type ফিল্টার</td>
+<td>১. Deposit/Withdrawal ইত্যাদি ফিল্টার</td>
+<td>সঠিক ফিল্টার</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>TR-04</td>
+<td>Date ফিল্টার</td>
+<td>১. Last 7 days / 30 days / custom</td>
+<td>তারিখ অনুযায়ী ফিল্টার</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>TR-05</td>
+<td>বিস্তারিত</td>
+<td>১. একটি রেকর্ড expand করুন</td>
+<td>amount, gateway, date, status দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>BR-01</td>
+<td>Betting records লোড</td>
+<td>১. Betting Records খুলুন</td>
+<td>বেট তালিকা</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>BR-02</td>
+<td>ট্যাব</td>
+<td>১. Settled / Unsettled (বা অন্যান্য) ট্যাব</td>
+<td>ট্যাব অনুযায়ী ফিল্টার</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>BR-03</td>
+<td>Date ফিল্টার</td>
+<td>১. তারিখ ফিল্টার প্রয়োগ করুন</td>
+<td>ফিল্টার করা বেট</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>BR-04</td>
+<td>Win/Loss badge</td>
+<td>১. Won/Lost বেট expand করুন</td>
+<td>সঠিক রঙ ও payout</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>TO-01</td>
+<td>Turnover পেজ</td>
+<td>১. Turnover খুলুন</td>
+<td>মোট/active/completed turnover</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>TO-02</td>
+<td>Progress bar</td>
+<td>১. active promotion turnover দেখুন</td>
+<td>progress bar সঠিক শতাংশ</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>TO-03</td>
+<td>Refresh</td>
+<td>১. গেম খেলার পর Refresh ক্লিক করুন</td>
+<td>turnover আপডেট</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১৭. নোটিফিকেশন</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NT-01</td>
+<td>তালিকা</td>
+<td>১. Notifications খুলুন</td>
+<td>নোটিফিকেশন তালিকা দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>NT-02</td>
+<td>Expand/Collapse</td>
+<td>১. একটি মেসেজ ক্লিক করুন</td>
+<td>বিস্তারিত expand/collapse</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>NT-03</td>
+<td>Edit mode</td>
+<td>১. Edit → মেসেজ সিলেক্ট → Read/Unread</td>
+<td>স্ট্যাটাস পরিবর্তন</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>NT-04</td>
+<td>Delete</td>
+<td>১. Edit → সিলেক্ট → Delete</td>
+<td>মেসেজ তালিকা থেকে সরে</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>NT-05</td>
+<td>Select all</td>
+<td>১. Select all → bulk action</td>
+<td>সব সিলেক্ট হয়</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১৮. My Referral (মেম্বার)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RF-01</td>
+<td>Referral summary</td>
+<td>১. My Referral খুলুন</td>
+<td>referral ID, stats API থেকে লোড</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>RF-02</td>
+<td>Code কপি</td>
+<td>১. Copy code ক্লিক করুন</td>
+<td>ক্লিপবোর্ডে কপি; টোস্ট</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>RF-03</td>
+<td>Link কপি</td>
+<td>১. Copy link ক্লিক করুন</td>
+<td>রেজিস্টার URL কপি</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>RF-04</td>
+<td>QR কোড</td>
+<td>১. QR ইমেজ দেখুন</td>
+<td>স্ক্যানযোগ্য QR</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>RF-05</td>
+<td>Share</td>
+<td>১. Share বাটন (মোবাইল)</td>
+<td>native share বা link copy</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>RF-06</td>
+<td>Tabs</td>
+<td>১. Info, Details, Rewards ট্যাব</td>
+<td>প্রতিটিতে সঠিক কন্টেন্ট</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>RF-07</td>
+<td>Rules modal</td>
+<td>১. Rules খুলুন</td>
+<td>রেফারেল নিয়ম দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>RF-08</td>
+<td>Referred users</td>
+<td>১. Rewards/Referred users তালিকা</td>
+<td>API ডেটা দেখায়</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>১৯. Coming Soon / Placeholder (যাচাই)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>আইটেম</th>
+<th>প্রত্যাশিত আচরণ</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CS-01</td>
+<td>Forgot Password</td>
+<td>UI only; কাজ করে না</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>CS-02</td>
+<td>My VIP (profile)</td>
+<td>Placeholder পেজ</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>CS-03</td>
+<td>E-wallet / Crypto / Local Bank deposit</td>
+<td>UI commented out</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>CS-04</td>
+<td>Member Center: Mission, Rebate, P&amp;L, Suggestion, Download APP, CS</td>
+<td>Coming soon toast</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>CS-05</td>
+<td>Reward Center: Rescue Fund, Promo Code</td>
+<td>Coming soon toast</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>CS-06</td>
+<td>Sidebar: Affiliate, Brand Ambassadors, App Download, Forum</td>
+<td>Placeholder/external</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>২০. ক্রস-ব্রাউজার ও রেসপন্সিভ (ঐচ্ছিক)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>টেস্ট কেস</th>
+<th>ধাপ</th>
+<th>প্রত্যাশিত ফলাফল</th>
+<th>ফলাফল</th>
+<th>মন্তব্য</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>X-01</td>
+<td>মোবাইল (≤768px)</td>
+<td>১. Chrome DevTools mobile view</td>
+<td>বটম ন্যাভ, সাইডবার, layout ঠিক</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>X-02</td>
+<td>ট্যাবলেট</td>
+<td>১. 768–1024px viewport</td>
+<td>layout ভাঙে না</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>X-03</td>
+<td>ডেস্কটপ</td>
+<td>১. ≥1024px</td>
+<td>সাইডবার + ফুল navbar</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>X-04</td>
+<td>Safari (iOS)</td>
+<td>১. মূল ফ্লো (login, deposit, game)</td>
+<td>কাজ করে</td>
+<td>☐</td>
+<td></td>
+</tr>
+<tr>
+<td>X-05</td>
+<td>Chrome (Android)</td>
+<td>১. মূল ফ্লো</td>
+<td>কাজ করে</td>
+<td>☐</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>সারাংশ শীট (পরীক্ষার শেষে পূরণ করুন)</h2>
+<table>
+<thead>
+<tr>
+<th>মেট্রিক</th>
+<th>সংখ্যা</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>মোট টেস্ট কেস</td>
+<td>_____</td>
+</tr>
+<tr>
+<td>Pass (✓)</td>
+<td>_____</td>
+</tr>
+<tr>
+<td>Fail (✗)</td>
+<td>_____</td>
+</tr>
+<tr>
+<td>N/A (—)</td>
+<td>_____</td>
+</tr>
+<tr>
+<td>Pass Rate</td>
+<td>_____%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critical bugs (ব্লকার):</strong><br />
+1. <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em><br />
+2. </strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>___</p>
+<p><strong>Major bugs:</strong><br />
+1. <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em><br />
+2. </strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>___</p>
+<p><strong>Minor / UI issues:</strong><br />
+1. <strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>_____</p>
+<p><strong>স্বাক্ষর:</strong></p>
+<p>টেস্টার: <strong><em>_</em></strong><strong><em>_</em></strong><strong><em> তারিখ: </em></strong><strong><em>_</em></strong><strong><em>_</em></strong></p>
+<p>QA Lead: <strong><em>_</em></strong><strong><em>_</em></strong><strong><em> তারিখ: </em></strong><strong><em>_</em></strong><strong><em>_</em></strong></p>
+<hr />
+<p><em>এই ডকুমেন্ট BKBaji <code>client</code> অ্যাপের বর্তমান ইমপ্লিমেন্টেশন অনুযায়ী প্রস্তুত। API/ব্যাকএন্ড পরিবর্তন হলে সংশ্লিষ্ট টেস্ট কেস আপডেট করুন।</em></p>
+</body>
+</html>

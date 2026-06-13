@@ -13,12 +13,15 @@ import {
   verifyAutoPayDeposit,
   type DepositPaymentMethod,
 } from "@/lib/deposit-api";
+import {
+  fetchActiveDepositAccounts,
+  findActiveAccountForMethod,
+} from "@/lib/deposit-payment-accounts";
 import { memberDepositHref } from "@/lib/member-routes";
 
 const PAYMENT_WINDOW_SEC = 10 * 60;
 const VERIFY_WINDOW_SEC = 3 * 60;
 const VERIFY_POLL_MS = 2500;
-const CASHOUT_NUMBER = "01635063453";
 
 function formatClock(totalSec: number): string {
   const safe = Math.max(0, totalSec);
@@ -90,6 +93,36 @@ function VerifyContent() {
       router.replace(memberDepositHref(locale));
     }
   }, [methodParam, router, locale]);
+
+  const [cashoutNumber, setCashoutNumber] = useState<string | null>(null);
+  const [channelName, setChannelName] = useState("");
+  const [accountLoading, setAccountLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setAccountLoading(true);
+      try {
+        const active = await fetchActiveDepositAccounts();
+        if (cancelled) return;
+        const account = findActiveAccountForMethod(active, paymentMethod);
+        if (!account) {
+          router.replace(memberDepositHref(locale));
+          return;
+        }
+        setCashoutNumber(account.accountNumber);
+        const matchedChannel = account.channelId === channel ? account.channelName : "";
+        setChannelName(matchedChannel || account.channelName);
+      } catch {
+        if (!cancelled) router.replace(memberDepositHref(locale));
+      } finally {
+        if (!cancelled) setAccountLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [paymentMethod, channel, router, locale]);
 
   const [stage, setStage] = useState<"pay" | "verifying">("pay");
   const [paySecLeft, setPaySecLeft] = useState(PAYMENT_WINDOW_SEC);
@@ -185,7 +218,7 @@ function VerifyContent() {
   }, []);
 
   const handleSubmit = async () => {
-    if (submitting || !txnId.trim() || paySecLeft <= 0 || amount <= 0) return;
+    if (submitting || !txnId.trim() || paySecLeft <= 0 || amount <= 0 || !cashoutNumber) return;
 
     setSubmitting(true);
     setError(null);
@@ -195,6 +228,7 @@ function VerifyContent() {
         amount,
         transactionId: txnId.trim(),
         paymentMethod,
+        agentNumber: cashoutNumber,
         promoCode,
       });
 
@@ -208,7 +242,17 @@ function VerifyContent() {
     }
   };
 
-  const canSubmit = txnId.trim().length >= 4 && paySecLeft > 0 && amount > 0 && !submitting;
+  const canSubmit =
+    txnId.trim().length >= 4 &&
+    paySecLeft > 0 &&
+    amount > 0 &&
+    !submitting &&
+    Boolean(cashoutNumber) &&
+    !accountLoading;
+
+  if (accountLoading || !cashoutNumber) {
+    return <div className={MEMBER_PAGE_BG} />;
+  }
 
   return (
     <div className={`${MEMBER_PAGE_BG} flex justify-center`}>
@@ -237,7 +281,7 @@ function VerifyContent() {
                   {channel ? (
                     <>
                       {" "}
-                      · {isBn ? "চ্যানেল:" : "Channel:"} {channel}
+                      · {isBn ? "চ্যানেল:" : "Channel:"} {channelName || channel}
                     </>
                   ) : null}
                 </p>
@@ -264,10 +308,10 @@ function VerifyContent() {
                     <span className="w-[120px] shrink-0 text-[14px] text-[#374151]">
                       {isBn ? "ক্যাশআউট করুন:" : "Cash out to:"}
                     </span>
-                    <span className="flex-1 text-[15px] font-bold text-[#1aa05a]">{CASHOUT_NUMBER}</span>
+                    <span className="flex-1 text-[15px] font-bold text-[#1aa05a]">{cashoutNumber}</span>
                     <button
                       type="button"
-                      onClick={() => copyValue("number", CASHOUT_NUMBER)}
+                      onClick={() => copyValue("number", cashoutNumber)}
                       className="shrink-0 text-[#f59e0b] transition-opacity hover:opacity-70"
                       aria-label={isBn ? "কপি করুন" : "Copy"}
                     >

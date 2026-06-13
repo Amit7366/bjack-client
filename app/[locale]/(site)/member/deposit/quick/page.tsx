@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
 import {
@@ -14,18 +14,17 @@ import DepositPromotionPicker, {
   DEFAULT_PROMO_CODE,
 } from "@/components/member/deposit/DepositPromotionPicker";
 import { getMinimumDepositAmount, hasSelectedPromotion } from "@/lib/deposit-promotions";
-
-type Method = {
-  id: string;
-  label: string;
-  badge: string;
-};
-
-type Channel = {
-  id: string;
-  name: string;
-  recommended?: boolean;
-};
+import {
+  channelsForMethod,
+  fetchActiveDepositAccounts,
+  fetchEnabledDepositAccounts,
+  methodBadge,
+  methodDisplayLabel,
+  methodQuickId,
+  uniqueActiveMethods,
+  type DepositPaymentAccount,
+} from "@/lib/deposit-payment-accounts";
+import type { DepositPaymentMethod } from "@/lib/deposit-api";
 
 function CircleToggle({ active }: { active: boolean }) {
   return (
@@ -70,31 +69,100 @@ export default function QuickDepositPage() {
   const locale = preferences.locale;
   const isBn = locale === "bn";
 
-  const methods = useMemo<Method[]>(
-    () => [
-      { id: "bKash", label: isBn ? "বিকাশ" : "bKash", badge: "✈" },
-      { id: "NAGAD", label: isBn ? "নগদ" : "Nagad", badge: "🎯" },
-      { id: "Rocket", label: isBn ? "রকেট" : "Rocket", badge: "🚀" },
-    ],
-    [isBn],
+  const [enabledAccounts, setEnabledAccounts] = useState<DepositPaymentAccount[]>([]);
+  const [activeAccounts, setActiveAccounts] = useState<DepositPaymentAccount[]>([]);
+  const [accountsLoading, setAccountsLoading] = useState(true);
+  const [accountsError, setAccountsError] = useState<string | null>(null);
+
+  const availableMethods = useMemo(
+    () => uniqueActiveMethods(activeAccounts),
+    [activeAccounts],
   );
 
-  const channels = useMemo<Channel[]>(
-    () => [
-      { id: "sg-cashout", name: "SG-Cashout", recommended: true },
-      { id: "send-money", name: "Send Money", recommended: true },
-      { id: "tm-cashout", name: "TM-CashOut" },
-    ],
-    [],
+  const methods = useMemo(
+    () =>
+      availableMethods.map((method) => ({
+        id: methodQuickId(method),
+        method,
+        label: methodDisplayLabel(method, isBn),
+        badge: methodBadge(method),
+      })),
+    [availableMethods, isBn],
   );
 
-  const [selectedMethod, setSelectedMethod] = useState(methods[0].id);
-  const [selectedChannel, setSelectedChannel] = useState(channels[0].id);
+  const [selectedMethod, setSelectedMethod] = useState("");
+  const [selectedChannel, setSelectedChannel] = useState("");
   const [amount, setAmount] = useState("");
   const [amountFocused, setAmountFocused] = useState(false);
   const [infoOpen, setInfoOpen] = useState(true);
   const [promoCode, setPromoCode] = useState(DEFAULT_PROMO_CODE);
   const [promoMinDeposit, setPromoMinDeposit] = useState(0);
+
+  const selectedPaymentMethod = useMemo<DepositPaymentMethod | null>(() => {
+    if (!selectedMethod) return null;
+    return mapQuickDepositMethod(selectedMethod);
+  }, [selectedMethod]);
+
+  const channels = useMemo(() => {
+    if (!selectedPaymentMethod) return [];
+    return channelsForMethod(enabledAccounts, selectedPaymentMethod);
+  }, [enabledAccounts, selectedPaymentMethod]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setAccountsLoading(true);
+      setAccountsError(null);
+      try {
+        const [enabled, active] = await Promise.all([
+          fetchEnabledDepositAccounts(),
+          fetchActiveDepositAccounts(),
+        ]);
+        if (cancelled) return;
+        setEnabledAccounts(enabled);
+        setActiveAccounts(active);
+
+        const methodsList = uniqueActiveMethods(active);
+        if (methodsList.length === 0) return;
+
+        const firstMethod = methodsList[0];
+        setSelectedMethod(methodQuickId(firstMethod));
+
+        const activeForMethod = active.find(
+          (row) => row.paymentMethod === firstMethod && row.isActive,
+        );
+        const methodChannels = channelsForMethod(enabled, firstMethod);
+        const defaultChannel =
+          activeForMethod?.channelId ?? methodChannels[0]?.channelId ?? "";
+        setSelectedChannel(defaultChannel);
+      } catch (err) {
+        if (!cancelled) {
+          setAccountsError(err instanceof Error ? err.message : "Failed to load payment options");
+        }
+      } finally {
+        if (!cancelled) setAccountsLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedPaymentMethod) return;
+    const methodChannels = channelsForMethod(enabledAccounts, selectedPaymentMethod);
+    if (methodChannels.length === 0) {
+      setSelectedChannel("");
+      return;
+    }
+    const stillValid = methodChannels.some((row) => row.channelId === selectedChannel);
+    if (stillValid) return;
+
+    const activeForMethod = activeAccounts.find(
+      (row) => row.paymentMethod === selectedPaymentMethod && row.isActive,
+    );
+    setSelectedChannel(activeForMethod?.channelId ?? methodChannels[0].channelId);
+  }, [selectedPaymentMethod, enabledAccounts, activeAccounts, selectedChannel]);
 
   const amountNum = Number.parseFloat(amount || "0");
   const minDepositRequired = getMinimumDepositAmount(promoCode, promoMinDeposit);
@@ -105,7 +173,12 @@ export default function QuickDepositPage() {
     amountNum <= 30000;
   const amountTooLowForPromo =
     promoSelected && amount.length > 0 && amountNum > 0 && amountNum < minDepositRequired;
-  const canSubmit = validAmount && Boolean(selectedChannel) && Boolean(selectedMethod);
+  const canSubmit =
+    validAmount &&
+    Boolean(selectedChannel) &&
+    Boolean(selectedMethod) &&
+    methods.length > 0 &&
+    !accountsLoading;
 
   const handlePromoChange = (code: string, minDeposit: number) => {
     setPromoCode(code);
@@ -154,6 +227,26 @@ export default function QuickDepositPage() {
       />
 
       <section className={`${memberContainerNarrow} ${memberPagePaddingNarrow} space-y-4`}>
+        {accountsLoading ? (
+          <p className="text-center text-[13px] text-[#9ca3af]">
+            {isBn ? "পেমেন্ট অপশন লোড হচ্ছে…" : "Loading payment options…"}
+          </p>
+        ) : null}
+
+        {accountsError ? (
+          <p className="rounded-sm border border-[#7f1d1d] bg-[#2a1515] px-3 py-2 text-[13px] text-[#fca5a5]">
+            {accountsError}
+          </p>
+        ) : null}
+
+        {!accountsLoading && methods.length === 0 ? (
+          <p className="rounded-sm border border-[#854d0e] bg-[#2a2415] px-3 py-3 text-[13px] text-[#fcd34d]">
+            {isBn
+              ? "এখন কোনো সক্রিয় ডিপোজিট পেমেন্ট পদ্ধতি নেই। অনুগ্রহ করে পরে আবার চেষ্টা করুন।"
+              : "No active deposit payment methods are available right now. Please try again later."}
+          </p>
+        ) : null}
+
         <DepositPromotionPicker
           isBn={isBn}
           selectedCode={promoCode}
@@ -168,6 +261,7 @@ export default function QuickDepositPage() {
                 key={m.id}
                 type="button"
                 onClick={() => setSelectedMethod(m.id)}
+                disabled={accountsLoading}
                 className={`focus-ring rounded-sm border px-2 py-2 text-center transition-colors ${
                   selectedMethod === m.id
                     ? "border-[#23c97f] bg-[#1f2428]"
@@ -188,22 +282,22 @@ export default function QuickDepositPage() {
           <div className="space-y-2">
             {channels.map((c) => (
               <button
-                key={c.id}
+                key={c.channelId}
                 type="button"
-                onClick={() => setSelectedChannel(c.id)}
+                onClick={() => setSelectedChannel(c.channelId)}
                 className={`focus-ring flex w-full items-center rounded-sm border px-3 py-3 text-left transition-colors ${
-                  selectedChannel === c.id
+                  selectedChannel === c.channelId
                     ? "border-[#23c97f] bg-[#1f2428]"
                     : "border-[#2d2d2d] bg-[#1f2326] hover:border-[#3b3b3b]"
                 }`}
               >
-                <span className="flex-1 text-[22px] font-semibold tracking-tight text-white">{c.name}</span>
+                <span className="flex-1 text-[22px] font-semibold tracking-tight text-white">{c.channelName}</span>
                 {c.recommended ? (
                   <span className="mr-2 rounded bg-[#1a6d52] px-2 py-0.5 text-[11px] font-medium text-[#57d1a4]">
                     {isBn ? "সুপারিশ করুন" : "Recommended"}
                   </span>
                 ) : null}
-                <CircleToggle active={selectedChannel === c.id} />
+                <CircleToggle active={selectedChannel === c.channelId} />
               </button>
             ))}
           </div>
