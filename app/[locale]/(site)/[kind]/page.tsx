@@ -10,7 +10,6 @@ import {
   LOBBY_VENDOR_ALL,
   type LobbyKind,
 } from "@/lib/vendor-routes";
-import { expandLobbyCatalog, LOBBY_DEMO_CATALOG_SIZE } from "@/lib/lobby-pagination";
 import { mergeGamesFromVendors, normalizeGameImage } from "@/lib/vendor-games-data";
 
 type PageProps = {
@@ -54,9 +53,6 @@ export default async function LobbyByKindPage({ params, searchParams }: PageProp
     : vendorsResolved.filter((v) => v !== LOBBY_VENDOR_ALL);
 
   let merged = await loadVendorGames(vendorCodesForMerge);
-  if (isAllLobbyVendors(vendorsResolved)) {
-    merged = expandLobbyCatalog(merged, LOBBY_DEMO_CATALOG_SIZE);
-  }
   const games = filterGamesByLobbyTypes(merged, typeParts);
 
   return (

@@ -4,9 +4,6 @@ import { inferLobbyGameTypes } from "./lobby-game-types";
 /** @deprecated Use GameTile — kept for gradual refactors */
 
 
-const DEFAULT_GAME_IMAGE =
-  "https://img.b112j.com/upload/game/AWCV2_JILI/BDT/JILI-SLOT-027.png?v=1778346484115";
-
 /** True when `src` is safe for next/image (http/https only). */
 export function isValidGameImageUrl(src: string): boolean {
   if (!src?.trim()) return false;
@@ -18,9 +15,10 @@ export function isValidGameImageUrl(src: string): boolean {
   }
 }
 
+/** Returns a usable image URL, or empty string when missing/invalid (use text placeholder in UI). */
 export function normalizeGameImage(src: string): string {
-  const trimmed = src.trim();
-  return isValidGameImageUrl(trimmed) ? trimmed : DEFAULT_GAME_IMAGE;
+  const trimmed = src?.trim() ?? "";
+  return isValidGameImageUrl(trimmed) ? trimmed : "";
 }
 
 /** Vendor lobby rows share `GameTile` fields with home / carousel data. */
