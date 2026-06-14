@@ -1,7 +1,5 @@
-import type { ApiResponse } from "@/lib/api/types";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 import { readAuthSession } from "@/lib/auth/session";
-
-const API_PREFIX = "/api/v1";
 
 export const MAX_USER_WALLETS = 5;
 
@@ -25,43 +23,25 @@ export type CreateUserWalletInput = {
 
 export async function fetchUserWallets(): Promise<UserWalletRecord[]> {
   const session = readAuthSession();
-  if (!session?.accessToken || !session.objectId) {
+  if (!session?.objectId) {
     throw new Error("Please log in to continue");
   }
 
-  const res = await fetch(
-    `${API_PREFIX}/wallets/user/${encodeURIComponent(session.objectId)}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-      credentials: "include",
-    },
+  return authFetchData<UserWalletRecord[]>(
+    `/wallets/user/${encodeURIComponent(session.objectId)}`,
   );
-
-  const body = (await res.json()) as ApiResponse<UserWalletRecord[]>;
-  if (!res.ok || !body.success || !body.data) {
-    throw new Error(body.message || "Failed to load wallets");
-  }
-  return body.data;
 }
 
 export async function createUserWallet(
   input: CreateUserWalletInput,
 ): Promise<UserWalletRecord> {
   const session = readAuthSession();
-  if (!session?.accessToken || !session.objectId) {
+  if (!session?.objectId) {
     throw new Error("Please log in to continue");
   }
 
-  const res = await fetch(`${API_PREFIX}/wallets`, {
+  return authFetchData<UserWalletRecord>("/wallets", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    credentials: "include",
     body: JSON.stringify({
       userId: session.objectId,
       walletType: input.walletType,
@@ -71,30 +51,10 @@ export async function createUserWallet(
       isDefault: input.isDefault ?? false,
     }),
   });
-
-  const body = (await res.json()) as ApiResponse<UserWalletRecord>;
-  if (!res.ok || !body.success || !body.data) {
-    throw new Error(body.message || "Failed to add wallet");
-  }
-  return body.data;
 }
 
 export async function deleteUserWallet(walletId: string): Promise<void> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
-  const res = await fetch(`${API_PREFIX}/wallets/${encodeURIComponent(walletId)}`, {
+  await authFetchData<null>(`/wallets/${encodeURIComponent(walletId)}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    credentials: "include",
   });
-
-  const body = (await res.json()) as ApiResponse<null>;
-  if (!res.ok || !body.success) {
-    throw new Error(body.message || "Failed to delete wallet");
-  }
 }

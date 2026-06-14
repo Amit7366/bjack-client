@@ -22,14 +22,8 @@ function categoryLabel(gameType: string | undefined, locale: Locale): string {
 
 function gameTitle(row: ApiGameTxnRecord, locale: Locale): string {
   const name = row.game?.name?.trim();
-  const provider = row.game?.provider?.trim();
-  const code = row.game?.code || row.gameUid;
-  if (name && provider) {
-    return `${provider} — ${name}`;
-  }
   if (name) return name;
-  if (code) return code;
-  return locale === "bn" ? "গেম" : locale === "hi" ? "गेम" : "Game";
+  return locale === "bn" ? "অজানা গেম" : locale === "hi" ? "अज्ञात गेम" : "Unknown game";
 }
 
 function mapResult(bet: number, win: number): BettingResult {

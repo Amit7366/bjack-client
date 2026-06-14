@@ -1,9 +1,9 @@
-import { readAuthSession } from "@/lib/auth/session";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 import type { BettingTab } from "@/lib/betting-records-data";
 import { getDateRangeForFilter } from "@/lib/transaction-records-api";
 import type { TransactionDateFilter } from "@/lib/transactions-data";
 
-const API_PREFIX = "/api/v1";
+export const BETTING_RECORDS_PAGE_SIZE = 20;
 
 export type ApiGameTxnRecord = {
   txnId: string;
@@ -27,6 +27,9 @@ export type GameBetHistoryResponse = {
   total: number;
   totalBets: number;
   totalWins: number;
+  page: number;
+  limit: number;
+  totalPages: number;
   history: ApiGameTxnRecord[];
   message?: string;
 };
@@ -37,47 +40,31 @@ export async function fetchUserBetHistory(params: {
   page?: number;
   limit?: number;
 }): Promise<GameBetHistoryResponse> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
-  const sbmId = session.memberId?.trim().toLowerCase();
-  if (!sbmId) {
-    throw new Error("Session expired. Please log in again.");
-  }
-
   const { from, to } = getDateRangeForFilter(params.dateFilter);
+  const page = params.page ?? 1;
+  const limit = params.limit ?? BETTING_RECORDS_PAGE_SIZE;
+
   const q = new URLSearchParams({
     from,
     to,
-    page: String(params.page ?? 1),
-    limit: String(params.limit ?? 200),
+    page: String(page),
+    limit: String(limit),
   });
 
   if (params.tab === "unsettled") {
     q.set("tab", "unsettled");
   }
 
-  const res = await fetch(
-    `${API_PREFIX}/gameRecords-txns/gametxnrecords/user-bets/me?${q.toString()}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-      credentials: "include",
-    },
+  const data = await authFetchData<GameBetHistoryResponse>(
+    `/gameRecords-txns/gametxnrecords/user-bets/me?${q.toString()}`,
   );
 
-  const body = (await res.json()) as GameBetHistoryResponse;
-  if (!res.ok || body.success === false) {
-    throw new Error(body.message || "Failed to load betting records");
-  }
-
   return {
-    ...body,
-    history: body.history ?? [],
-    total: body.total ?? body.history?.length ?? 0,
+    ...data,
+    history: data.history ?? [],
+    total: data.total ?? 0,
+    page: data.page ?? page,
+    limit: data.limit ?? limit,
+    totalPages: data.totalPages ?? 0,
   };
 }

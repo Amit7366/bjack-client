@@ -1,4 +1,7 @@
 import type { ApiResponse } from "@/lib/api/types";
+import { API_PREFIX } from "@/lib/auth/auth-fetch";
+import { isJwtExpired } from "@/lib/auth/jwt";
+import { handleSessionExpired, handleUnauthorizedResponse } from "@/lib/auth/session-expired";
 import { formatWalletBalance, refreshWalletBalance } from "@/lib/auth/api";
 import { readAuthSession, saveAuthSession } from "@/lib/auth/session";
 import { notifyTurnoverRefresh } from "@/lib/game-return-events";
@@ -12,7 +15,6 @@ import {
   reanchorWalletFromDb,
 } from "@/lib/wallet-local-state";
 
-const API_PREFIX = "/api/v1";
 const SYNC_TIMEOUT_MS = 20_000;
 let inflightPreview: Promise<GamePreviewResult | null> | null = null;
 
@@ -108,6 +110,10 @@ async function fetchWithTimeout(
 async function previewGameBalance(): Promise<GamePreviewResult | null> {
   const session = readAuthSession();
   if (!session?.accessToken || !session.memberId) return null;
+  if (isJwtExpired(session.accessToken)) {
+    handleSessionExpired();
+    return null;
+  }
 
   const res = await fetchWithTimeout(
     `${API_PREFIX}/gameRecords-txns/api/transactions/sync-user/preview`,
@@ -120,6 +126,8 @@ async function previewGameBalance(): Promise<GamePreviewResult | null> {
       credentials: "include",
     },
   );
+
+  if (handleUnauthorizedResponse(res)) return null;
 
   const body = (await res.json()) as ApiResponse<GamePreviewResult>;
   if (!res.ok || !body.success || !body.data) {
@@ -144,7 +152,11 @@ function firePersistSilent(syncToken: string): void {
       credentials: "include",
       body: JSON.stringify({ syncToken }),
     },
-  ).catch(() => undefined);
+  )
+    .then((res) => {
+      handleUnauthorizedResponse(res);
+    })
+    .catch(() => undefined);
 
   for (const delayMs of [15_000, 45_000, 90_000]) {
     window.setTimeout(() => {
@@ -167,6 +179,7 @@ async function checkPersistDrift(syncToken: string): Promise<void> {
       },
       8_000,
     );
+    if (handleUnauthorizedResponse(res)) return;
     const body = (await res.json()) as ApiResponse<{
       status: string;
       dbBalance?: number;

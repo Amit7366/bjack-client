@@ -4,9 +4,9 @@ import {
   AUTH_TOKEN_COOKIE,
   USER_ROLE,
 } from "./constants";
-import { parseJwtPayload } from "./jwt";
+import { isJwtExpired, parseJwtPayload } from "./jwt";
 
-const AUTH_STORAGE_KEY = "bkbaji.auth";
+export const AUTH_STORAGE_KEY = "bkbaji.auth";
 export const AUTH_CHANGE_EVENT = "bkbaji-auth-change";
 
 export type AuthSession = {
@@ -61,6 +61,10 @@ export function readAuthSession(): AuthSession | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as AuthSession;
     if (!parsed?.accessToken) return null;
+    if (isJwtExpired(parsed.accessToken)) {
+      clearAuthSession();
+      return null;
+    }
     return enrichSession(parsed);
   } catch {
     return null;

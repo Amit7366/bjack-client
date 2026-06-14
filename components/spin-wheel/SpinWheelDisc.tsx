@@ -22,7 +22,7 @@ const SIZE = 320;
 const CX = SIZE / 2;
 const CY = SIZE / 2;
 const RIM = 148;
-const INNER = 118;
+const LABEL_RADIUS = RIM - 26;
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
   const rad = ((angleDeg - 90) * Math.PI) / 180;
@@ -49,22 +49,6 @@ function BjHubLogo() {
       <tspan fill="#e8e8e8">b</tspan>
       <tspan fill="#ffb347">j</tspan>
     </text>
-  );
-}
-
-function FsBadge({ x, y }: { x: number; y: number }) {
-  return (
-    <g transform={`translate(${x - 10}, ${y - 8})`}>
-      <polygon
-        points="10,0 18,5 18,15 10,20 2,15 2,5"
-        fill="#1faa59"
-        stroke="#7dff9e"
-        strokeWidth="0.8"
-      />
-      <text x="10" y="13" textAnchor="middle" fontSize="6" fontWeight="800" fill="#fff">
-        ৳
-      </text>
-    </g>
   );
 }
 
@@ -100,20 +84,19 @@ export default function SpinWheelDisc({
 }: SpinWheelDiscProps) {
   const count = segments.length || 10;
   const segmentAngle = 360 / count;
+  const labelFontSize = count > 12 ? 10 : count > 10 ? 11 : 13;
 
   const wedges = useMemo(() => {
     return segments.map((seg, i) => {
       const start = i * segmentAngle;
       const end = (i + 1) * segmentAngle;
       const mid = start + segmentAngle / 2;
-      const labelPos = polarToCartesian(CX, CY, (RIM + INNER) / 2, mid);
-      const badgePos = polarToCartesian(CX, CY, INNER + 14, mid);
+      const labelPos = polarToCartesian(CX, CY, LABEL_RADIUS, mid);
       return {
         ...seg,
         path: describeArc(CX, CY, RIM, start, end),
         color: SEGMENT_COLORS[i % SEGMENT_COLORS.length],
         labelPos,
-        badgePos,
         mid,
         label: `৳${formatSpinAmount(seg.amount, locale)}`,
       };
@@ -204,16 +187,18 @@ export default function SpinWheelDisc({
                   x={w.labelPos.x}
                   y={w.labelPos.y}
                   fill="#fff8e0"
-                  fontSize="13"
+                  fontSize={labelFontSize}
                   fontWeight="800"
+                  fontFamily="system-ui, -apple-system, sans-serif"
                   textAnchor="middle"
                   dominantBaseline="middle"
                   transform={`rotate(${w.mid}, ${w.labelPos.x}, ${w.labelPos.y})`}
-                  style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}
+                  stroke="#0a1f14"
+                  strokeWidth="0.6"
+                  paintOrder="stroke fill"
                 >
                   {w.label}
                 </text>
-                <FsBadge x={w.badgePos.x} y={w.badgePos.y} />
               </g>
             ))}
 

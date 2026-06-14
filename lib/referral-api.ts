@@ -1,7 +1,4 @@
-import type { ApiResponse } from "@/lib/api/types";
-import { readAuthSession } from "@/lib/auth/session";
-
-const API_PREFIX = "/api/v1";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 
 export type ReferredUserRow = {
   userId: string;
@@ -34,22 +31,5 @@ export function buildReferralQrUrl(link: string, size = 200): string {
 }
 
 export async function fetchMyReferralSummary(): Promise<MyReferralSummary> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
-  const res = await fetch(`${API_PREFIX}/referral/me`, {
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    credentials: "include",
-  });
-
-  const body = (await res.json()) as ApiResponse<MyReferralSummary>;
-  if (!res.ok || !body.success || !body.data) {
-    throw new Error(body.message || "Failed to load referral summary");
-  }
-
-  return body.data;
+  return authFetchData<MyReferralSummary>("/referral/me");
 }

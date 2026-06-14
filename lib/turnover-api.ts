@@ -1,7 +1,4 @@
-import type { ApiResponse } from "@/lib/api/types";
-import { readAuthSession } from "@/lib/auth/session";
-
-const API_PREFIX = "/api/v1";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 
 export type TurnoverProgressItem = {
   id: string;
@@ -41,24 +38,8 @@ export type TurnoverSummary = {
 };
 
 export async function fetchTurnoverSummary(): Promise<TurnoverSummary> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
-  const res = await fetch(`${API_PREFIX}/transaction/turnover/me`, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    credentials: "include",
+  return authFetchData<TurnoverSummary>("/transaction/turnover/me", {
+    headers: { Accept: "application/json" },
     cache: "no-store",
   });
-
-  const body = (await res.json()) as ApiResponse<TurnoverSummary>;
-  if (!res.ok || !body.success || !body.data) {
-    throw new Error(body.message || "Failed to load turnover");
-  }
-
-  return body.data;
 }

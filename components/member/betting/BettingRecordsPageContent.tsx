@@ -15,7 +15,7 @@ import {
 } from "@/components/member/shared/member-ui";
 import { getProfileMessages } from "@/lib/i18n/profile-messages";
 import { getBettingMessages } from "@/lib/i18n/betting-messages";
-import { fetchUserBetHistory } from "@/lib/betting-records-api";
+import { fetchUserBetHistory, BETTING_RECORDS_PAGE_SIZE } from "@/lib/betting-records-api";
 import { mapGameTxnToRecord } from "@/lib/betting-records-mapper";
 import {
   formatBetAmount,
@@ -160,6 +160,9 @@ export default function BettingRecordsPageContent() {
   const [records, setRecords] = useState<BettingRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     setFilterPortalReady(true);
@@ -182,15 +185,21 @@ export default function BettingRecordsPageContent() {
       const result = await fetchUserBetHistory({
         dateFilter: appliedDate,
         tab: activeTab,
+        page,
+        limit: BETTING_RECORDS_PAGE_SIZE,
       });
       setRecords(result.history.map((tx) => mapGameTxnToRecord(tx, locale)));
+      setTotal(result.total);
+      setTotalPages(result.totalPages);
     } catch {
       setLoadError(labels.loadError);
       setRecords([]);
+      setTotal(0);
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }
-  }, [activeTab, appliedDate, locale, labels.loadError]);
+  }, [activeTab, appliedDate, locale, labels.loadError, page]);
 
   useEffect(() => {
     void loadRecords();
@@ -212,6 +221,7 @@ export default function BettingRecordsPageContent() {
   }, [filterOpen, openFilter]);
 
   const applyFilters = useCallback(() => {
+    setPage(1);
     setAppliedDate(draftDate);
     setFilterOpen(false);
   }, [draftDate]);
@@ -221,10 +231,12 @@ export default function BettingRecordsPageContent() {
   }, []);
 
   const dateChipLabel = labels.dateFilterLabels[appliedDate];
-  const total = records.length;
-  const from = total === 0 ? 0 : 1;
-  const to = total;
+  const pageSize = BETTING_RECORDS_PAGE_SIZE;
+  const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const to = total === 0 ? 0 : Math.min(page * pageSize, total);
   const showNoData = !loading && !loadError && total === 0;
+  const canGoPrev = page > 1;
+  const canGoNext = totalPages > 0 && page < totalPages;
 
   return (
     <div className={MEMBER_PAGE_BG}>
@@ -238,7 +250,10 @@ export default function BettingRecordsPageContent() {
       <MemberTabBar
         tabs={["settled", "unsettled"] as const}
         active={activeTab}
-        onChange={setActiveTab}
+        onChange={(tab) => {
+          setPage(1);
+          setActiveTab(tab);
+        }}
         labels={labels.tabs}
         ariaLabel={labels.pageTitle}
         fullWidthContainer
@@ -282,9 +297,34 @@ export default function BettingRecordsPageContent() {
         )}
 
         {!showNoData ? (
-          <p className="mt-6 text-[13px] text-[#9ca3af]">
-            {labels.recordsCount(from, to, total)}
-          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[13px] text-[#9ca3af]">
+              {labels.recordsCount(from, to, total)}
+            </p>
+            {totalPages > 1 ? (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="focus-ring min-h-10 rounded-md border border-[#3f3f3f] px-3 text-[13px] font-semibold text-[#d4d4d4] transition-colors hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={!canGoPrev || loading}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
+                  {labels.prevPage}
+                </button>
+                <span className="min-w-[7rem] text-center text-[13px] text-[#9ca3af]">
+                  {labels.pageLabel(page, totalPages)}
+                </span>
+                <button
+                  type="button"
+                  className="focus-ring min-h-10 rounded-md border border-[#3f3f3f] px-3 text-[13px] font-semibold text-[#d4d4d4] transition-colors hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={!canGoNext || loading}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  {labels.nextPage}
+                </button>
+              </div>
+            ) : null}
+          </div>
         ) : null}
       </div>
 

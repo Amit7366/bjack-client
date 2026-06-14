@@ -1,39 +1,18 @@
 import type { ApiResponse, LoginResponseData, RegisterResponseData } from "@/lib/api/types";
+import { authFetchJson } from "@/lib/auth/auth-fetch";
 import { clearMemberProfileCache } from "@/lib/member/profile-cache";
-import { clearAuthSession, enrichSession, saveAuthSession, type AuthSession } from "./session";
+import { clearAuthSession, enrichSession, readAuthSession, saveAuthSession, type AuthSession } from "./session";
 import { clearLocalWallet, initWalletFromDb, reanchorWalletFromDb } from "@/lib/wallet-local-state";
-
-const API_PREFIX = "/api/v1";
 
 async function requestJson<T>(
   path: string,
   init?: RequestInit,
 ): Promise<{ ok: boolean; status: number; body: ApiResponse<T> }> {
-  const session = typeof window !== "undefined" ? readAuthSessionForRequest() : null;
-  const res = await fetch(`${API_PREFIX}${path}`, {
-    ...init,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(session?.accessToken
-        ? { Authorization: `Bearer ${session.accessToken}` }
-        : {}),
-      ...(init?.headers ?? {}),
-    },
-  });
-
-  const body = (await res.json()) as ApiResponse<T>;
-  return { ok: res.ok && body.success, status: res.status, body };
+  return authFetchJson<T>(path, init);
 }
 
 function readAuthSessionForRequest(): AuthSession | null {
-  try {
-    const raw = localStorage.getItem("bkbaji.auth");
-    if (!raw) return null;
-    return enrichSession(JSON.parse(raw) as AuthSession);
-  } catch {
-    return null;
-  }
+  return readAuthSession();
 }
 
 export function formatContactNo(phone: string, currency: "BDT" | "INR"): string {

@@ -1,7 +1,4 @@
-import type { ApiResponse } from "@/lib/api/types";
-import { readAuthSession } from "@/lib/auth/session";
-
-const API_PREFIX = "/api/v1";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 
 export type GameEligibilityResult = {
   allowed: boolean;
@@ -22,50 +19,16 @@ export type ActiveGameRestrictions = {
 export async function checkGameLaunchEligibility(
   gameCode: string
 ): Promise<GameEligibilityResult> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
-  const res = await fetch(
-    `${API_PREFIX}/games/eligibility/check?gameCode=${encodeURIComponent(gameCode)}`,
-    {
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-      credentials: "include",
-      cache: "no-store",
-    }
+  return authFetchData<GameEligibilityResult>(
+    `/games/eligibility/check?gameCode=${encodeURIComponent(gameCode)}`,
+    { cache: "no-store" },
   );
-
-  const body = (await res.json()) as ApiResponse<GameEligibilityResult>;
-  if (!res.ok || !body.success || !body.data) {
-    throw new Error(body.message || "Failed to verify game eligibility");
-  }
-
-  return body.data;
 }
 
 export async function fetchActiveGameRestrictions(): Promise<ActiveGameRestrictions> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
-  const res = await fetch(`${API_PREFIX}/games/eligibility/active`, {
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    credentials: "include",
+  return authFetchData<ActiveGameRestrictions>("/games/eligibility/active", {
     cache: "no-store",
   });
-
-  const body = (await res.json()) as ApiResponse<ActiveGameRestrictions>;
-  if (!res.ok || !body.success || !body.data) {
-    throw new Error(body.message || "Failed to load game restrictions");
-  }
-
-  return body.data;
 }
 
 export function promotionRestrictionMessage(

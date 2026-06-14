@@ -1,8 +1,6 @@
 import type { ApiResponse } from "@/lib/api/types";
+import { authFetchJson } from "@/lib/auth/auth-fetch";
 import type { DocumentTypeId } from "@/lib/documents-data";
-import { readAuthSession } from "@/lib/auth/session";
-
-const API_PREFIX = "/api/v1";
 
 export type KycStatus = "pending" | "approved" | "rejected" | null;
 
@@ -42,20 +40,8 @@ async function requestJson<T>(
   path: string,
   init?: RequestInit,
 ): Promise<{ ok: boolean; body: ApiResponse<T> }> {
-  const session = readAuthSession();
-  const res = await fetch(`${API_PREFIX}${path}`, {
-    ...init,
-    credentials: "include",
-    headers: {
-      ...(session?.accessToken
-        ? { Authorization: `Bearer ${session.accessToken}` }
-        : {}),
-      ...(init?.headers ?? {}),
-    },
-  });
-
-  const body = (await res.json()) as ApiResponse<T>;
-  return { ok: res.ok && body.success, body };
+  const { ok, body } = await authFetchJson<T>(path, init);
+  return { ok, body };
 }
 
 export async function submitKycDocuments(input: {

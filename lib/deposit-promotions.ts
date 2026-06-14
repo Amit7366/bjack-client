@@ -1,7 +1,4 @@
-import type { ApiResponse } from "@/lib/api/types";
-import { readAuthSession } from "@/lib/auth/session";
-
-const API_PREFIX = "/api/v1";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 
 export type DepositPromotion = {
   code: string;
@@ -50,27 +47,10 @@ export function getPromotionDescription(promo: DepositPromotion, isBn: boolean):
 export async function fetchDepositPromotions(
   amount?: number,
 ): Promise<DepositPromotion[]> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
   const q =
     amount != null && Number.isFinite(amount) ? `?amount=${encodeURIComponent(amount)}` : "";
 
-  const res = await fetch(`${API_PREFIX}/promotions/deposit${q}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    credentials: "include",
-  });
-
-  const body = (await res.json()) as ApiResponse<DepositPromotion[]>;
-  if (!res.ok || !body.success || !body.data) {
-    throw new Error(body.message || "Failed to load promotions");
-  }
-  return body.data;
+  return authFetchData<DepositPromotion[]>(`/promotions/deposit${q}`);
 }
 
 export function isValidPromoCode(code: string, promotions: DepositPromotion[]): boolean {

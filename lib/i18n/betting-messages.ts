@@ -14,6 +14,9 @@ export type BettingMessages = {
   loading: string;
   loadError: string;
   recordsCount: (from: number, to: number, total: number) => string;
+  prevPage: string;
+  nextPage: string;
+  pageLabel: (page: number, totalPages: number) => string;
   dateGroupToday: (date: string) => string;
   dateGroupYesterday: (date: string) => string;
   dateGroupOn: (date: string) => string;
@@ -37,6 +40,9 @@ const en: BettingMessages = {
   loading: "Loading…",
   loadError: "Could not load betting records. Please try again.",
   recordsCount: (from, to, total) => `${from} - ${to} of ${total} records`,
+  prevPage: "Previous",
+  nextPage: "Next",
+  pageLabel: (page, totalPages) => `Page ${page} of ${totalPages}`,
   dateGroupToday: (date) => `Today ${date}`,
   dateGroupYesterday: (date) => `Yesterday ${date}`,
   dateGroupOn: (date) => date,
@@ -64,6 +70,9 @@ const bn: BettingMessages = {
   loading: "লোড হচ্ছে…",
   loadError: "বেটিং রেকর্ড লোড করা যায়নি। আবার চেষ্টা করুন।",
   recordsCount: (from, to, total) => `${total} রেকর্ডের মধ্যে ${from} - ${to}`,
+  prevPage: "আগের পৃষ্ঠা",
+  nextPage: "পরের পৃষ্ঠা",
+  pageLabel: (page, totalPages) => `পৃষ্ঠা ${page} / ${totalPages}`,
   dateGroupToday: (date) => `আজ ${date}`,
   dateGroupYesterday: (date) => `গতকাল ${date}`,
   dateGroupOn: (date) => date,
@@ -91,6 +100,9 @@ const hi: BettingMessages = {
   loading: "लोड हो रहा है…",
   loadError: "बेटिंग रिकॉर्ड लोड नहीं हो सके। पुनः प्रयास करें।",
   recordsCount: (from, to, total) => `${total} रिकॉर्ड में से ${from} - ${to}`,
+  prevPage: "पिछला",
+  nextPage: "अगला",
+  pageLabel: (page, totalPages) => `पृष्ठ ${page} / ${totalPages}`,
   dateGroupToday: (date) => `आज ${date}`,
   dateGroupYesterday: (date) => `कल ${date}`,
   dateGroupOn: (date) => date,

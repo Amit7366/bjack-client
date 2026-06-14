@@ -1,7 +1,4 @@
-import type { ApiResponse } from "@/lib/api/types";
-import { readAuthSession } from "@/lib/auth/session";
-
-const API_PREFIX = "/api/v1";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 
 export type MemberBonusRewardStatus = {
   bonusAmount: number;
@@ -24,35 +21,12 @@ export type MemberBonusClaimResult = {
   claimCount: number;
 };
 
-async function authFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
-  const res = await fetch(`${API_PREFIX}${path}`, {
-    ...init,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.accessToken}`,
-      ...(init?.headers ?? {}),
-    },
-  });
-
-  const body = (await res.json()) as ApiResponse<T>;
-  if (!res.ok || !body.success) {
-    throw new Error(body.message || "Request failed");
-  }
-  return body.data as T;
-}
-
 export async function fetchMemberBonusRewardStatus(): Promise<MemberBonusRewardStatus> {
-  return authFetch<MemberBonusRewardStatus>("/member-bonus-reward/status");
+  return authFetchData<MemberBonusRewardStatus>("/member-bonus-reward/status");
 }
 
 export async function claimMemberBonusReward(): Promise<MemberBonusClaimResult> {
-  return authFetch<MemberBonusClaimResult>("/member-bonus-reward/claim", { method: "POST" });
+  return authFetchData<MemberBonusClaimResult>("/member-bonus-reward/claim", { method: "POST" });
 }
 
 export function remainingFromMs(ms: number): { days: number; clock: string } {

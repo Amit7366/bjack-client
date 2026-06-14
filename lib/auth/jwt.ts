@@ -1,4 +1,5 @@
 export type JwtAuthClaims = {
+  exp?: number;
   id?: string;
   objectId?: string;
   role?: string;
@@ -6,6 +7,13 @@ export type JwtAuthClaims = {
   userName?: string;
   contactNo?: string;
 };
+
+/** True when the access token is past expiry (with optional leeway). */
+export function isJwtExpired(token: string, leewaySeconds = 30): boolean {
+  const claims = parseJwtPayload(token);
+  if (!claims?.exp) return false;
+  return Date.now() >= (claims.exp - leewaySeconds) * 1000;
+}
 
 export function parseJwtPayload(token: string): JwtAuthClaims | null {
   try {

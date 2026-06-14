@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { logoutUser as logoutApi, fetchWalletMeta } from "@/lib/auth/api";
+import { expireSessionIfNeeded } from "@/lib/auth/session-expired";
 import {
   refreshBalanceAfterGameReturn,
   shouldRefreshBalanceAfterGame,
@@ -46,6 +47,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 const WALLET_FOCUS_DEBOUNCE_MS = 1500;
 const ANCHOR_CHECK_INTERVAL_MS = 2 * 60 * 60 * 1000;
+const SESSION_CHECK_INTERVAL_MS = 30_000;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(null);
@@ -95,6 +97,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
+    if (expireSessionIfNeeded()) {
+      setSession(null);
+      return;
+    }
+
     const current = readAuthSession();
     if (current) {
       saveAuthSession(current);
@@ -112,6 +119,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("storage", onAuthChange);
     };
   }, [refreshSession]);
+
+  /** Log out and redirect when JWT expires while the app is open. */
+  useEffect(() => {
+    if (!authReady) return;
+
+    const checkExpiry = () => {
+      if (expireSessionIfNeeded()) {
+        setSession(null);
+      }
+    };
+
+    checkExpiry();
+    const intervalId = window.setInterval(checkExpiry, SESSION_CHECK_INTERVAL_MS);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") checkExpiry();
+    };
+
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [authReady]);
 
   useEffect(() => {
     return subscribeWalletLocalChange(refreshSession);

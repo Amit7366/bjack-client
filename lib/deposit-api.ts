@@ -1,8 +1,6 @@
-import type { ApiResponse } from "@/lib/api/types";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 import { readAuthSession, saveAuthSession } from "@/lib/auth/session";
 import { reanchorWalletFromDb } from "@/lib/wallet-local-state";
-
-const API_PREFIX = "/api/v1";
 
 type ManualDepositPayload = {
   userId: string;
@@ -32,29 +30,6 @@ export type VerifyAutoPayResult = {
   currentBalance?: number;
   transaction?: ManualDepositRecord;
 };
-
-async function authFetch<T>(path: string, init?: RequestInit) {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
-  const res = await fetch(`${API_PREFIX}${path}`, {
-    ...init,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.accessToken}`,
-      ...(init?.headers ?? {}),
-    },
-  });
-
-  const body = (await res.json()) as ApiResponse<T>;
-  if (!res.ok || !body.success) {
-    throw new Error(body.message || "Request failed");
-  }
-  return body.data as T;
-}
 
 export type DepositPaymentMethod = "bkash" | "nagad" | "rocket";
 
@@ -106,7 +81,7 @@ export async function createManualDeposit(input: {
     bonusAmount: 0,
   };
 
-  return authFetch<ManualDepositRecord>("/transaction/deposit/manual", {
+  return authFetchData<ManualDepositRecord>("/transaction/deposit/manual", {
     method: "POST",
     body: JSON.stringify(payload),
   });
@@ -119,7 +94,7 @@ export async function verifyAutoPayDeposit(input: {
   transactionId: string;
   paymentMethod: DepositPaymentMethod;
 }): Promise<VerifyAutoPayResult> {
-  return authFetch<VerifyAutoPayResult>("/transaction/deposit/verify-autopay", {
+  return authFetchData<VerifyAutoPayResult>("/transaction/deposit/verify-autopay", {
     method: "POST",
     body: JSON.stringify({
       depositTransactionId: input.depositTransactionId,
@@ -132,7 +107,7 @@ export async function verifyAutoPayDeposit(input: {
 
 /** POST /transaction/deposit/fail-autopay — when verify window expires. */
 export async function failAutoPayDeposit(depositTransactionId: string): Promise<void> {
-  await authFetch<unknown>("/transaction/deposit/fail-autopay", {
+  await authFetchData<unknown>("/transaction/deposit/fail-autopay", {
     method: "POST",
     body: JSON.stringify({ depositTransactionId }),
   });

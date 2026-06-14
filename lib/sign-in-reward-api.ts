@@ -1,7 +1,4 @@
-import type { ApiResponse } from "@/lib/api/types";
-import { readAuthSession } from "@/lib/auth/session";
-
-const API_PREFIX = "/api/v1";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 
 export type SignInDayStatus = "claimed" | "current" | "locked";
 
@@ -34,33 +31,10 @@ export type SignInClaimResult = {
   nextDay: number;
 };
 
-async function authFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
-  const res = await fetch(`${API_PREFIX}${path}`, {
-    ...init,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.accessToken}`,
-      ...(init?.headers ?? {}),
-    },
-  });
-
-  const body = (await res.json()) as ApiResponse<T>;
-  if (!res.ok || !body.success) {
-    throw new Error(body.message || "Request failed");
-  }
-  return body.data as T;
-}
-
 export async function fetchSignInRewardStatus(): Promise<SignInRewardStatus> {
-  return authFetch<SignInRewardStatus>("/sign-in-reward/status");
+  return authFetchData<SignInRewardStatus>("/sign-in-reward/status");
 }
 
 export async function claimSignInReward(): Promise<SignInClaimResult> {
-  return authFetch<SignInClaimResult>("/sign-in-reward/claim", { method: "POST" });
+  return authFetchData<SignInClaimResult>("/sign-in-reward/claim", { method: "POST" });
 }

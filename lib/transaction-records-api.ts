@@ -1,8 +1,5 @@
-import type { ApiResponse } from "@/lib/api/types";
-import { readAuthSession } from "@/lib/auth/session";
+import { authFetchData } from "@/lib/auth/auth-fetch";
 import type { TransactionDateFilter, TransactionPaymentType, TransactionStatus } from "@/lib/transactions-data";
-
-const API_PREFIX = "/api/v1";
 
 export type ApiTransaction = {
   _id: string;
@@ -83,11 +80,6 @@ export type FetchUserTransactionsParams = {
 export async function fetchUserTransactions(
   params: FetchUserTransactionsParams,
 ): Promise<ApiTransaction[]> {
-  const session = readAuthSession();
-  if (!session?.accessToken) {
-    throw new Error("Please log in to continue");
-  }
-
   const q = new URLSearchParams({
     from: params.from,
     to: params.to,
@@ -95,17 +87,5 @@ export async function fetchUserTransactions(
   if (params.status) q.set("status", params.status);
   if (params.transactionType) q.set("transactionType", params.transactionType);
 
-  const res = await fetch(`${API_PREFIX}/transaction/me?${q.toString()}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-    credentials: "include",
-  });
-
-  const body = (await res.json()) as ApiResponse<ApiTransaction[]>;
-  if (!res.ok || !body.success || !body.data) {
-    throw new Error(body.message || "Failed to load transactions");
-  }
-  return body.data;
+  return authFetchData<ApiTransaction[]>(`/transaction/me?${q.toString()}`);
 }

@@ -1,9 +1,8 @@
 import type { ApiResponse } from "@/lib/api/types";
+import { authFetchJson } from "@/lib/auth/auth-fetch";
 import { parseJwtPayload } from "@/lib/auth/jwt";
 import { readAuthSession } from "@/lib/auth/session";
 import { writeMemberProfileCache } from "./profile-cache";
-
-const API_PREFIX = "/api/v1";
 
 export type NormalUserProfile = {
   name?: string;
@@ -19,21 +18,7 @@ async function requestJson<T>(
   path: string,
   init?: RequestInit,
 ): Promise<{ ok: boolean; status: number; body: ApiResponse<T> }> {
-  const session = readAuthSession();
-  const res = await fetch(`${API_PREFIX}${path}`, {
-    ...init,
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(session?.accessToken
-        ? { Authorization: `Bearer ${session.accessToken}` }
-        : {}),
-      ...(init?.headers ?? {}),
-    },
-  });
-
-  const body = (await res.json()) as ApiResponse<T>;
-  return { ok: res.ok && body.success, status: res.status, body };
+  return authFetchJson<T>(path, init);
 }
 
 export function getAuthObjectId(): string | null {

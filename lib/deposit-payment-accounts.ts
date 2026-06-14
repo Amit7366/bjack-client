@@ -1,8 +1,6 @@
 import type { ApiResponse } from "@/lib/api/types";
 import type { DepositPaymentMethod } from "@/lib/deposit-api";
-import { readAuthSession } from "@/lib/auth/session";
-
-const API_PREFIX = "/api/v1";
+import { API_PREFIX, authFetch } from "@/lib/auth/auth-fetch";
 
 export type DepositPaymentAccount = {
   _id: string;
@@ -18,13 +16,16 @@ export type DepositPaymentAccount = {
 };
 
 async function fetchAccounts(path: string, auth = false): Promise<DepositPaymentAccount[]> {
-  const session = auth ? readAuthSession() : null;
-  const res = await fetch(`${API_PREFIX}${path}`, {
-    credentials: "include",
-    headers: session?.accessToken
-      ? { Authorization: `Bearer ${session.accessToken}` }
-      : undefined,
-  });
+  if (auth) {
+    const res = await authFetch(path);
+    const body = (await res.json()) as ApiResponse<DepositPaymentAccount[]>;
+    if (!res.ok || !body.success) {
+      throw new Error(body.message || "Failed to load payment accounts");
+    }
+    return body.data ?? [];
+  }
+
+  const res = await fetch(`${API_PREFIX}${path}`, { credentials: "include" });
   const body = (await res.json()) as ApiResponse<DepositPaymentAccount[]>;
   if (!res.ok || !body.success) {
     throw new Error(body.message || "Failed to load payment accounts");
