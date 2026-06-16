@@ -13,20 +13,14 @@ function BjMark() {
   );
 }
 
-function GameImagePlaceholder({ title, provider }: { title?: string; provider?: string }) {
+function GameImagePlaceholder({ title }: { title?: string }) {
   const displayTitle = title?.trim() || "Game";
-  const displayProvider = provider?.trim();
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-[#1f1f1f] px-2 py-3 text-center">
       <p className="line-clamp-4 text-[10px] font-semibold leading-snug text-white sm:text-[11px] lg:text-xs">
         {displayTitle}
       </p>
-      {displayProvider ? (
-        <p className="mt-1.5 line-clamp-2 text-[9px] font-medium uppercase tracking-wide text-[#9ca3af] sm:text-[10px]">
-          {displayProvider}
-        </p>
-      ) : null}
     </div>
   );
 }
@@ -53,6 +47,7 @@ export default function GameCard(props: GameCardProps) {
   const { handleGameClick } = useGamePlayGate();
   const src = normalizeGameImage(props.image);
   const hasImage = isValidGameImageUrl(src);
+  const providerLabel = props.provider?.trim() ?? "";
   const alt =
     props.title && props.provider ? `${props.title} — ${props.provider}` : "";
   const defaultClassName =
@@ -87,11 +82,16 @@ export default function GameCard(props: GameCardProps) {
             unoptimized={props.unoptimized}
           />
         ) : (
-          <GameImagePlaceholder title={props.title} provider={props.provider} />
+          <GameImagePlaceholder title={props.title} />
         )}
         <span className="absolute right-1 top-1 z-[2] lg:right-2 lg:top-2">
           <BjMark />
         </span>
+        {providerLabel ? (
+          <span className="absolute bottom-1.5 left-1/2 z-[2] max-w-[calc(100%-0.5rem)] -translate-x-1/2 truncate px-1 text-center text-[9px] font-semibold uppercase tracking-wide text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-[10px] lg:bottom-2 lg:text-[11px]">
+            {providerLabel}
+          </span>
+        ) : null}
       </div>
     </button>
   );
