@@ -10,6 +10,7 @@ import {
 } from "./sidebar-menu";
 import { ExternalLinkIcon, LiveSupportIcon, SubItemIcon, menuIconFor } from "./SidebarIcons";
 import { sidebarItemHref, sidebarSubItemHref } from "@/lib/sidebar-routes";
+import { BKBAJI_ANDROID_APP_PATH } from "@/lib/seo/site-config";
 import { useLocale } from "./LocaleProvider";
 
 type SideNavigationProps = {
@@ -84,6 +85,15 @@ function MenuRow({ item, expandedId, onToggleItem }: MenuRowProps) {
     const href = sidebarItemHref(preferences.locale, item.id);
     const rowClass =
       "flex w-full items-center gap-3 px-3 py-[13px] text-left transition-opacity hover:opacity-90";
+    if (href === BKBAJI_ANDROID_APP_PATH) {
+      return (
+        <a href={href} download className={rowClass}>
+          {icon}
+          <span className="min-w-0 flex-1 text-[14px] font-normal leading-snug text-[#c8c8c8]">{label}</span>
+          <span className="w-4 shrink-0" />
+        </a>
+      );
+    }
     if (href) {
       return (
         <Link href={href} className={rowClass}>
@@ -248,6 +258,19 @@ export default function SideNavigation({
               const label = t.sidebar[item.id] ?? item.id;
               const railClass =
                 "focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-[#262626]";
+              if (href === BKBAJI_ANDROID_APP_PATH) {
+                return (
+                  <a
+                    key={item.id}
+                    href={href}
+                    download
+                    aria-label={label}
+                    className={railClass}
+                  >
+                    {menuIconFor(item.id)}
+                  </a>
+                );
+              }
               if (href) {
                 return (
                   <Link key={item.id} href={href} aria-label={label} className={railClass}>

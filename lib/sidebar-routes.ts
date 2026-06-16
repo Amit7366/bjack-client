@@ -1,4 +1,5 @@
 import type { HomeTabId } from "./home-games-data";
+import { BKBAJI_ANDROID_APP_PATH } from "./seo/site-config";
 import {
   categoryProviderHref,
   lobbyCategoryHref,
@@ -48,6 +49,7 @@ export function sidebarLobbyKind(itemId: string): LobbyKind | undefined {
 
 /** Internal sidebar link targets; `null` = placeholder (#). */
 export function sidebarItemHref(locale: string, itemId: string): string | null {
+  if (itemId === "appDownload") return BKBAJI_ANDROID_APP_PATH;
   if (itemId === "vipClub") return `/${locale}/vip`;
   if (itemId === "referral") return `/${locale}/referral`;
   const kind = SIDEBAR_TO_LOBBY[itemId];

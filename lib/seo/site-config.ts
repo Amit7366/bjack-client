@@ -13,6 +13,9 @@ export const SITE_LICENSE = "ALSI-202410030-FI1";
 
 export const SITE_DEFAULT_LOCALE = "bn" as const;
 
+/** Official Android APK served from `public/download/`. */
+export const BKBAJI_ANDROID_APP_PATH = "/download/bkbaji/bkbaji.apk";
+
 /** Brand & PWA icons — replace with self-hosted assets on bkbaji.com when available. */
 export const SITE_ICONS = {
   favicon: "https://img.b112j.com/images/bj/bj-favicon.ico",

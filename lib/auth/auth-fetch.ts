@@ -12,6 +12,28 @@ export class SessionExpiredError extends Error {
   }
 }
 
+function emptyApiResponse<T>(res: Response, message?: string): ApiResponse<T> {
+  return {
+    success: false,
+    statusCode: res.status,
+    message: message ?? (res.statusText || `Request failed (${res.status})`),
+    data: undefined as T,
+  };
+}
+
+async function parseApiResponse<T>(res: Response): Promise<ApiResponse<T>> {
+  const text = await res.text();
+  if (!text.trim()) {
+    return emptyApiResponse<T>(res);
+  }
+
+  try {
+    return JSON.parse(text) as ApiResponse<T>;
+  } catch {
+    return emptyApiResponse<T>(res, "Invalid server response");
+  }
+}
+
 function assertAuthenticatedSession() {
   const session = readAuthSession();
   if (!session?.accessToken) {
@@ -71,13 +93,13 @@ export async function authFetchJson<T>(
     throw new SessionExpiredError();
   }
 
-  const body = (await res.json()) as ApiResponse<T>;
+  const body = await parseApiResponse<T>(res);
   return { ok: res.ok && body.success, status: res.status, body };
 }
 
 export async function authFetchData<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await authFetch(path, init);
-  const body = (await res.json()) as ApiResponse<T>;
+  const body = await parseApiResponse<T>(res);
   if (!res.ok || !body.success) {
     throw new Error(body.message || "Request failed");
   }
