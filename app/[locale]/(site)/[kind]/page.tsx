@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import VendorGamesLobby from "@/components/VendorGamesLobby";
 import { fetchVendorGames } from "@/lib/games-api";
+import type { GameTile } from "@/lib/game-tile";
 import { filterGamesByLobbyTypes, inferLobbyGameTypes } from "@/lib/lobby-game-types";
 import { allLobbyVendorCodes } from "@/lib/lobby-filter-providers";
 import {
@@ -10,7 +11,7 @@ import {
   LOBBY_VENDOR_ALL,
   type LobbyKind,
 } from "@/lib/vendor-routes";
-import { mergeGamesFromVendors, normalizeGameImage } from "@/lib/vendor-games-data";
+import { mergeGamesFromVendors, resolveGameImage } from "@/lib/vendor-games-data";
 
 type PageProps = {
   params: Promise<{ locale: string; kind: string }>;
@@ -27,7 +28,10 @@ async function loadVendorGames(vendorCodes: string[]) {
     const games = await fetchVendorGames(vendorCodes);
     return games.map((g) => ({
       ...g,
-      image: normalizeGameImage(g.image),
+      image: resolveGameImage(
+        (g as GameTile & { game_image?: string }).game_image,
+        g.image,
+      ),
       types: g.types?.length ? g.types : inferLobbyGameTypes(g.title),
     }));
   } catch (error) {

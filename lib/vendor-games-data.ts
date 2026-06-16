@@ -21,6 +21,15 @@ export function normalizeGameImage(src: string): string {
   return isValidGameImageUrl(trimmed) ? trimmed : "";
 }
 
+/** Pick the first valid URL from catalog fields (`game_image` before `image`). */
+export function resolveGameImage(...sources: (string | undefined | null)[]): string {
+  for (const src of sources) {
+    const normalized = normalizeGameImage(src ?? "");
+    if (normalized) return normalized;
+  }
+  return "";
+}
+
 /** Vendor lobby rows share `GameTile` fields with home / carousel data. */
 const JILI_SLOT_GAMES: GameTile[] = [
   {
