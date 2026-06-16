@@ -83,7 +83,7 @@ export default function GameCard(props: GameCardProps) {
             fill
             priority={props.priority}
             sizes={props.sizes ?? "(max-width: 1023px) 33vw, 12.5vw"}
-            className={`object-cover object-center ${props.imageClassName ?? ""}`.trim()}
+            className={`object-fill cursor-pointer object-center ${props.imageClassName ?? ""}`.trim()}
             unoptimized={props.unoptimized}
           />
         ) : (
