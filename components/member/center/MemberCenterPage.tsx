@@ -13,6 +13,7 @@ import {
 } from "@/lib/i18n/member-center-messages";
 import {
   memberDepositHref,
+  memberRebateHref,
   memberRewardCenterHref,
   memberSectionHref,
   memberSignInRewardHref,
@@ -163,6 +164,8 @@ export default function MemberCenterPage() {
           return memberSectionHref(locale, "my-referral");
         case "internal-message":
           return memberSectionHref(locale, "notification");
+        case "rebate":
+          return memberRebateHref(locale);
         default:
           return null;
       }

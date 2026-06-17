@@ -29,6 +29,14 @@ export function memberRewardCenterHref(locale: string): string {
   return `/${locale}/member/reward-center`;
 }
 
+export function memberCenterHref(locale: string): string {
+  return `/${locale}/member`;
+}
+
+export function memberRebateHref(locale: string): string {
+  return `/${locale}/member/rebate`;
+}
+
 export function memberSignInRewardHref(locale: string): string {
   return `/${locale}/member/reward-center/sign-in`;
 }
