@@ -55,6 +55,7 @@ export function tabToLobbyKind(tab: Exclude<HomeTabId, "popular">): LobbyKind {
 const VENDOR_CODE: Record<string, string> = {
   ...vendorCodeMapFromActiveProviders(),
   pp: "awcv2_pragmaticplay",
+  pragmaticplay: "awcv2_pragmaticplay",
   btiSports: "awcv2_bti",
   /*
    * Inactive — not in MongoDB gamecatalogs yet:
@@ -124,6 +125,7 @@ function vendorCodeFor(providerId: string): string {
 const FEATURED_ROUTE: Record<string, { kind: LobbyKind; providerId: string }> = {
   ...featuredRoutesFromActiveProviders(),
   pp: { kind: "slot", providerId: "pragmatic" },
+  pragmaticplay: { kind: "slot", providerId: "pragmatic" },
 };
 
 export function featuredProviderHref(locale: string, featuredId: string): string {

@@ -51,6 +51,22 @@ export function filterGamesByLobbyTypes<T extends { title: string; types?: strin
   return games.filter((g) => gameMatchesLobbyTypes(g, selectedTypeIds));
 }
 
+/** Lobby URL kind → catalog `types[]` values (casino lobby includes live dealer games). */
+export function catalogTypesForLobbyKind(kind: string): string[] {
+  const k = kind.trim().toLowerCase();
+  if (!k) return [];
+  if (k === "casino") return ["casino", "live"];
+  if (k === "table") return ["table", "table game"];
+  if (k === "slot") return ["slot", "instant"];
+  return [k];
+}
+
+export function gameMatchesLobbyKind(game: { types?: string[] }, kind: string): boolean {
+  const allowed = new Set(catalogTypesForLobbyKind(kind));
+  if (!allowed.size) return true;
+  return game.types?.some((t) => allowed.has(t.toLowerCase())) ?? false;
+}
+
 /** Keep games whose catalog `types` includes the lobby URL segment (e.g. fishing, slot). */
 export function filterGamesByLobbyKind<T extends { types?: string[] }>(
   games: T[],
@@ -58,5 +74,5 @@ export function filterGamesByLobbyKind<T extends { types?: string[] }>(
 ): T[] {
   const category = kind.trim().toLowerCase();
   if (!category) return games;
-  return games.filter((g) => g.types?.some((t) => t.toLowerCase() === category));
+  return games.filter((g) => gameMatchesLobbyKind(g, category));
 }

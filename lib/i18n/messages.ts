@@ -30,6 +30,15 @@ export type Messages = {
     description: string;
     close: string;
   };
+  appDownloadPrompt: {
+    title: string;
+    continueInBrowser: string;
+    close: string;
+    apkLabel: string;
+    webAppLabel: string;
+    badge: string;
+    pwaUnavailable: string;
+  };
   navbar: {
     withdraw: string;
     deposit: string;
@@ -123,6 +132,15 @@ const en: Messages = {
     title: "Become a BKBaji Member",
     description: "Log in to play the game. If you don't have an account, sign up for free!",
     close: "Close",
+  },
+  appDownloadPrompt: {
+    title: "Download the BKBaji app now and enjoy the best gaming experience.",
+    continueInBrowser: "Continue using browser",
+    close: "Close",
+    apkLabel: "APP",
+    webAppLabel: "Web-app",
+    badge: "More benefits",
+    pwaUnavailable: 'Use your browser menu and tap "Add to Home screen" to install.',
   },
   navbar: {
     withdraw: "Withdraw",
@@ -393,6 +411,15 @@ const bn: Messages = {
     description: "গেমটি খেলতে লগ ইন করুন। আপনার যদি অ্যাকাউন্ট না থাকে তবে ফ্রি সাইন আপ করুন!",
     close: "বন্ধ করুন",
   },
+  appDownloadPrompt: {
+    title: "এখনই BKBaji অ্যাপ ডাউনলোড করুন, সর্বোচ্চ পুরস্কার জিতুন।",
+    continueInBrowser: "ব্রাউজার ব্যবহার করে এগিয়ে যান",
+    close: "বন্ধ করুন",
+    apkLabel: "APP",
+    webAppLabel: "ওয়েব-অ্যাপ",
+    badge: "আরও সুবিধা",
+    pwaUnavailable: 'ইনস্টল করতে ব্রাউজার মেনু থেকে "হোম স্ক্রিনে যোগ করুন" ট্যাপ করুন।',
+  },
   navbar: {
     withdraw: "উইথড্র",
     deposit: "ডিপোজিট",
@@ -661,6 +688,15 @@ const hi: Messages = {
     title: "BKBaji सदस्य बनें",
     description: "गेम खेलने के लिए लॉग इन करें। अकाउंट नहीं है तो मुफ्त में साइन अप करें!",
     close: "बंद करें",
+  },
+  appDownloadPrompt: {
+    title: "अभी BKBaji ऐप डाउनलोड करें और बेहतरीन गेमिंग अनुभव पाएं।",
+    continueInBrowser: "ब्राउज़र में जारी रखें",
+    close: "बंद करें",
+    apkLabel: "APP",
+    webAppLabel: "वेब-ऐप",
+    badge: "और लाभ",
+    pwaUnavailable: 'इंस्टॉल करने के लिए ब्राउज़र मेनू में "होम स्क्रीन में जोड़ें" टैप करें।',
   },
   navbar: {
     withdraw: "निकासी",
