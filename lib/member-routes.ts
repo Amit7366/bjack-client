@@ -37,6 +37,10 @@ export function memberRebateHref(locale: string): string {
   return `/${locale}/member/rebate`;
 }
 
+export function memberProfitLossHref(locale: string): string {
+  return `/${locale}/member/profit-and-loss`;
+}
+
 export function memberSignInRewardHref(locale: string): string {
   return `/${locale}/member/reward-center/sign-in`;
 }

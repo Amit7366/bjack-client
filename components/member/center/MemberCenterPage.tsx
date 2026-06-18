@@ -13,6 +13,7 @@ import {
 } from "@/lib/i18n/member-center-messages";
 import {
   memberDepositHref,
+  memberProfitLossHref,
   memberRebateHref,
   memberRewardCenterHref,
   memberSectionHref,
@@ -152,6 +153,8 @@ export default function MemberCenterPage() {
           return memberRewardCenterHref(locale);
         case "betting-record":
           return memberSectionHref(locale, "betting-records");
+        case "profit-and-loss":
+          return memberProfitLossHref(locale);
         case "deposit-record":
         case "withdrawal-record":
         case "account-record":
