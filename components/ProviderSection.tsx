@@ -9,70 +9,18 @@ import { useLocale } from "./LocaleProvider";
 
 type FeaturedProvider = (typeof featuredProviders)[number];
 
-function ProviderLogo({ type }: { type: FeaturedProvider["logo"] }) {
-  switch (type) {
-    case "jili":
-      return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gradient-to-br from-[#ffe566] to-[#c48a0a] text-[11px] font-black text-[#5c3d00]">
-          JL
-        </div>
-      );
-    case "pp":
-      return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f97316] text-[8px] font-bold leading-tight text-white">
-          <span className="text-center">
-            👑
-            <br />
-            PLAY
-          </span>
-        </div>
-      );
-    case "sexy":
-      return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-gradient-to-br from-[#f472b6] to-[#db2777] text-[9px] font-bold italic text-white">
-          Sexy
-        </div>
-      );
-    case "fachai":
-      return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[#1d4ed8] text-[11px] font-black text-white">
-          FC
-        </div>
-      );
-    case "yellowBat":
-      return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[#eab308] text-[11px] font-black text-[#422006]">
-          YB
-        </div>
-      );
-    case "jdb":
-      return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[#ca8a04] text-[10px] font-black text-[#3f2d00]">
-          JDB
-        </div>
-      );
-    case "pg":
-      return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[#16a34a] text-[10px] font-black text-white">
-          PG
-        </div>
-      );
-    case "spribe":
-      return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[#dc2626] text-[9px] font-black text-white">
-          SP
-        </div>
-      );
-    case "evolution":
-      return (
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[#1e3a8a] text-[9px] font-black text-white">
-          EV
-        </div>
-      );
-  }
+function ProviderLogo({ initials, color }: { initials: string; color: string }) {
+  return (
+    <div
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-[#111]"
+      style={{ backgroundColor: color }}
+    >
+      {initials}
+    </div>
+  );
 }
 
-function ProviderCard({ id, logo }: FeaturedProvider) {
+function ProviderCard({ id, initials, color }: FeaturedProvider) {
   const { t, preferences } = useLocale();
   const label = t.home.providers[id] ?? id;
   const href = featuredProviderHref(preferences.locale, id);
@@ -82,7 +30,7 @@ function ProviderCard({ id, logo }: FeaturedProvider) {
       href={href}
       className="flex min-w-[148px] shrink-0 items-center gap-3 rounded-md bg-[#1f1f1f] px-3 py-3 transition-colors hover:bg-[#2a2a2a] sm:min-w-[160px]"
     >
-      <ProviderLogo type={logo} />
+      <ProviderLogo initials={initials} color={color} />
       <span className="truncate text-[13px] font-medium text-[#d4d4d4]">{label}</span>
     </Link>
   );

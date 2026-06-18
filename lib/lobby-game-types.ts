@@ -50,3 +50,13 @@ export function filterGamesByLobbyTypes<T extends { title: string; types?: strin
   if (!selectedTypeIds.length) return games;
   return games.filter((g) => gameMatchesLobbyTypes(g, selectedTypeIds));
 }
+
+/** Keep games whose catalog `types` includes the lobby URL segment (e.g. fishing, slot). */
+export function filterGamesByLobbyKind<T extends { types?: string[] }>(
+  games: T[],
+  kind: string,
+): T[] {
+  const category = kind.trim().toLowerCase();
+  if (!category) return games;
+  return games.filter((g) => g.types?.some((t) => t.toLowerCase() === category));
+}

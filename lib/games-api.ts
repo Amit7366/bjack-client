@@ -26,10 +26,21 @@ export async function fetchExclusiveSlides(): Promise<CarouselSlide[]> {
   return fetchFromServer<CarouselSlide[]>("exclusive-games");
 }
 
-export async function fetchVendorGames(vendorCodes: string[]): Promise<GameTile[]> {
+export type FetchVendorGamesOptions = {
+  vendorCodes?: string[];
+  category: string;
+};
+
+export async function fetchVendorGames({
+  vendorCodes = [],
+  category,
+}: FetchVendorGamesOptions): Promise<GameTile[]> {
   const params = new URLSearchParams();
   if (vendorCodes.length > 0) {
     params.set("vendor", vendorCodes.join(","));
+  }
+  if (category.trim()) {
+    params.set("category", category.trim());
   }
   const query = params.toString();
   const path = query ? `allgames/vendor?${query}` : "allgames/vendor";

@@ -39,7 +39,7 @@ const SIDEBAR_TO_TAB: Record<string, Exclude<HomeTabId, "popular">> = {
 const SIDEBAR_SUB_PROVIDER: Partial<Record<string, Partial<Record<string, string>>>> = {
   sports: {
     football: "fbSports",
-    tennis: "btiSports",
+    tennis: "bti",
   },
 };
 

@@ -1,9 +1,13 @@
 import { notFound } from "next/navigation";
 import VendorGamesLobby from "@/components/VendorGamesLobby";
+import { loadExclusiveLobbyGames } from "@/lib/exclusive-lobby-games";
 import { fetchVendorGames } from "@/lib/games-api";
 import type { GameTile } from "@/lib/game-tile";
-import { filterGamesByLobbyTypes, inferLobbyGameTypes } from "@/lib/lobby-game-types";
-import { allLobbyVendorCodes } from "@/lib/lobby-filter-providers";
+import {
+  filterGamesByLobbyKind,
+  filterGamesByLobbyTypes,
+  inferLobbyGameTypes,
+} from "@/lib/lobby-game-types";
 import {
   defaultLobbyVendorParam,
   isAllLobbyVendors,
@@ -23,9 +27,9 @@ function splitCsv(param: string | string[] | undefined): string[] {
   return [...new Set(param.split(",").map((s) => s.trim()).filter(Boolean))];
 }
 
-async function loadVendorGames(vendorCodes: string[]) {
+async function loadVendorGames(kind: LobbyKind, vendorCodes: string[]) {
   try {
-    const games = await fetchVendorGames(vendorCodes);
+    const games = await fetchVendorGames({ vendorCodes, category: kind });
     return games.map((g) => ({
       ...g,
       image: resolveGameImage(
@@ -36,7 +40,8 @@ async function loadVendorGames(vendorCodes: string[]) {
     }));
   } catch (error) {
     console.error("Failed to load vendor games from API, using fallback:", error);
-    return mergeGamesFromVendors(vendorCodes);
+    const fallback = mergeGamesFromVendors(vendorCodes);
+    return filterGamesByLobbyKind(fallback, kind);
   }
 }
 
@@ -52,11 +57,18 @@ export default async function LobbyByKindPage({ params, searchParams }: PageProp
     vendorParts.length > 0 ? vendorParts : [defaultLobbyVendorParam()];
   const typeParts = splitCsv(sp.type);
 
-  const vendorCodesForMerge = isAllLobbyVendors(vendorsResolved)
-    ? allLobbyVendorCodes(kind)
+  const vendorCodesForFetch = isAllLobbyVendors(vendorsResolved)
+    ? []
     : vendorsResolved.filter((v) => v !== LOBBY_VENDOR_ALL);
 
-  let merged = await loadVendorGames(vendorCodesForMerge);
+  let merged =
+    kind === "exclusive"
+      ? await loadExclusiveLobbyGames(vendorCodesForFetch)
+      : await loadVendorGames(kind, vendorCodesForFetch);
+
+  if (kind !== "exclusive") {
+    merged = filterGamesByLobbyKind(merged, kind);
+  }
   const games = filterGamesByLobbyTypes(merged, typeParts);
 
   return (

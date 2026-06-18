@@ -1,4 +1,5 @@
 import type { GameTile } from "./game-tile";
+import { activeProvidersForHomeTab, type HomeCategoryTabId } from "./catalog-providers";
 
 export type HomeTabId =
   | "popular"
@@ -123,105 +124,36 @@ export type CategoryProvider = {
   initials: string;
 };
 
+function categoryProvidersForTab(tab: HomeCategoryTabId): CategoryProvider[] {
+  return activeProvidersForHomeTab(tab).map((p) => ({
+    id: p.providerKey,
+    color: p.color,
+    initials: p.initials,
+  }));
+}
+
 export const categoryProviders: Record<
   Exclude<HomeTabId, "popular">,
   CategoryProvider[]
 > = {
-  sports: [
-    { id: "cricket", color: "#e879a8", initials: "🏏" },
-    { id: "btiSports", color: "#ef4444", initials: "BT" },
-    { id: "inSports", color: "#3b82f6", initials: "IN" },
-    { id: "fbSports", color: "#eab308", initials: "FB" },
-    { id: "ugSports", color: "#06b6d4", initials: "UG" },
-    { id: "iSports", color: "#f43f5e", initials: "IS" },
-    { id: "cmdSports", color: "#2563eb", initials: "CM" },
-    { id: "sboSports", color: "#1d4ed8", initials: "SB" },
-    { id: "eSports", color: "#6366f1", initials: "E7" },
-    { id: "horsebook", color: "#f97316", initials: "🐎" },
-    { id: "pinnacle", color: "#ec4899", initials: "38" },
-  ],
-  casino: [
-    { id: "evolution", color: "#1d4ed8", initials: "EV" },
-    { id: "pragmatic", color: "#f97316", initials: "PP" },
-    { id: "sexy", color: "#ec4899", initials: "SG" },
-    { id: "ezugi", color: "#22c55e", initials: "EZ" },
-    { id: "playtech", color: "#0ea5e9", initials: "PT" },
-    { id: "saGaming", color: "#eab308", initials: "SA" },
-    { id: "dreamGaming", color: "#a855f7", initials: "DG" },
-    { id: "allbet", color: "#ef4444", initials: "AB" },
-    { id: "wmCasino", color: "#14b8a6", initials: "WM" },
-    { id: "vivoGaming", color: "#6366f1", initials: "VG" },
-  ],
-  slots: [
-    { id: "jili", color: "#f59e0b", initials: "JL" },
-    { id: "pg", color: "#22c55e", initials: "PG" },
-    { id: "jdb", color: "#eab308", initials: "JD" },
-    { id: "pragmatic", color: "#f97316", initials: "PP" },
-    { id: "hacksaw", color: "#94a3b8", initials: "HS" },
-    { id: "rich88", color: "#a855f7", initials: "R8" },
-    { id: "fachai", color: "#3b82f6", initials: "FC" },
-    { id: "spadegaming", color: "#ef4444", initials: "SP" },
-    { id: "cq9", color: "#06b6d4", initials: "CQ" },
-    { id: "netent", color: "#22c55e", initials: "NE" },
-  ],
-  crash: [
-    { id: "spribe", color: "#ef4444", initials: "SP" },
-    { id: "aviator", color: "#dc2626", initials: "AV" },
-    { id: "jili", color: "#f59e0b", initials: "JL" },
-    { id: "smartsoft", color: "#8b5cf6", initials: "SS" },
-    { id: "turboGames", color: "#06b6d4", initials: "TG" },
-    { id: "bgaming", color: "#22c55e", initials: "BG" },
-    { id: "onlyplay", color: "#ec4899", initials: "OP" },
-    { id: "inout", color: "#f97316", initials: "IO" },
-    { id: "galaxsys", color: "#6366f1", initials: "GX" },
-    { id: "mascot", color: "#14b8a6", initials: "MC" },
-  ],
-  table: [
-    { id: "baccarat", color: "#ef4444", initials: "BC" },
-    { id: "roulette", color: "#22c55e", initials: "RL" },
-    { id: "blackjack", color: "#1d4ed8", initials: "BJ" },
-    { id: "sicbo", color: "#f59e0b", initials: "SB" },
-    { id: "dragonTiger", color: "#dc2626", initials: "DT" },
-    { id: "teenPatti", color: "#a855f7", initials: "TP" },
-    { id: "andarBahar", color: "#06b6d4", initials: "AB" },
-    { id: "poker", color: "#6366f1", initials: "PK" },
-    { id: "holdem", color: "#14b8a6", initials: "HE" },
-    { id: "threeCard", color: "#ec4899", initials: "3C" },
-  ],
-  fishing: [
-    { id: "jili", color: "#f59e0b", initials: "JL" },
-    { id: "jdb", color: "#eab308", initials: "JD" },
-    { id: "cq9", color: "#06b6d4", initials: "CQ" },
-    { id: "fachai", color: "#3b82f6", initials: "FC" },
-    { id: "kaGaming", color: "#22c55e", initials: "KA" },
-    { id: "spadegaming", color: "#ef4444", initials: "SP" },
-    { id: "rich88", color: "#a855f7", initials: "R8" },
-    { id: "youlian", color: "#38bdf8", initials: "YL" },
-    { id: "bigGaming", color: "#f97316", initials: "BG" },
-    { id: "simplePlay", color: "#6366f1", initials: "SP" },
-  ],
-  arcade: [
-    { id: "jdb", color: "#f5a623", initials: "JD" },
-    { id: "fachai", color: "#3b82f6", initials: "FC" },
-    { id: "pragmatic", color: "#f97316", initials: "PP" },
-    { id: "rich88", color: "#a855f7", initials: "R8" },
-    { id: "youlian", color: "#38bdf8", initials: "YL" },
-    { id: "hacksaw", color: "#e5e7eb", initials: "HS" },
-    { id: "spribe", color: "#ef4444", initials: "SP" },
-    { id: "jili", color: "#f59e0b", initials: "JL" },
-    { id: "cq9", color: "#06b6d4", initials: "CQ" },
-    { id: "smartsoft", color: "#8b5cf6", initials: "SS" },
-  ],
-  lottery: [
-    { id: "tc", color: "#22c55e", initials: "TC" },
-    { id: "king", color: "#f59e0b", initials: "KM" },
-    { id: "vrLottery", color: "#6366f1", initials: "VR" },
-    { id: "bbin", color: "#ef4444", initials: "BB" },
-    { id: "gwLottery", color: "#06b6d4", initials: "GW" },
-    { id: "tpLottery", color: "#a855f7", initials: "TP" },
-    { id: "igLottery", color: "#f97316", initials: "IG" },
-    { id: "sgWin", color: "#14b8a6", initials: "SG" },
-    { id: "aeLottery", color: "#ec4899", initials: "AE" },
-    { id: "happyLottery", color: "#eab308", initials: "HP" },
-  ],
+  sports: categoryProvidersForTab("sports"),
+  casino: categoryProvidersForTab("casino"),
+  slots: categoryProvidersForTab("slots"),
+  crash: categoryProvidersForTab("crash"),
+  table: categoryProvidersForTab("table"),
+  fishing: categoryProvidersForTab("fishing"),
+  arcade: categoryProvidersForTab("arcade"),
+  lottery: categoryProvidersForTab("lottery"),
 };
+
+/*
+ * Inactive home-tab providers (not in MongoDB) — enable in catalog-providers.ts when added:
+ * sports: cricket, btiSports, inSports, fbSports, ugSports, iSports, cmdSports, sboSports, eSports, horsebook, pinnacle
+ * slots: jdb, hacksaw, rich88, spadegaming, cq9, netent, yellowBat
+ * casino: sexy, saGaming, dreamGaming, allbet, wmCasino, vivoGaming
+ * crash: aviator, smartsoft, turboGames, bgaming, onlyplay, inout, galaxsys, mascot
+ * table: baccarat, roulette, blackjack, sicbo, dragonTiger, teenPatti, andarBahar, poker, holdem, threeCard
+ * fishing: jdb, cq9, kaGaming, spadegaming, rich88, youlian, simplePlay
+ * arcade: jdb, rich88, youlian, hacksaw, spribe, cq9, smartsoft
+ * lottery: tc, vrLottery, bbin, gwLottery, tpLottery, igLottery, sgWin, aeLottery, happyLottery
+ */
