@@ -8,15 +8,17 @@ import { useToast } from "@/components/ToastProvider";
 import { getBonusRewardMessages } from "@/lib/i18n/bonus-reward-messages";
 import { memberRewardCenterHref } from "@/lib/member-routes";
 import {
-  claimMemberBonusReward,
-  fetchMemberBonusRewardStatus,
-  remainingFromMs,
-  type MemberBonusRewardStatus,
-} from "@/lib/member-bonus-reward-api";
-import {
   fetchMyNormalUserProfile,
   type NormalUserProfile,
 } from "@/lib/member/profile-api";
+import {
+  claimRewardOffer,
+  fetchRewardOffers,
+  pickLocalizedText,
+  remainingFromMs,
+  type RewardOfferCriteriaType,
+  type RewardOfferView,
+} from "@/lib/reward-offers-api";
 import { DefaultAvatarIcon, HeaderBackIcon } from "./MemberCenterIcons";
 
 function formatBalance(amount: string | undefined, locale: string): string {
@@ -90,6 +92,126 @@ function DonutDecor({ className }: { className: string }) {
   );
 }
 
+function criteriaProgressLabel(
+  type: RewardOfferCriteriaType,
+  progress: { current: number; required: number },
+  labels: ReturnType<typeof getBonusRewardMessages>,
+  locale: string,
+): string {
+  const current = formatBonus(progress.current, locale);
+  const required = formatBonus(progress.required, locale);
+  switch (type) {
+    case "daily_deposit":
+      return `${labels.depositToday}: ৳${current} / ৳${required}`;
+    case "total_deposit":
+      return `${labels.totalDeposit}: ৳${current} / ৳${required}`;
+    case "referral":
+      return `${labels.referFriends}: ${progress.current} / ${progress.required}`;
+    default:
+      return "";
+  }
+}
+
+type OfferCardProps = {
+  offer: RewardOfferView;
+  locale: string;
+  labels: ReturnType<typeof getBonusRewardMessages>;
+  tick: number;
+  claiming: boolean;
+  onClaim: (offerId: string) => void;
+};
+
+function OfferCard({ offer, locale, labels, tick, claiming, onClaim }: OfferCardProps) {
+  const title = pickLocalizedText(offer.title, locale as "en" | "bn" | "hi");
+  const description = pickLocalizedText(offer.description, locale as "en" | "bn" | "hi");
+
+  const countdown = useMemo(() => {
+    if (offer.canClaim) {
+      return { days: 0, clock: "00:00:00" };
+    }
+    if (offer.nextClaimAt) {
+      const remaining = Math.max(0, new Date(offer.nextClaimAt).getTime() - tick);
+      return remainingFromMs(remaining);
+    }
+    return remainingFromMs(offer.remainingMs);
+  }, [offer, tick]);
+
+  const dueDateLabel = useMemo(() => {
+    if (offer.canClaim) return formatDueDate(new Date().toISOString(), locale);
+    return formatDueDate(offer.nextClaimAt, locale);
+  }, [offer, locale]);
+
+  const onCooldown = !offer.canClaim && (offer.remainingMs > 0 || offer.nextClaimAt !== null);
+  const buttonEnabled = offer.canClaim && !claiming;
+
+  return (
+    <div className="relative flex overflow-hidden bg-gradient-to-r from-[#fdf1e7] via-[#fbeadd] to-white shadow-sm">
+      <DonutDecor className="left-[42%] -top-5 h-12 w-12" />
+      <DonutDecor className="left-[55%] bottom-1 h-7 w-7 border-[5px]" />
+      <DonutDecor className="left-2 -bottom-4 h-9 w-9 border-[6px]" />
+
+      <div className="relative z-10 my-4 ml-3 flex w-[124px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg bg-gradient-to-b from-[#ff5f3d] to-[#ef2722] px-2 py-3.5 text-center text-white shadow-md">
+        <span className="text-[12px] font-bold leading-tight">{labels.voucherTitle}</span>
+        <span className="text-[12px] font-semibold leading-tight">
+          ৳ {formatBonus(offer.bonusAmount, locale)}
+        </span>
+        <span className="text-[12px] font-semibold leading-tight">{dueDateLabel}</span>
+      </div>
+
+      <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-center gap-1 px-3 py-4">
+        <p className="text-[13px] text-[#6b7280]">{labels.rewardLabel}</p>
+        <p className="truncate text-[14px] font-semibold text-[#1c1c1c]">{title}</p>
+        <p className="mt-0.5 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#eceef1] px-2.5 py-1 text-[12px] text-[#4b5563]">
+          {description}
+          <InfoBadge />
+        </p>
+        {offer.criteriaProgress && offer.criteriaType !== "none" ? (
+          <p
+            className={`mt-1 text-[12px] ${offer.criteriaMet ? "text-[#16a34a]" : "text-[#dc2626]"}`}
+          >
+            {criteriaProgressLabel(offer.criteriaType, offer.criteriaProgress, labels, locale)}
+          </p>
+        ) : null}
+        {!offer.criteriaMet ? (
+          <p className="text-[12px] text-[#dc2626]">{labels.criteriaNotMet}</p>
+        ) : null}
+        {offer.totalClaimed > 0 ? (
+          <p className="mt-1 text-[12px] text-[#6b7280]">
+            Total claimed: ৳ {formatBonus(offer.totalClaimed, locale)}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="relative z-10 flex w-[104px] shrink-0 flex-col items-center justify-center gap-0.5 bg-white px-2 py-3">
+        <span className="text-[12px] text-[#9ca3af]">
+          {offer.canClaim ? labels.dueDate : labels.cooldownNote}
+        </span>
+        <span className="text-[#1c1c1c]">
+          <span className="text-[26px] font-extrabold leading-none tabular-nums">
+            {offer.canClaim ? 0 : countdown.days}
+          </span>
+          <span className="ml-0.5 text-[11px] font-semibold">{labels.dayUnit}</span>
+        </span>
+        <span className="text-[12px] font-medium tabular-nums text-[#374151]">
+          {offer.canClaim ? "00:00:00" : countdown.clock}
+        </span>
+        <button
+          type="button"
+          onClick={() => onClaim(offer.id)}
+          disabled={!buttonEnabled}
+          className={`focus-ring mt-1.5 w-full rounded-full py-1.5 text-[13px] font-semibold text-white shadow-sm transition-transform ${
+            buttonEnabled
+              ? "bg-gradient-to-b from-[#52d61f] to-[#2fae0a] active:scale-[0.97]"
+              : "cursor-not-allowed bg-[#c9ccd1]"
+          }`}
+        >
+          {claiming ? "…" : offer.canClaim ? labels.claim : onCooldown ? labels.claimed : labels.criteriaNotMet}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function BonusRewardPage() {
   const { session, refreshBalance, refreshSession } = useAuth();
   const { preferences } = useLocale();
@@ -99,17 +221,17 @@ export default function BonusRewardPage() {
 
   const [mounted, setMounted] = useState(false);
   const [profile, setProfile] = useState<NormalUserProfile | null>(null);
-  const [status, setStatus] = useState<MemberBonusRewardStatus | null>(null);
+  const [offers, setOffers] = useState<RewardOfferView[]>([]);
   const [loading, setLoading] = useState(true);
-  const [claiming, setClaiming] = useState(false);
+  const [claimingId, setClaimingId] = useState<string | null>(null);
   const [tick, setTick] = useState(() => Date.now());
 
-  const loadStatus = useCallback(async () => {
+  const loadOffers = useCallback(async () => {
     setLoading(true);
     try {
-      setStatus(await fetchMemberBonusRewardStatus());
+      setOffers(await fetchRewardOffers());
     } catch (e) {
-      showToast(e instanceof Error ? e.message : "Failed to load bonus", { variant: "error" });
+      showToast(e instanceof Error ? e.message : "Failed to load bonus offers", { variant: "error" });
     } finally {
       setLoading(false);
     }
@@ -125,8 +247,8 @@ export default function BonusRewardPage() {
   }, []);
 
   useEffect(() => {
-    void loadStatus();
-  }, [loadStatus]);
+    void loadOffers();
+  }, [loadOffers]);
 
   useEffect(() => {
     let cancelled = false;
@@ -146,52 +268,28 @@ export default function BonusRewardPage() {
   const balanceDisplay = mounted ? formatBalance(session?.balance, locale) : "0.00";
   const avatarSrc = profile?.profileImg;
 
-  const countdown = useMemo(() => {
-    if (!status || status.canClaim) {
-      return { days: 0, clock: "00:00:00" };
-    }
-    if (status.nextClaimAt) {
-      const remaining = Math.max(0, new Date(status.nextClaimAt).getTime() - tick);
-      return remainingFromMs(remaining);
-    }
-    return remainingFromMs(status.remainingMs);
-  }, [status, tick]);
+  const onClaim = useCallback(
+    async (offerId: string) => {
+      const offer = offers.find((o) => o.id === offerId);
+      if (!offer?.canClaim || claimingId) return;
 
-  const dueDateLabel = useMemo(() => {
-    if (!status) return "—";
-    if (status.canClaim) return formatDueDate(new Date().toISOString(), locale);
-    return formatDueDate(status.nextClaimAt, locale);
-  }, [status, locale]);
-
-  const onClaim = useCallback(async () => {
-    if (claiming || !status?.canClaim) return;
-    setClaiming(true);
-    try {
-      const result = await claimMemberBonusReward();
-      showToast(
-        `${b.claimSuccess} (+৳${formatBonus(result.bonusAmount, locale)})`,
-        { variant: "success" },
-      );
-      await Promise.all([refreshBalance(), refreshSession()]);
-      await loadStatus();
-    } catch (e) {
-      showToast(e instanceof Error ? e.message : "Claim failed", { variant: "error" });
-    } finally {
-      setClaiming(false);
-    }
-  }, [
-    claiming,
-    status?.canClaim,
-    showToast,
-    b.claimSuccess,
-    locale,
-    refreshBalance,
-    refreshSession,
-    loadStatus,
-  ]);
-
-  const canClaim = status?.canClaim ?? false;
-  const bonusAmount = status?.bonusAmount ?? 10;
+      setClaimingId(offerId);
+      try {
+        const result = await claimRewardOffer(offerId);
+        showToast(
+          `${b.claimSuccess} (+৳${formatBonus(result.bonusAmount, locale)})`,
+          { variant: "success" },
+        );
+        await Promise.all([refreshBalance(), refreshSession()]);
+        await loadOffers();
+      } catch (e) {
+        showToast(e instanceof Error ? e.message : "Claim failed", { variant: "error" });
+      } finally {
+        setClaimingId(null);
+      }
+    },
+    [offers, claimingId, showToast, b.claimSuccess, locale, refreshBalance, refreshSession, loadOffers],
+  );
 
   return (
     <div className="min-h-full bg-[#eef0f2]">
@@ -248,63 +346,20 @@ export default function BonusRewardPage() {
         </div>
 
         <div className="space-y-3 px-0 pb-mobile-nav pt-2 lg:pb-10">
-          {loading && !status ? (
+          {loading && offers.length === 0 ? (
             <p className="px-4 py-8 text-center text-[14px] text-[#6b7280]">…</p>
-          ) : status ? (
-            <div className="relative flex overflow-hidden bg-gradient-to-r from-[#fdf1e7] via-[#fbeadd] to-white shadow-sm">
-              <DonutDecor className="left-[42%] -top-5 h-12 w-12" />
-              <DonutDecor className="left-[55%] bottom-1 h-7 w-7 border-[5px]" />
-              <DonutDecor className="left-2 -bottom-4 h-9 w-9 border-[6px]" />
-
-              <div className="relative z-10 my-4 ml-3 flex w-[124px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg bg-gradient-to-b from-[#ff5f3d] to-[#ef2722] px-2 py-3.5 text-center text-white shadow-md">
-                <span className="text-[12px] font-bold leading-tight">{b.voucherTitle}</span>
-                <span className="text-[12px] font-semibold leading-tight">
-                  ৳ {formatBonus(bonusAmount, locale)}
-                </span>
-                <span className="text-[12px] font-semibold leading-tight">{dueDateLabel}</span>
-              </div>
-
-              <div className="relative z-10 flex min-w-0 flex-1 flex-col justify-center gap-1 px-3 py-4">
-                <p className="text-[13px] text-[#6b7280]">{b.rewardLabel}</p>
-                <p className="truncate text-[14px] font-semibold text-[#1c1c1c]">{b.rewardTitle}</p>
-                <p className="mt-0.5 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#eceef1] px-2.5 py-1 text-[12px] text-[#4b5563]">
-                  {b.rewardDescription}
-                  <InfoBadge />
-                </p>
-                {status.totalBonusClaimed > 0 ? (
-                  <p className="mt-1 text-[12px] text-[#6b7280]">
-                    Total claimed: ৳ {formatBonus(status.totalBonusClaimed, locale)}
-                  </p>
-                ) : null}
-              </div>
-
-              <div className="relative z-10 flex w-[104px] shrink-0 flex-col items-center justify-center gap-0.5 bg-white px-2 py-3">
-                <span className="text-[12px] text-[#9ca3af]">
-                  {canClaim ? b.dueDate : b.cooldownNote}
-                </span>
-                <span className="text-[#1c1c1c]">
-                  <span className="text-[26px] font-extrabold leading-none tabular-nums">
-                    {canClaim ? 0 : countdown.days}
-                  </span>
-                  <span className="ml-0.5 text-[11px] font-semibold">{b.dayUnit}</span>
-                </span>
-                <span className="text-[12px] font-medium tabular-nums text-[#374151]">
-                  {canClaim ? "00:00:00" : countdown.clock}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => void onClaim()}
-                  disabled={!canClaim || claiming}
-                  className={`focus-ring mt-1.5 w-full rounded-full py-1.5 text-[13px] font-semibold text-white shadow-sm transition-transform ${
-                    canClaim && !claiming
-                      ? "bg-gradient-to-b from-[#52d61f] to-[#2fae0a] active:scale-[0.97]"
-                      : "cursor-not-allowed bg-[#c9ccd1]"
-                  }`}
-                >
-                  {claiming ? "…" : canClaim ? b.claim : b.claimed}
-                </button>
-              </div>
-            </div>
+          ) : offers.length > 0 ? (
+            offers.map((offer) => (
+              <OfferCard
+                key={offer.id}
+                offer={offer}
+                locale={locale}
+                labels={b}
+                tick={tick}
+                claiming={claimingId === offer.id}
+                onClaim={(id) => void onClaim(id)}
+              />
+            ))
           ) : (
             <p className="px-4 py-8 text-center text-[14px] text-[#6b7280]">{b.noBonus}</p>
           )}

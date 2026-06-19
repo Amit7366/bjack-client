@@ -10,11 +10,14 @@ export type BonusRewardMessages = {
   dayUnit: string;
   claim: string;
   noBonus: string;
-  rewardTitle: string;
-  rewardDescription: string;
   claimSuccess: string;
   cooldownNote: string;
   claimed: string;
+  criteriaNotMet: string;
+  depositToday: string;
+  totalDeposit: string;
+  referFriends: string;
+  progress: string;
 };
 
 const en: BonusRewardMessages = {
@@ -26,12 +29,15 @@ const en: BonusRewardMessages = {
   dueDate: "Due Date",
   dayUnit: "Day",
   claim: "Claim",
-  noBonus: "No bonus available right now.",
-  rewardTitle: "Member bonus ৳10",
-  rewardDescription: "Claim ৳10 every 15 days (1× turnover)",
+  noBonus: "No bonus offers available right now.",
   claimSuccess: "Bonus added to your balance",
   cooldownNote: "Next claim available in",
   claimed: "Claimed",
+  criteriaNotMet: "Requirements not met",
+  depositToday: "Deposit today",
+  totalDeposit: "Total deposit",
+  referFriends: "Referrals",
+  progress: "Progress",
 };
 
 const bn: BonusRewardMessages = {
@@ -43,12 +49,15 @@ const bn: BonusRewardMessages = {
   dueDate: "Due Date",
   dayUnit: "Day",
   claim: "Claim",
-  noBonus: "এই মুহূর্তে কোনো বোনাস উপলব্ধ নেই।",
-  rewardTitle: "মেম্বার বোনাস ৳১০",
-  rewardDescription: "প্রতি ১৫ দিনে ৳১০ ক্লেইম (১× টার্নওভার)",
+  noBonus: "এই মুহূর্তে কোনো বোনাস অফার উপলব্ধ নেই।",
   claimSuccess: "বোনাস ব্যালেন্সে যোগ হয়েছে",
   cooldownNote: "পরবর্তী ক্লেইম",
   claimed: "Claimed",
+  criteriaNotMet: "শর্ত পূরণ হয়নি",
+  depositToday: "আজকের ডিপোজিট",
+  totalDeposit: "মোট ডিপোজিট",
+  referFriends: "রেফারেল",
+  progress: "অগ্রগতি",
 };
 
 const hi: BonusRewardMessages = {
@@ -60,12 +69,15 @@ const hi: BonusRewardMessages = {
   dueDate: "Due Date",
   dayUnit: "Day",
   claim: "Claim",
-  noBonus: "अभी कोई बोनस उपलब्ध नहीं है।",
-  rewardTitle: "सदस्य बोनस ৳10",
-  rewardDescription: "हर 15 दिन में ৳10 क्लेम (1× टर्नओवर)",
+  noBonus: "अभी कोई बोनस ऑफर उपलब्ध नहीं है।",
   claimSuccess: "बोनस बैलेंस में जोड़ा गया",
   cooldownNote: "अगला क्लेम",
   claimed: "Claimed",
+  criteriaNotMet: "शर्तें पूरी नहीं हुईं",
+  depositToday: "आज की जमा",
+  totalDeposit: "कुल जमा",
+  referFriends: "रेफरल",
+  progress: "प्रगति",
 };
 
 const byLocale: Record<Locale, BonusRewardMessages> = { en, bn, hi };
