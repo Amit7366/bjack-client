@@ -16,13 +16,12 @@ export const SITE_DEFAULT_LOCALE = "bn" as const;
 /** Official Android APK served from `public/download/`. */
 export const BKBAJI_ANDROID_APP_PATH = "/download/bkbaji/bkbaji.apk";
 
-/** Brand & PWA icons — replace with self-hosted assets on bkbaji.com when available. */
+/** Brand & PWA icons — self-hosted from `public/icons/`. */
 export const SITE_ICONS = {
-  favicon: "https://img.b112j.com/images/bj/bj-favicon.ico",
-  appleTouchIcon:
-    "https://img.b112j.com/bj/h5/assets/images/icons/PWAicon-192px.png?v=1778659269258",
-  pwa192:
-    "https://img.b112j.com/bj/h5/assets/images/icons/PWAicon-192px.png?v=1778659269258",
+  favicon: "/favicon.png",
+  appleTouchIcon: "/icons/apple-touch-icon.png",
+  pwa192: "/icons/pwa-192.png",
+  pwa512: "/icons/pwa-512.png",
   ogImage: "https://img.b112j.com/upload/announcement/image_304033.jpg",
 } as const;
 

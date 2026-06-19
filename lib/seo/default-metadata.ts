@@ -27,9 +27,9 @@ export const defaultSiteMetadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: [{ url: SITE_ICONS.favicon, type: "image/x-icon" }],
+    icon: [{ url: SITE_ICONS.favicon, type: "image/png" }],
     shortcut: SITE_ICONS.favicon,
-    apple: [{ url: SITE_ICONS.appleTouchIcon, sizes: "192x192", type: "image/png" }],
+    apple: [{ url: SITE_ICONS.appleTouchIcon, sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {

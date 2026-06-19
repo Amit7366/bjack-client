@@ -45,6 +45,16 @@ const PROVIDER_LOBBY_KINDS: Record<string, LobbyKind[]> = {
   cq9: ["slot", "arcade", "lottery"],
   yellowBat: ["slot", "lottery"],
   sabasport: ["sports"],
+  "9wicket": ["sports"],
+  betby: ["sports"],
+  cmd: ["sports"],
+  tfgaming: ["sports"],
+  sabasportsphp: ["sports"],
+  unitedgaming: ["sports"],
+  "568winsportsbook": ["sports"],
+  sbosportsbook: ["sports"],
+  sbovirtualsports: ["sports"],
+  lucksport: ["sports"],
   inout: ["slot"],
   rich88: ["slot", "arcade", "table", "lottery"],
 };
@@ -58,7 +68,7 @@ const HOME_TAB_PROVIDER_KEYS: Record<HomeCategoryTabId, string[]> = {
   table: ["km", "jili", "playngo", "rich88"],
   arcade: ["fachai", "jdb", "cq9", "rich88"],
   lottery: ["cq9", "jdb", "rich88", "yellowBat"],
-  sports: ["bti", "sabasport"],
+  sports: ["bti", "sabasport", "9wicket", "betby", "cmd", "tfgaming", "sabasportsphp", "unitedgaming", "568winsportsbook", "sbosportsbook", "sbovirtualsports", "lucksport"],
 };
 
 export const ACTIVE_CATALOG_PROVIDERS: CatalogProvider[] = [
@@ -81,6 +91,16 @@ export const ACTIVE_CATALOG_PROVIDERS: CatalogProvider[] = [
   { providerKey: "cq9", vendorCode: "awcv2_cq9", labelKey: "cq9", initials: "CQ", color: "#06b6d4", defaultLobbyKind: "slot" },
   { providerKey: "yellowBat", vendorCode: "awcv2_yellowbat", labelKey: "yellowBat", initials: "YB", color: "#eab308", defaultLobbyKind: "slot" },
   { providerKey: "sabasport", vendorCode: "awcv2_sabasport", labelKey: "sabasport", initials: "SB", color: "#16a34a", defaultLobbyKind: "sports" },
+  { providerKey: "9wicket", vendorCode: "awcv2_9wicket", labelKey: "9wicket", initials: "9W", color: "#0ea5e9", defaultLobbyKind: "sports" },
+  { providerKey: "betby", vendorCode: "awcv2_betby", labelKey: "betby", initials: "BY", color: "#6366f1", defaultLobbyKind: "sports" },
+  { providerKey: "cmd", vendorCode: "awcv2_cmd", labelKey: "cmd", initials: "CM", color: "#dc2626", defaultLobbyKind: "sports" },
+  { providerKey: "tfgaming", vendorCode: "awcv2_tfgaming", labelKey: "tfgaming", initials: "TF", color: "#7c3aed", defaultLobbyKind: "sports" },
+  { providerKey: "sabasportsphp", vendorCode: "awcv2_sabasportsphp", labelKey: "sabasportsphp", initials: "SP", color: "#15803d", defaultLobbyKind: "sports" },
+  { providerKey: "unitedgaming", vendorCode: "awcv2_unitedgaming", labelKey: "unitedgaming", initials: "UG", color: "#2563eb", defaultLobbyKind: "sports" },
+  { providerKey: "568winsportsbook", vendorCode: "awcv2_568winsportsbook", labelKey: "568winsportsbook", initials: "56", color: "#ea580c", defaultLobbyKind: "sports" },
+  { providerKey: "sbosportsbook", vendorCode: "awcv2_sbosportsbook", labelKey: "sbosportsbook", initials: "SO", color: "#0891b2", defaultLobbyKind: "sports" },
+  { providerKey: "sbovirtualsports", vendorCode: "awcv2_sbovirtualsports", labelKey: "sbovirtualsports", initials: "SV", color: "#0284c7", defaultLobbyKind: "sports" },
+  { providerKey: "lucksport", vendorCode: "awcv2_lucksport", labelKey: "lucksport", initials: "LS", color: "#ca8a04", defaultLobbyKind: "sports" },
   { providerKey: "inout", vendorCode: "awcv2_inout", labelKey: "inout", initials: "IO", color: "#8b5cf6", defaultLobbyKind: "slot" },
   { providerKey: "rich88", vendorCode: "awcv2_rich88", labelKey: "rich88", initials: "R8", color: "#a855f7", defaultLobbyKind: "slot" },
 ];
