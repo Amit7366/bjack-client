@@ -51,20 +51,60 @@ export function filterGamesByLobbyTypes<T extends { title: string; types?: strin
   return games.filter((g) => gameMatchesLobbyTypes(g, selectedTypeIds));
 }
 
+/** Accepted MongoDB `types[]` values per lobby URL segment. */
+export const LOBBY_KIND_TYPE_ALIASES: Record<string, readonly string[]> = {
+  slot: ["slot", "slot game", "slots", "instant", "instant game"],
+  arcade: ["arcade", "arcade game"],
+  table: ["table", "table game"],
+  fishing: ["fishing", "fish", "fish game"],
+  lottery: ["lottery", "lottery game", "bingo", "bingo game"],
+  crash: ["crash", "crash game"],
+  sports: ["sports", "sport", "sportsbook"],
+  casino: ["casino", "live", "live casino", "live game"],
+};
+
 /** Lobby URL kind → catalog `types[]` values (casino lobby includes live dealer games). */
 export function catalogTypesForLobbyKind(kind: string): string[] {
   const k = kind.trim().toLowerCase();
   if (!k) return [];
-  if (k === "casino") return ["casino", "live"];
-  if (k === "table") return ["table", "table game"];
-  if (k === "slot") return ["slot", "instant"];
-  return [k];
+  return [...(LOBBY_KIND_TYPE_ALIASES[k] ?? [k])];
+}
+
+/** Whether a single catalog `types[]` entry belongs to a lobby URL segment. */
+export function catalogTypeMatchesLobbyKind(gameType: string, kind: string): boolean {
+  const t = String(gameType ?? "").trim().toLowerCase();
+  if (!t) return false;
+  const k = String(kind ?? "").trim().toLowerCase();
+  if (!k) return true;
+
+  if (catalogTypesForLobbyKind(k).includes(t)) return true;
+
+  switch (k) {
+    case "fishing":
+      return t.includes("fish");
+    case "slot":
+      return t.includes("slot") || t.includes("instant");
+    case "arcade":
+      return t.includes("arcade");
+    case "table":
+      return t.includes("table");
+    case "lottery":
+      return t.includes("lottery") || t.includes("bingo");
+    case "crash":
+      return t.includes("crash") || t.includes("aviator");
+    case "sports":
+      return t.includes("sport") || t.includes("cricket");
+    case "casino":
+      return t.includes("casino") || t.includes("live");
+    default:
+      return t === k || t.includes(k);
+  }
 }
 
 export function gameMatchesLobbyKind(game: { types?: string[] }, kind: string): boolean {
-  const allowed = new Set(catalogTypesForLobbyKind(kind));
-  if (!allowed.size) return true;
-  return game.types?.some((t) => allowed.has(t.toLowerCase())) ?? false;
+  const category = kind.trim().toLowerCase();
+  if (!category) return true;
+  return game.types?.some((t) => catalogTypeMatchesLobbyKind(t, category)) ?? false;
 }
 
 /** Keep games whose catalog `types` includes the lobby URL segment (e.g. fishing, slot). */

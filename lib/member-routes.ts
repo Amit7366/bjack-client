@@ -49,6 +49,10 @@ export function memberBonusRewardHref(locale: string): string {
   return `/${locale}/member/reward-center/bonus`;
 }
 
+export function memberSuggestionHref(locale: string): string {
+  return `/${locale}/member/suggestion`;
+}
+
 export function isMemberSection(value: string): value is MemberSection {
   return (MEMBER_SECTIONS as readonly string[]).includes(value);
 }

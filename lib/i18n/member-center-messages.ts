@@ -34,6 +34,7 @@ export type MemberCenterMessages = {
   copyFailedToast: string;
   editNickname: string;
   comingSoonToast: string;
+  logoutFailedToast: string;
   items: Record<MemberCenterItemId, string>;
 };
 
@@ -53,6 +54,7 @@ const en: MemberCenterMessages = {
   copyFailedToast: "Could not copy. Please try again.",
   editNickname: "Edit nickname",
   comingSoonToast: "Coming soon",
+  logoutFailedToast: "Logout failed. Please try again.",
   items: {
     "reward-center": "Reward Center",
     "betting-record": "Betting Record",
@@ -89,6 +91,7 @@ const bn: MemberCenterMessages = {
   copyFailedToast: "কপি করা যায়নি। আবার চেষ্টা করুন।",
   editNickname: "ডাকনাম পরিবর্তন করুন",
   comingSoonToast: "শীঘ্রই আসছে",
+  logoutFailedToast: "লগ আউট ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
   items: {
     "reward-center": "রিওয়ার্ড সেন্টার",
     "betting-record": "বেটিং রেকর্ড",
@@ -125,6 +128,7 @@ const hi: MemberCenterMessages = {
   copyFailedToast: "कॉपी नहीं हो सका। पुनः प्रयास करें।",
   editNickname: "उपनाम बदलें",
   comingSoonToast: "जल्द आ रहा है",
+  logoutFailedToast: "लॉग आउट विफल। कृपया पुनः प्रयास करें।",
   items: {
     "reward-center": "रिवॉर्ड सेंटर",
     "betting-record": "बेटिंग रिकॉर्ड",

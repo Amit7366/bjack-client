@@ -11,6 +11,7 @@ export type LoginResponseData = {
   needsPasswordChange?: boolean;
   memberId?: string;
   balance?: string;
+  status?: string;
 };
 
 export type RegisterResponseData = {

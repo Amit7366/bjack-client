@@ -106,9 +106,14 @@ export async function requestGameLaunch(
 
   const body = buildGameLaunchPayload(gameCode, session);
 
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (session?.accessToken) {
+    headers.Authorization = `Bearer ${session.accessToken}`;
+  }
+
   const response = await fetch("/api/game-launch", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(body),
   });
 

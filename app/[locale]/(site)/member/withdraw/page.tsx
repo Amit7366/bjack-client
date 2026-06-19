@@ -17,6 +17,8 @@ import {
   createManualWithdraw,
   mapWalletNameToPaymentMethod,
 } from "@/lib/withdraw-api";
+import { canWithdraw } from "@/lib/account-status";
+import { getAccountRestrictionMessage } from "@/lib/i18n/account-status-messages";
 import {
   fetchUserWallets,
   MAX_USER_WALLETS,
@@ -61,10 +63,15 @@ export default function WithdrawPage() {
   const balanceNum = Number.parseFloat(session?.balance ?? "0") || 0;
   const amountNum = Number.parseFloat(amount || "0");
   const minWithdraw = 100;
+  const accountStatus = session?.accountStatus;
+  const withdrawAllowed = canWithdraw(accountStatus);
+  const restrictionMessage = withdrawAllowed
+    ? null
+    : getAccountRestrictionMessage(locale, accountStatus);
   const validAmount =
     !Number.isNaN(amountNum) && amountNum >= minWithdraw && amountNum <= balanceNum;
   const selectedWallet = wallets.find((w) => w._id === selectedWalletId) ?? null;
-  const canSubmit = validAmount && selectedWallet != null && !submitting;
+  const canSubmit = withdrawAllowed && validAmount && selectedWallet != null && !submitting;
 
   const addWalletHref = memberSectionHref(locale, "add-wallet");
 
@@ -156,6 +163,12 @@ export default function WithdrawPage() {
       />
 
       <section className={`${memberContainerNarrow} ${memberPagePaddingNarrow} space-y-4`}>
+        {!withdrawAllowed && restrictionMessage ? (
+          <div className="rounded-sm border border-amber-500/30 bg-amber-500/10 px-3 py-3 text-[13px] leading-relaxed text-amber-100">
+            {restrictionMessage}
+          </div>
+        ) : null}
+
         <div className="rounded-sm border border-[#2d2d2d] bg-[#1f2326] px-3 py-3">
           <p className="text-[13px] text-[#9ca3af]">
             {isBn ? "উপলব্ধ ব্যালেন্স" : "Available balance"}

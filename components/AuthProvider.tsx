@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { logoutUser as logoutApi, fetchWalletMeta } from "@/lib/auth/api";
+import { fetchMyNormalUserProfile } from "@/lib/member/profile-api";
 import { expireSessionIfNeeded } from "@/lib/auth/session-expired";
 import {
   refreshBalanceAfterGameReturn,
@@ -142,6 +143,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       document.removeEventListener("visibilitychange", onVisible);
     };
   }, [authReady]);
+
+  useEffect(() => {
+    if (!authReady || !session?.accessToken || session.role !== USER_ROLE) return;
+
+    void fetchMyNormalUserProfile()
+      .then(() => refreshSession())
+      .catch(() => {
+        /* keep session accountStatus from login */
+      });
+  }, [authReady, session?.accessToken, session?.role, refreshSession]);
 
   useEffect(() => {
     return subscribeWalletLocalChange(refreshSession);

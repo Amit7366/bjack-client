@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { parseJwtPayload } from "@/lib/auth/jwt";
+
+const API_BASE = (process.env.API_URL ?? "http://localhost:8000").replace(/\/$/, "");
 
 type GameLaunchBody = {
   game_uid?: string;
@@ -25,6 +28,33 @@ type RemoteLaunchResponse = {
 
 export async function POST(request: Request) {
   try {
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    const token = authHeader.slice(7);
+    const claims = parseJwtPayload(token);
+    const objectId = claims?.objectId;
+    if (!objectId) {
+      return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+    }
+
+    const statusRes = await fetch(`${API_BASE}/api/v1/normalUsers/${encodeURIComponent(objectId)}`, {
+      headers: { Authorization: authHeader },
+      cache: "no-store",
+    });
+    if (!statusRes.ok) {
+      return NextResponse.json({ error: "Unable to verify account status" }, { status: 403 });
+    }
+    const statusBody = (await statusRes.json()) as { data?: { status?: string } };
+    if (statusBody.data?.status && statusBody.data.status !== "active") {
+      return NextResponse.json(
+        { error: "Your account cannot launch games right now." },
+        { status: 403 },
+      );
+    }
+
     const proxyUrl = process.env.GAME_LAUNCH_PROXY_URL;
     const agencyUid = process.env.GAME_AGENCY_UID;
 

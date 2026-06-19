@@ -1,7 +1,8 @@
 import type { ApiResponse, LoginResponseData, RegisterResponseData } from "@/lib/api/types";
-import { authFetchJson } from "@/lib/auth/auth-fetch";
+import { API_PREFIX, authFetchJson } from "@/lib/auth/auth-fetch";
 import { clearMemberProfileCache } from "@/lib/member/profile-cache";
 import { clearAuthSession, enrichSession, readAuthSession, saveAuthSession, type AuthSession } from "./session";
+import { isAccountStatus } from "@/lib/account-status";
 import { clearLocalWallet, initWalletFromDb, reanchorWalletFromDb } from "@/lib/wallet-local-state";
 
 async function requestJson<T>(
@@ -40,6 +41,7 @@ export async function loginWithUsername(
     balance: formatWalletBalance(body.data.balance) ?? body.data.balance,
     userName: userName.trim(),
     needsPasswordChange: body.data.needsPasswordChange,
+    accountStatus: isAccountStatus(body.data.status) ? body.data.status : "active",
   });
 
   saveAuthSession(session);
@@ -170,12 +172,22 @@ export async function reanchorWalletFromApi(memberId: string): Promise<string | 
 
 /** Invalidate refresh cookie on server and clear local session */
 export async function logoutUser(): Promise<void> {
+  const session = readAuthSessionForRequest();
   try {
-    await requestJson<null>("/auth/logout", { method: "POST" });
+    await fetch(`${API_PREFIX}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(session?.accessToken
+          ? { Authorization: `Bearer ${session.accessToken}` }
+          : {}),
+      },
+    });
   } catch {
     /* still clear client session if network fails */
   } finally {
-    const memberId = readAuthSessionForRequest()?.memberId;
+    const memberId = session?.memberId ?? readAuthSessionForRequest()?.memberId;
     if (memberId) clearLocalWallet(memberId);
     clearMemberProfileCache();
     clearAuthSession();

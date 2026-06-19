@@ -10,6 +10,7 @@ import {
 } from "@/lib/home-games-data";
 import { categoryProviderHref, lobbyCategoryHref } from "@/lib/vendor-routes";
 import { menuIconFor } from "./SidebarIcons";
+import ProviderLogo from "./ProviderLogo";
 import { useLocale } from "./LocaleProvider";
 import GameCard from "./games/GameCard";
 
@@ -63,12 +64,7 @@ function ProviderCard({
       href={href}
       className="flex items-center gap-2 rounded-md bg-[#262626] px-2.5 py-2.5 transition-colors hover:bg-[#303030]"
     >
-      <span
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-[#111]"
-        style={{ backgroundColor: color }}
-      >
-        {initials}
-      </span>
+      <ProviderLogo providerKey={id} initials={initials} color={color} size="sm" />
       <span className="truncate text-[12px] font-medium leading-snug text-[#e5e5e5]">{label}</span>
     </Link>
   );

@@ -5,6 +5,8 @@ import {
   USER_ROLE,
 } from "./constants";
 import { isJwtExpired, parseJwtPayload } from "./jwt";
+import type { AccountStatus } from "@/lib/account-status";
+import { isAccountStatus } from "@/lib/account-status";
 
 export const AUTH_STORAGE_KEY = "bkbaji.auth";
 export const AUTH_CHANGE_EVENT = "bkbaji-auth-change";
@@ -19,6 +21,7 @@ export type AuthSession = {
   userName?: string;
   contactNo?: string;
   needsPasswordChange?: boolean;
+  accountStatus?: AccountStatus;
 };
 
 function syncAuthCookies(session: AuthSession | null) {
@@ -82,6 +85,13 @@ export function clearAuthSession() {
   localStorage.removeItem(AUTH_STORAGE_KEY);
   syncAuthCookies(null);
   notifyAuthChange();
+}
+
+export function updateSessionAccountStatus(status?: string | null): void {
+  const current = readAuthSession();
+  if (!current) return;
+  const accountStatus = isAccountStatus(status) ? status : "active";
+  saveAuthSession({ ...current, accountStatus });
 }
 
 export function isLoggedIn(): boolean {

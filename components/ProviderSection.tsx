@@ -5,20 +5,10 @@ import Link from "next/link";
 import { featuredProviders } from "@/lib/home-providers-data";
 import { featuredProviderHref } from "@/lib/vendor-routes";
 import { useMounted } from "@/lib/use-mounted";
+import ProviderLogo from "./ProviderLogo";
 import { useLocale } from "./LocaleProvider";
 
 type FeaturedProvider = (typeof featuredProviders)[number];
-
-function ProviderLogo({ initials, color }: { initials: string; color: string }) {
-  return (
-    <div
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-[#111]"
-      style={{ backgroundColor: color }}
-    >
-      {initials}
-    </div>
-  );
-}
 
 function ProviderCard({ id, initials, color }: FeaturedProvider) {
   const { t, preferences } = useLocale();
@@ -30,7 +20,7 @@ function ProviderCard({ id, initials, color }: FeaturedProvider) {
       href={href}
       className="flex min-w-[148px] shrink-0 items-center gap-3 rounded-md bg-[#1f1f1f] px-3 py-3 transition-colors hover:bg-[#2a2a2a] sm:min-w-[160px]"
     >
-      <ProviderLogo initials={initials} color={color} />
+      <ProviderLogo providerKey={id} initials={initials} color={color} size="md" />
       <span className="truncate text-[13px] font-medium text-[#d4d4d4]">{label}</span>
     </Link>
   );

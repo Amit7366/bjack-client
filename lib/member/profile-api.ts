@@ -1,7 +1,8 @@
 import type { ApiResponse } from "@/lib/api/types";
 import { authFetchJson } from "@/lib/auth/auth-fetch";
 import { parseJwtPayload } from "@/lib/auth/jwt";
-import { readAuthSession } from "@/lib/auth/session";
+import { readAuthSession, updateSessionAccountStatus } from "@/lib/auth/session";
+import { isAccountStatus } from "@/lib/account-status";
 import { writeMemberProfileCache } from "./profile-cache";
 
 export type NormalUserProfile = {
@@ -12,6 +13,7 @@ export type NormalUserProfile = {
   dateOfBirth?: string;
   profileImg?: string;
   createdAt?: string;
+  status?: string;
 };
 
 async function requestJson<T>(
@@ -43,6 +45,14 @@ function syncCacheFromProfile(profile: NormalUserProfile) {
   });
 }
 
+function applyProfileResult(profile: NormalUserProfile): NormalUserProfile {
+  if (isAccountStatus(profile.status)) {
+    updateSessionAccountStatus(profile.status);
+  }
+  syncCacheFromProfile(profile);
+  return profile;
+}
+
 async function patchMyProfile(normalUser: Record<string, unknown>): Promise<NormalUserProfile> {
   const objectId = getAuthObjectId();
   if (!objectId) {
@@ -65,8 +75,7 @@ async function patchMyProfile(normalUser: Record<string, unknown>): Promise<Norm
     ...body.data,
     dateOfBirth: formatDateOfBirthForInput(body.data.dateOfBirth),
   };
-  syncCacheFromProfile(profile);
-  return profile;
+  return applyProfileResult(profile);
 }
 
 export async function fetchMyNormalUserProfile(): Promise<NormalUserProfile> {
@@ -88,8 +97,7 @@ export async function fetchMyNormalUserProfile(): Promise<NormalUserProfile> {
     ...body.data,
     dateOfBirth: formatDateOfBirthForInput(body.data.dateOfBirth),
   };
-  syncCacheFromProfile(profile);
-  return profile;
+  return applyProfileResult(profile);
 }
 
 export async function updateMyLegalName(name: string): Promise<NormalUserProfile> {

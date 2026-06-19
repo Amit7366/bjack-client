@@ -21,6 +21,8 @@ import {
 import { GAME_RETURN_EVENT } from "@/lib/game-return-events";
 import { launchGameInBrowser } from "@/lib/game-launch";
 import { readAuthSession } from "@/lib/auth/session";
+import { canPlayGames } from "@/lib/account-status";
+import { getAccountRestrictionMessage } from "@/lib/i18n/account-status-messages";
 import GameLaunchOverlay from "./GameLaunchOverlay";
 
 export type GameClickOptions = {
@@ -106,6 +108,14 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
 
       if (!isUser) {
         setLoginPromptOpen(true);
+        return;
+      }
+
+      const accountStatus = session?.accountStatus ?? readAuthSession()?.accountStatus;
+      if (!canPlayGames(accountStatus)) {
+        showToast(getAccountRestrictionMessage(preferences.locale, accountStatus), {
+          variant: "error",
+        });
         return;
       }
 

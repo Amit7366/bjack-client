@@ -41,21 +41,24 @@ const PROVIDER_LOBBY_KINDS: Record<string, LobbyKind[]> = {
   ideal: ["slot"],
   playtech: ["slot"],
   bti: ["sports"],
-  jdb: ["slot", "fishing", "arcade"],
-  cq9: ["slot", "arcade"],
-  yellowBat: ["slot"],
+  jdb: ["slot", "fishing", "arcade", "lottery"],
+  cq9: ["slot", "arcade", "lottery"],
+  yellowBat: ["slot", "lottery"],
+  sabasport: ["sports"],
+  inout: ["slot"],
+  rich88: ["slot", "arcade", "table", "lottery"],
 };
 
 /** Home tab → provider keys shown in HomeGameTabs grid. */
 const HOME_TAB_PROVIDER_KEYS: Record<HomeCategoryTabId, string[]> = {
-  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe"],
+  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe", "rich88", "inout"],
   casino: ["evolution", "ezugi", "jili"],
   crash: ["spribe", "pg"],
   fishing: ["jili", "fachai", "jdb"],
-  table: ["km", "jili", "playngo"],
-  arcade: ["fachai", "jdb", "cq9"],
-  lottery: [],
-  sports: ["bti"],
+  table: ["km", "jili", "playngo", "rich88"],
+  arcade: ["fachai", "jdb", "cq9", "rich88"],
+  lottery: ["cq9", "jdb", "rich88", "yellowBat"],
+  sports: ["bti", "sabasport"],
 };
 
 export const ACTIVE_CATALOG_PROVIDERS: CatalogProvider[] = [
@@ -77,6 +80,9 @@ export const ACTIVE_CATALOG_PROVIDERS: CatalogProvider[] = [
   { providerKey: "jdb", vendorCode: "awcv2_jdb", labelKey: "jdb", initials: "JD", color: "#eab308", defaultLobbyKind: "slot" },
   { providerKey: "cq9", vendorCode: "awcv2_cq9", labelKey: "cq9", initials: "CQ", color: "#06b6d4", defaultLobbyKind: "slot" },
   { providerKey: "yellowBat", vendorCode: "awcv2_yellowbat", labelKey: "yellowBat", initials: "YB", color: "#eab308", defaultLobbyKind: "slot" },
+  { providerKey: "sabasport", vendorCode: "awcv2_sabasport", labelKey: "sabasport", initials: "SB", color: "#16a34a", defaultLobbyKind: "sports" },
+  { providerKey: "inout", vendorCode: "awcv2_inout", labelKey: "inout", initials: "IO", color: "#8b5cf6", defaultLobbyKind: "slot" },
+  { providerKey: "rich88", vendorCode: "awcv2_rich88", labelKey: "rich88", initials: "R8", color: "#a855f7", defaultLobbyKind: "slot" },
 ];
 
 /*

@@ -18,8 +18,10 @@ import {
   memberRewardCenterHref,
   memberSectionHref,
   memberSignInRewardHref,
+  memberSuggestionHref,
   memberWithdrawHref,
 } from "@/lib/member-routes";
+import { BKBAJI_ANDROID_APP_PATH } from "@/lib/seo/site-config";
 import {
   fetchMyNormalUserProfile,
   type NormalUserProfile,
@@ -140,11 +142,14 @@ export default function MemberCenterPage() {
     setLoggingOut(true);
     try {
       await logout();
-    } finally {
-      router.push(`${base}/login`);
+      router.replace(`${base}/login`);
       router.refresh();
+    } catch {
+      showToast(m.logoutFailedToast, { variant: "error" });
+    } finally {
+      setLoggingOut(false);
     }
-  }, [loggingOut, logout, router, base]);
+  }, [loggingOut, logout, router, base, showToast, m.logoutFailedToast]);
 
   const itemHref = useCallback(
     (id: MemberCenterItemId): string | null => {
@@ -169,6 +174,8 @@ export default function MemberCenterPage() {
           return memberSectionHref(locale, "notification");
         case "rebate":
           return memberRebateHref(locale);
+        case "suggestion":
+          return memberSuggestionHref(locale);
         default:
           return null;
       }
@@ -330,13 +337,37 @@ export default function MemberCenterPage() {
                 </Link>
               );
             }
+            if (id === "download-app") {
+              return (
+                <a
+                  key={id}
+                  href={BKBAJI_ANDROID_APP_PATH}
+                  download
+                  className={className}
+                >
+                  {inner}
+                </a>
+              );
+            }
+            if (id === "logout") {
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => void onLogout()}
+                  disabled={loggingOut}
+                  className={`${className} disabled:opacity-50`}
+                >
+                  {inner}
+                </button>
+              );
+            }
             return (
               <button
                 key={id}
                 type="button"
-                onClick={id === "logout" ? () => void onLogout() : onComingSoon}
-                disabled={id === "logout" && loggingOut}
-                className={`${className} disabled:opacity-50`}
+                onClick={onComingSoon}
+                className={className}
               >
                 {inner}
               </button>
