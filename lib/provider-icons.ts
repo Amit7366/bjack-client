@@ -6,6 +6,7 @@ import sbtechIcon from "@/assets/provider-icon/icon-sbtech.svg";
 import sportbookIcon from "@/assets/provider-icon/icon-sportbook.svg";
 import ugv3Icon from "@/assets/provider-icon/icon-ugv3.svg";
 import fachaiIcon from "@/assets/provider-icon/vendor-awcmfc.png";
+import fastspinIcon from "@/assets/provider-icon/vendor-awcmfastspin.png";
 import evolutionIcon from "@/assets/provider-icon/vendor-evo.png";
 import jiliIcon from "@/assets/provider-icon/vendor-awcmjili.png";
 import kmIcon from "@/assets/provider-icon/vendor-awcmkm.png";
@@ -14,6 +15,8 @@ import playtechIcon from "@/assets/provider-icon/vendor-awcmpt.png";
 import relaxgamingIcon from "@/assets/provider-icon/vendor-awcmrt.png";
 import yellowBatIcon from "@/assets/provider-icon/vendor-awcmyesbingo.png";
 import jdbIcon from "@/assets/provider-icon/vendor-jdb.png";
+import microgamingIcon from "@/assets/provider-icon/vendor-mg.png";
+import nextspinIcon from "@/assets/provider-icon/vendor-nextspin.png";
 import spribeIcon from "@/assets/provider-icon/vendor-jdbaspribe.png";
 import pgIcon from "@/assets/provider-icon/vendor-pg.png";
 import playngoIcon from "@/assets/provider-icon/vendor-playngo.png";
@@ -39,6 +42,9 @@ const PROVIDER_ICONS: Record<string, ProviderIcon> = {
   jdb: jdbIcon,
   spribe: spribeIcon,
   rich88: rich88Icon,
+  fastspin: fastspinIcon,
+  nextspin: nextspinIcon,
+  microgaming: microgamingIcon,
   yellowBat: yellowBatIcon,
   bti: sbtechIcon,
   cmd: cmdIcon,
@@ -59,6 +65,8 @@ const PROVIDER_ICON_ALIASES: Record<string, string> = {
   pragmaticplay: "pragmatic",
   btiSports: "bti",
   sboSports: "sbosportsbook",
+  dreamGaming: "dreamgaming",
+  mg: "microgaming",
 };
 
 export function providerIconSrc(providerKey: string): string | undefined {

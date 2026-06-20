@@ -53,14 +53,14 @@ export function filterGamesByLobbyTypes<T extends { title: string; types?: strin
 
 /** Accepted MongoDB `types[]` values per lobby URL segment. */
 export const LOBBY_KIND_TYPE_ALIASES: Record<string, readonly string[]> = {
-  slot: ["slot", "slot game", "slots", "instant", "instant game"],
+  slot: ["slot", "slot game", "slots", "instant", "instant game", "mini"],
   arcade: ["arcade", "arcade game"],
-  table: ["table", "table game"],
+  table: ["table", "table game", "roulette", "dice"],
   fishing: ["fishing", "fish", "fish game"],
   lottery: ["lottery", "lottery game", "bingo", "bingo game"],
   crash: ["crash", "crash game"],
   sports: ["sports", "sport", "sportsbook"],
-  casino: ["casino", "live", "live casino", "live game"],
+  casino: ["casino", "live", "live casino", "live game", "lobby"],
 };
 
 /** Lobby URL kind → catalog `types[]` values (casino lobby includes live dealer games). */
@@ -83,11 +83,11 @@ export function catalogTypeMatchesLobbyKind(gameType: string, kind: string): boo
     case "fishing":
       return t.includes("fish");
     case "slot":
-      return t.includes("slot") || t.includes("instant");
+      return t.includes("slot") || t.includes("instant") || t.includes("mini");
     case "arcade":
       return t.includes("arcade");
     case "table":
-      return t.includes("table");
+      return t.includes("table") || t.includes("roulette") || t.includes("dice");
     case "lottery":
       return t.includes("lottery") || t.includes("bingo");
     case "crash":
@@ -95,7 +95,7 @@ export function catalogTypeMatchesLobbyKind(gameType: string, kind: string): boo
     case "sports":
       return t.includes("sport") || t.includes("cricket");
     case "casino":
-      return t.includes("casino") || t.includes("live");
+      return t.includes("casino") || t.includes("live") || t.includes("lobby");
     default:
       return t === k || t.includes(k);
   }

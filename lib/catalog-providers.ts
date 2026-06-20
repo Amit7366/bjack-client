@@ -57,17 +57,23 @@ const PROVIDER_LOBBY_KINDS: Record<string, LobbyKind[]> = {
   lucksport: ["sports"],
   inout: ["slot"],
   rich88: ["slot", "arcade", "table", "lottery"],
+  fastspin: ["slot", "fishing"],
+  nextspin: ["slot", "arcade", "fishing"],
+  microgaming: ["slot", "arcade", "fishing"],
+  hacksaw: ["arcade", "slot", "casino"],
+  dreamgaming: ["casino"],
+  eeai: ["lottery", "casino", "table", "slot", "arcade"],
 };
 
 /** Home tab → provider keys shown in HomeGameTabs grid. */
 const HOME_TAB_PROVIDER_KEYS: Record<HomeCategoryTabId, string[]> = {
-  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe", "rich88", "inout"],
-  casino: ["evolution", "ezugi", "jili"],
+  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe", "rich88", "inout", "fastspin", "nextspin", "microgaming", "hacksaw", "eeai"],
+  casino: ["evolution", "ezugi", "jili", "dreamgaming", "hacksaw", "eeai"],
   crash: ["spribe", "pg"],
-  fishing: ["jili", "fachai", "jdb"],
-  table: ["km", "jili", "playngo", "rich88"],
-  arcade: ["fachai", "jdb", "cq9", "rich88"],
-  lottery: ["cq9", "jdb", "rich88", "yellowBat"],
+  fishing: ["jili", "fachai", "jdb", "fastspin", "nextspin", "microgaming"],
+  table: ["km", "jili", "playngo", "rich88", "eeai"],
+  arcade: ["fachai", "jdb", "cq9", "rich88", "nextspin", "microgaming", "hacksaw", "eeai"],
+  lottery: ["cq9", "jdb", "rich88", "yellowBat", "eeai"],
   sports: ["bti", "sabasport", "9wicket", "betby", "cmd", "tfgaming", "sabasportsphp", "unitedgaming", "568winsportsbook", "sbosportsbook", "sbovirtualsports", "lucksport"],
 };
 
@@ -103,6 +109,12 @@ export const ACTIVE_CATALOG_PROVIDERS: CatalogProvider[] = [
   { providerKey: "lucksport", vendorCode: "awcv2_lucksport", labelKey: "lucksport", initials: "LS", color: "#ca8a04", defaultLobbyKind: "sports" },
   { providerKey: "inout", vendorCode: "awcv2_inout", labelKey: "inout", initials: "IO", color: "#8b5cf6", defaultLobbyKind: "slot" },
   { providerKey: "rich88", vendorCode: "awcv2_rich88", labelKey: "rich88", initials: "R8", color: "#a855f7", defaultLobbyKind: "slot" },
+  { providerKey: "fastspin", vendorCode: "awcv2_fastspin", labelKey: "fastspin", initials: "FS", color: "#f43f5e", defaultLobbyKind: "slot" },
+  { providerKey: "nextspin", vendorCode: "awcv2_nextspin", labelKey: "nextspin", initials: "NS", color: "#14b8a6", defaultLobbyKind: "slot" },
+  { providerKey: "microgaming", vendorCode: "awcv2_microgaming", labelKey: "microgaming", initials: "MG", color: "#84cc16", defaultLobbyKind: "slot" },
+  { providerKey: "hacksaw", vendorCode: "awcv2_hacksaw", labelKey: "hacksaw", initials: "HS", color: "#e5e7eb", defaultLobbyKind: "arcade" },
+  { providerKey: "dreamgaming", vendorCode: "awcv2_dreamgaming", labelKey: "dreamGaming", initials: "DG", color: "#a855f7", defaultLobbyKind: "casino" },
+  { providerKey: "eeai", vendorCode: "awcv2_eeai", labelKey: "eeai", initials: "EA", color: "#0d9488", defaultLobbyKind: "casino" },
 ];
 
 /*
