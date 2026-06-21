@@ -3,9 +3,21 @@ import type { PromotionFilterId } from "@/lib/promotions-data";
 
 export type PromotionMessages = {
   pageTitle: string;
+  pageSubtitle: string;
+  back: string;
+  featuredLabel: string;
+  promotionsCount: string;
   readMore: string;
+  viewDetails: string;
+  claimNow: string;
   noResults: string;
   validity: string;
+  validUntil: string;
+  minDeposit: string;
+  turnover: string;
+  loading: string;
+  loadError: string;
+  depositCta: string;
   filters: Record<PromotionFilterId, string>;
   badges: Record<string, string>;
   subtitles: Record<string, string>;
@@ -15,9 +27,21 @@ export type PromotionMessages = {
 
 const en: PromotionMessages = {
   pageTitle: "Promotions",
+  pageSubtitle: "Deposit bonuses and reload offers — the same promotions you can select when making a deposit.",
+  back: "Back",
+  featuredLabel: "Featured offer",
+  promotionsCount: "offers available",
   readMore: "Read more",
-  noResults: "No promotions in this category yet.",
+  viewDetails: "View details",
+  claimNow: "Claim now",
+  noResults: "No promotions in this category yet. Check back soon or browse all offers.",
   validity: "Validity period",
+  validUntil: "Valid until",
+  minDeposit: "Min. deposit",
+  turnover: "Turnover",
+  loading: "Loading promotions…",
+  loadError: "Could not load promotions. Please try again.",
+  depositCta: "Deposit with this offer",
   filters: {
     all: "ALL",
     welcome: "Welcome Offer",
@@ -34,6 +58,8 @@ const en: PromotionMessages = {
   badges: {
     welcomeOffer: "WELCOME OFFER",
     cricketQuest: "CRICKET QUEST MISSION",
+    dailyBonus: "DAILY BONUS",
+    reloadBonus: "RELOAD BONUS",
   },
   subtitles: {
     spinAndWin: "SPIN & WIN!",
@@ -59,9 +85,21 @@ const en: PromotionMessages = {
 
 const bn: PromotionMessages = {
   pageTitle: "প্রমোশন",
+  pageSubtitle: "ডিপোজিট বোনাস ও রিলোড অফার — ডিপোজিটের সময় যে প্রমোশনগুলো পাবেন।",
+  back: "পিছনে",
+  featuredLabel: "ফিচার্ড অফার",
+  promotionsCount: "টি অফার উপলব্ধ",
   readMore: "আরও পড়ুন",
-  noResults: "এই বিভাগে এখনও কোনো প্রমোশন নেই।",
+  viewDetails: "বিস্তারিত দেখুন",
+  claimNow: "এখনই ক্লেইম করুন",
+  noResults: "এই বিভাগে এখনও কোনো প্রমোশন নেই। পরে আবার দেখুন বা সব অফার ব্রাউজ করুন।",
   validity: "মেয়াদ",
+  validUntil: "বৈধতার শেষ",
+  minDeposit: "ন্যূনতম ডিপোজিট",
+  turnover: "টার্নওভার",
+  loading: "প্রমোশন লোড হচ্ছে…",
+  loadError: "প্রমোশন লোড করা যায়নি। আবার চেষ্টা করুন।",
+  depositCta: "এই অফারে ডিপোজিট করুন",
   filters: {
     all: "সব",
     welcome: "ওয়েলকাম অফার",
@@ -78,6 +116,8 @@ const bn: PromotionMessages = {
   badges: {
     welcomeOffer: "ওয়েলকাম অফার",
     cricketQuest: "ক্রিকেট কোয়েস্ট মিশন",
+    dailyBonus: "দৈনিক বোনাস",
+    reloadBonus: "রিলোড বোনাস",
   },
   subtitles: {
     spinAndWin: "স্পিন ও জিতুন!",
@@ -103,9 +143,21 @@ const bn: PromotionMessages = {
 
 const hi: PromotionMessages = {
   pageTitle: "प्रमोशन",
+  pageSubtitle: "जमा बोनस और रीलोड ऑफर — वही प्रमोशन जो जमा करते समय चुन सकते हैं।",
+  back: "वापस",
+  featuredLabel: "फीचर्ड ऑफर",
+  promotionsCount: "ऑफर उपलब्ध",
   readMore: "और पढ़ें",
-  noResults: "इस श्रेणी में अभी कोई प्रमोशन नहीं है।",
+  viewDetails: "विवरण देखें",
+  claimNow: "अभी क्लेम करें",
+  noResults: "इस श्रेणी में अभी कोई प्रमोशन नहीं है। बाद में देखें या सभी ऑफर ब्राउज़ करें।",
   validity: "वैधता अवधि",
+  validUntil: "वैधता समाप्त",
+  minDeposit: "न्यूनतम जमा",
+  turnover: "टर्नओवर",
+  loading: "प्रमोशन लोड हो रहे हैं…",
+  loadError: "प्रमोशन लोड नहीं हो सके। कृपया पुनः प्रयास करें।",
+  depositCta: "इस ऑफर के साथ जमा करें",
   filters: {
     all: "सभी",
     welcome: "वेलकम ऑफर",
@@ -122,6 +174,8 @@ const hi: PromotionMessages = {
   badges: {
     welcomeOffer: "वेलकम ऑफर",
     cricketQuest: "क्रिकेट क्वेस्ट मिशन",
+    dailyBonus: "दैनिक बोनस",
+    reloadBonus: "रीलोड बोनस",
   },
   subtitles: {
     spinAndWin: "स्पिन और जीतें!",

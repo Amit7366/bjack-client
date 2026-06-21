@@ -116,6 +116,17 @@ export const popularGames: PopularGame[] = [
     emoji: "🥊",
     image: "https://img.b112j.com/bj/h5/assets/images/exclusivegames/default/exclusive-boxing-king.png?v=1778752753270&source=drccdnsrc",
   },
+  {
+    id: "chickenRoad2",
+    title: "Chicken Road 2.0",
+    providerLabel: "INOUT",
+    gameCode: "562b299961b0ec40f252a832453c67b0",
+    providerKey: "inout",
+    gradient: "from-[#f97316] via-[#ea580c] to-[#9a3412]",
+    glow: "#fb923c",
+    emoji: "🐔",
+    image: "https://i.ibb.co.com/hFckdPtt/IO-002-Chicken-Road-2-0.png",
+  },
 ];
 
 export type CategoryProvider = {

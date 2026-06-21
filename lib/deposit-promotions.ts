@@ -1,4 +1,4 @@
-import { authFetchData } from "@/lib/auth/auth-fetch";
+import { API_PREFIX, authFetchData } from "@/lib/auth/auth-fetch";
 
 export type DepositPromotion = {
   code: string;
@@ -51,6 +51,21 @@ export async function fetchDepositPromotions(
     amount != null && Number.isFinite(amount) ? `?amount=${encodeURIComponent(amount)}` : "";
 
   return authFetchData<DepositPromotion[]>(`/promotions/deposit${q}`);
+}
+
+export async function fetchPublicDepositPromotions(): Promise<DepositPromotion[]> {
+  const res = await fetch(`${API_PREFIX}/promotions/deposit/public`, {
+    credentials: "include",
+  });
+  const body = (await res.json()) as {
+    success?: boolean;
+    message?: string;
+    data?: DepositPromotion[];
+  };
+  if (!res.ok || !body.success || !body.data) {
+    throw new Error(body.message || "Failed to load promotions");
+  }
+  return body.data.filter((promo) => promo.code !== DEFAULT_PROMO_CODE);
 }
 
 export function isValidPromoCode(code: string, promotions: DepositPromotion[]): boolean {

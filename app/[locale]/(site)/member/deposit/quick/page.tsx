@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
 import {
   MEMBER_PAGE_BG,
@@ -13,7 +13,7 @@ import { depositMethodToUrlParam, mapQuickDepositMethod } from "@/lib/deposit-ap
 import DepositPromotionPicker, {
   DEFAULT_PROMO_CODE,
 } from "@/components/member/deposit/DepositPromotionPicker";
-import { getMinimumDepositAmount, hasSelectedPromotion } from "@/lib/deposit-promotions";
+import { getMinimumDepositAmount, hasSelectedPromotion, fetchDepositPromotions } from "@/lib/deposit-promotions";
 import {
   channelsForMethod,
   fetchActiveDepositAccounts,
@@ -66,6 +66,7 @@ function Chevron({ open }: { open: boolean }) {
 export default function QuickDepositPage() {
   const { preferences } = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const locale = preferences.locale;
   const isBn = locale === "bn";
 
@@ -97,6 +98,30 @@ export default function QuickDepositPage() {
   const [infoOpen, setInfoOpen] = useState(true);
   const [promoCode, setPromoCode] = useState(DEFAULT_PROMO_CODE);
   const [promoMinDeposit, setPromoMinDeposit] = useState(0);
+
+  useEffect(() => {
+    const promo = searchParams.get("promo")?.trim();
+    if (!promo || promo === DEFAULT_PROMO_CODE) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const list = await fetchDepositPromotions();
+        if (cancelled) return;
+        const picked = list.find((item) => item.code === promo);
+        if (picked) {
+          setPromoCode(picked.code);
+          setPromoMinDeposit(picked.minDeposit);
+        }
+      } catch {
+        // Picker will still load promotions when opened.
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams]);
 
   const selectedPaymentMethod = useMemo<DepositPaymentMethod | null>(() => {
     if (!selectedMethod) return null;

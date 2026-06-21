@@ -102,7 +102,7 @@ export default function HomeGameTabs({ popularGames }: { popularGames: PopularGa
 
       {activeTab === "popular" ? (
         <div>
-          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 lg:grid-cols-8 lg:gap-2.5">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 lg:grid-cols-9 lg:gap-2.5">
             {popularGames.map((game, index) => (
               <GameCard
                 key={game.id}

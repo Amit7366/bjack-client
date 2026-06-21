@@ -130,7 +130,7 @@
   .announcement-track {
     display: flex;
     width: max-content;
-    animation: announcement-scroll 35s linear infinite;
+    animation: announcement-scroll 55s linear infinite;
     animation-play-state: running;
   }
 

@@ -63,16 +63,18 @@ const PROVIDER_LOBBY_KINDS: Record<string, LobbyKind[]> = {
   hacksaw: ["arcade", "slot", "casino"],
   dreamgaming: ["casino"],
   eeai: ["lottery", "casino", "table", "slot", "arcade"],
+  penguinking: ["arcade", "slot"],
+  topbet: ["crash", "slot"],
 };
 
 /** Home tab → provider keys shown in HomeGameTabs grid. */
 const HOME_TAB_PROVIDER_KEYS: Record<HomeCategoryTabId, string[]> = {
-  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe", "rich88", "inout", "fastspin", "nextspin", "microgaming", "hacksaw", "eeai"],
+  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe", "rich88", "inout", "fastspin", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking", "topbet"],
   casino: ["evolution", "ezugi", "jili", "dreamgaming", "hacksaw", "eeai"],
-  crash: ["spribe", "pg"],
+  crash: ["spribe", "pg", "topbet"],
   fishing: ["jili", "fachai", "jdb", "fastspin", "nextspin", "microgaming"],
   table: ["km", "jili", "playngo", "rich88", "eeai"],
-  arcade: ["fachai", "jdb", "cq9", "rich88", "nextspin", "microgaming", "hacksaw", "eeai"],
+  arcade: ["fachai", "jdb", "cq9", "rich88", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking"],
   lottery: ["cq9", "jdb", "rich88", "yellowBat", "eeai"],
   sports: ["bti", "sabasport", "9wicket", "betby", "cmd", "tfgaming", "sabasportsphp", "unitedgaming", "568winsportsbook", "sbosportsbook", "sbovirtualsports", "lucksport"],
 };
@@ -115,6 +117,8 @@ export const ACTIVE_CATALOG_PROVIDERS: CatalogProvider[] = [
   { providerKey: "hacksaw", vendorCode: "awcv2_hacksaw", labelKey: "hacksaw", initials: "HS", color: "#e5e7eb", defaultLobbyKind: "arcade" },
   { providerKey: "dreamgaming", vendorCode: "awcv2_dreamgaming", labelKey: "dreamGaming", initials: "DG", color: "#a855f7", defaultLobbyKind: "casino" },
   { providerKey: "eeai", vendorCode: "awcv2_eeai", labelKey: "eeai", initials: "EA", color: "#0d9488", defaultLobbyKind: "casino" },
+  { providerKey: "penguinking", vendorCode: "awcv2_penguinking", labelKey: "penguinking", initials: "PK", color: "#38bdf8", defaultLobbyKind: "slot" },
+  { providerKey: "topbet", vendorCode: "awcv2_topbet", labelKey: "topbet", initials: "TB", color: "#f97316", defaultLobbyKind: "crash" },
 ];
 
 /*

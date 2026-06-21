@@ -1,5 +1,6 @@
 "use client";
 
+import { absoluteUrl, BKBAJI_ANDROID_APP_PATH } from "@/lib/seo/site-config";
 import { useLocale } from "./LocaleProvider";
 
 function MegaphoneIcon() {
@@ -11,6 +12,29 @@ function MegaphoneIcon() {
       />
       <path d="M13.5 6v6c.9-.3 1.5-1.1 1.5-2.1v-1.8c0-1-.6-1.8-1.5-2.1z" fill="#8ef0b4" />
     </svg>
+  );
+}
+
+const ANNOUNCEMENT_DOWNLOAD_URL = absoluteUrl(BKBAJI_ANDROID_APP_PATH);
+
+function AnnouncementText({ text }: { text: string }) {
+  const linkIndex = text.indexOf(ANNOUNCEMENT_DOWNLOAD_URL);
+  if (linkIndex === -1) {
+    return <span>{text}</span>;
+  }
+
+  return (
+    <span>
+      {text.slice(0, linkIndex)}
+      <a
+        href={BKBAJI_ANDROID_APP_PATH}
+        download
+        className="pointer-events-auto font-medium text-[#2cb86e] underline decoration-[#2cb86e]/50 underline-offset-2 transition-colors hover:text-[#8ef0b4] hover:decoration-[#8ef0b4]"
+      >
+        {ANNOUNCEMENT_DOWNLOAD_URL}
+      </a>
+      {text.slice(linkIndex + ANNOUNCEMENT_DOWNLOAD_URL.length)}
+    </span>
   );
 }
 
@@ -34,14 +58,14 @@ export default function AnnouncementBar() {
             <div className="flex shrink-0 items-center gap-12 pr-12">
               {items.map((item, index) => (
                 <span key={`a-${index}`} className="whitespace-nowrap text-[13px] text-[#e8e8e8]">
-                  {item}
+                  <AnnouncementText text={item} />
                 </span>
               ))}
             </div>
             <div className="flex shrink-0 items-center gap-12 pr-12" aria-hidden>
               {items.map((item, index) => (
                 <span key={`b-${index}`} className="whitespace-nowrap text-[13px] text-[#e8e8e8]">
-                  {item}
+                  <AnnouncementText text={item} />
                 </span>
               ))}
             </div>

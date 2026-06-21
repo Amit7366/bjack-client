@@ -132,7 +132,7 @@ export default function ProfileMenuPanel({
               router.refresh();
             }
           }}
-          className="focus-ring min-h-11 w-full rounded-md border border-[#444] py-2.5 text-[13px] font-medium text-white transition-colors hover:border-[#666] hover:bg-[#2a2a2a] disabled:cursor-not-allowed disabled:opacity-60"
+          className="focus-ring min-h-11 w-full rounded-md border border-[#b91c1c] bg-[#dc2626] py-2.5 text-[13px] font-medium text-white transition-colors hover:border-[#991b1b] hover:bg-[#b91c1c] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loggingOut ? "…" : p.logout}
         </button>
