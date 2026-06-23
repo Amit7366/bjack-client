@@ -54,8 +54,8 @@ export function filterGamesByLobbyTypes<T extends { title: string; types?: strin
 /** Accepted MongoDB `types[]` values per lobby URL segment. */
 export const LOBBY_KIND_TYPE_ALIASES: Record<string, readonly string[]> = {
   slot: ["slot", "slot game", "slots", "instant", "instant game", "mini"],
-  arcade: ["arcade", "arcade game"],
-  table: ["table", "table game", "roulette", "dice"],
+  arcade: ["arcade", "arcade game", "multiplayer", "multiplayer game"],
+  table: ["table", "table game", "roulette", "dice", "poker", "poker game"],
   fishing: ["fishing", "fish", "fish game"],
   lottery: ["lottery", "lottery game", "bingo", "bingo game"],
   crash: ["crash", "crash game"],
@@ -85,9 +85,9 @@ export function catalogTypeMatchesLobbyKind(gameType: string, kind: string): boo
     case "slot":
       return t.includes("slot") || t.includes("instant") || t.includes("mini");
     case "arcade":
-      return t.includes("arcade");
+      return t.includes("arcade") || t.includes("multiplayer");
     case "table":
-      return t.includes("table") || t.includes("roulette") || t.includes("dice");
+      return t.includes("table") || t.includes("roulette") || t.includes("dice") || t.includes("poker");
     case "lottery":
       return t.includes("lottery") || t.includes("bingo");
     case "crash":

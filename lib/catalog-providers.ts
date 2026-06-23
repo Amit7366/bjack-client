@@ -65,18 +65,33 @@ const PROVIDER_LOBBY_KINDS: Record<string, LobbyKind[]> = {
   eeai: ["lottery", "casino", "table", "slot", "arcade"],
   penguinking: ["arcade", "slot"],
   topbet: ["crash", "slot"],
+  turbogames: ["lottery", "arcade", "crash"],
+  twoj: ["slot", "crash", "table", "fishing", "arcade"],
+  mini: ["lottery", "crash"],
+  auragaming: ["crash", "casino"],
+  cockfight: ["sports"],
+  funkygames: ["crash", "arcade", "casino", "slot"],
+  spadegaming: ["crash", "fishing", "slot", "casino"],
+  veliplay: ["crash"],
+  creedroomz: ["table", "casino"],
+  gamesoft: ["table"],
+  psg: ["crash", "slot", "casino"],
+  atg: ["crash", "arcade", "slot", "casino"],
+  galaxsys: ["fishing", "crash", "arcade", "slot"],
+  smartsoft: ["crash", "arcade", "casino", "slot"],
+  koolbet: ["table", "arcade", "crash", "slot"],
 };
 
 /** Home tab → provider keys shown in HomeGameTabs grid. */
 const HOME_TAB_PROVIDER_KEYS: Record<HomeCategoryTabId, string[]> = {
-  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe", "rich88", "inout", "fastspin", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking", "topbet"],
-  casino: ["evolution", "ezugi", "jili", "dreamgaming", "hacksaw", "eeai"],
-  crash: ["spribe", "pg", "topbet"],
-  fishing: ["jili", "fachai", "jdb", "fastspin", "nextspin", "microgaming"],
-  table: ["km", "jili", "playngo", "rich88", "eeai"],
-  arcade: ["fachai", "jdb", "cq9", "rich88", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking"],
-  lottery: ["cq9", "jdb", "rich88", "yellowBat", "eeai"],
-  sports: ["bti", "sabasport", "9wicket", "betby", "cmd", "tfgaming", "sabasportsphp", "unitedgaming", "568winsportsbook", "sbosportsbook", "sbovirtualsports", "lucksport"],
+  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe", "rich88", "inout", "fastspin", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking", "topbet", "twoj", "funkygames", "spadegaming", "psg", "atg", "galaxsys", "smartsoft", "koolbet"],
+  casino: ["evolution", "ezugi", "jili", "dreamgaming", "hacksaw", "eeai", "auragaming", "funkygames", "spadegaming", "psg", "atg", "smartsoft", "creedroomz"],
+  crash: ["spribe", "pg", "topbet", "turbogames", "twoj", "mini", "auragaming", "funkygames", "spadegaming", "veliplay", "psg", "atg", "galaxsys", "smartsoft", "koolbet"],
+  fishing: ["jili", "fachai", "jdb", "fastspin", "nextspin", "microgaming", "twoj", "spadegaming", "galaxsys"],
+  table: ["km", "jili", "playngo", "rich88", "eeai", "twoj", "creedroomz", "gamesoft", "koolbet"],
+  arcade: ["fachai", "jdb", "cq9", "rich88", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking", "turbogames", "twoj", "funkygames", "atg", "galaxsys", "smartsoft", "koolbet"],
+  lottery: ["cq9", "jdb", "rich88", "yellowBat", "eeai", "turbogames", "mini"],
+  sports: ["bti", "sabasport", "9wicket", "betby", "cmd", "tfgaming", "sabasportsphp", "unitedgaming", "568winsportsbook", "sbosportsbook", "sbovirtualsports", "lucksport", "cockfight"],
 };
 
 export const ACTIVE_CATALOG_PROVIDERS: CatalogProvider[] = [
@@ -119,6 +134,21 @@ export const ACTIVE_CATALOG_PROVIDERS: CatalogProvider[] = [
   { providerKey: "eeai", vendorCode: "awcv2_eeai", labelKey: "eeai", initials: "EA", color: "#0d9488", defaultLobbyKind: "casino" },
   { providerKey: "penguinking", vendorCode: "awcv2_penguinking", labelKey: "penguinking", initials: "PK", color: "#38bdf8", defaultLobbyKind: "slot" },
   { providerKey: "topbet", vendorCode: "awcv2_topbet", labelKey: "topbet", initials: "TB", color: "#f97316", defaultLobbyKind: "crash" },
+  { providerKey: "turbogames", vendorCode: "awcv2_turbogames", labelKey: "turboGames", initials: "TG", color: "#ec4899", defaultLobbyKind: "crash" },
+  { providerKey: "twoj", vendorCode: "awcv2_twoj", labelKey: "twoj", initials: "2J", color: "#8b5cf6", defaultLobbyKind: "slot" },
+  { providerKey: "mini", vendorCode: "awcv2_mini", labelKey: "mini", initials: "MN", color: "#f472b6", defaultLobbyKind: "crash" },
+  { providerKey: "auragaming", vendorCode: "awcv2_auragaming", labelKey: "auragaming", initials: "AG", color: "#06b6d4", defaultLobbyKind: "crash" },
+  { providerKey: "cockfight", vendorCode: "awcv2_cockfight", labelKey: "cockfight", initials: "CF", color: "#b91c1c", defaultLobbyKind: "sports" },
+  { providerKey: "funkygames", vendorCode: "awcv2_funkygames", labelKey: "funkygames", initials: "FG", color: "#a3e635", defaultLobbyKind: "slot" },
+  { providerKey: "spadegaming", vendorCode: "awcv2_spadegaming", labelKey: "spadegaming", initials: "SG", color: "#1d4ed8", defaultLobbyKind: "slot" },
+  { providerKey: "veliplay", vendorCode: "awcv2_veliplay", labelKey: "veliplay", initials: "VP", color: "#7c3aed", defaultLobbyKind: "crash" },
+  { providerKey: "creedroomz", vendorCode: "awcv2_creedroomz", labelKey: "creedroomz", initials: "CR", color: "#ca8a04", defaultLobbyKind: "table" },
+  { providerKey: "gamesoft", vendorCode: "awcv2_gamesoft", labelKey: "gamesoft", initials: "GS", color: "#64748b", defaultLobbyKind: "table" },
+  { providerKey: "psg", vendorCode: "awcv2_psg", labelKey: "psg", initials: "PS", color: "#0ea5e9", defaultLobbyKind: "slot" },
+  { providerKey: "atg", vendorCode: "awcv2_atg", labelKey: "atg", initials: "AT", color: "#f59e0b", defaultLobbyKind: "slot" },
+  { providerKey: "galaxsys", vendorCode: "awcv2_galaxsys", labelKey: "galaxsys", initials: "GX", color: "#6366f1", defaultLobbyKind: "slot" },
+  { providerKey: "smartsoft", vendorCode: "awcv2_smartsoft", labelKey: "smartsoft", initials: "SS", color: "#22c55e", defaultLobbyKind: "crash" },
+  { providerKey: "koolbet", vendorCode: "awcv2_koolbet", labelKey: "koolbet", initials: "KB", color: "#ef4444", defaultLobbyKind: "slot" },
 ];
 
 /*
