@@ -13,6 +13,10 @@ import { GamePlayGateProvider } from "./games/GamePlayGateProvider";
 
 import { useLocale } from "./LocaleProvider";
 
+function isHomePath(pathname: string): boolean {
+  return /^\/(bn|en|hi)\/?$/.test(pathname);
+}
+
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { t } = useLocale();
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -77,7 +81,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
         <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain pb-[calc(3.5rem+env(safe-area-inset-bottom))] [-webkit-overflow-scrolling:touch] lg:pb-0">
           {children}
-          <SiteFooter />
+          {isHomePath(pathname) ? <SiteFooter /> : null}
         </main>
       </div>
 
