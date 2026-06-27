@@ -80,17 +80,24 @@ const PROVIDER_LOBBY_KINDS: Record<string, LobbyKind[]> = {
   galaxsys: ["fishing", "crash", "arcade", "slot"],
   smartsoft: ["crash", "arcade", "casino", "slot"],
   koolbet: ["table", "arcade", "crash", "slot"],
+  pix: ["lottery", "slot", "crash", "table", "arcade"],
+  kygaming: ["lottery", "table", "arcade", "slot"],
+  hp: ["slot", "crash", "lottery", "table", "arcade"],
+  habanero: ["table", "slot"],
+  amigo: ["crash", "slot"],
+  sevenfivenine: ["slot"],
+  rectangle: ["slot", "arcade", "table", "crash", "lottery"],
 };
 
 /** Home tab → provider keys shown in HomeGameTabs grid. */
 const HOME_TAB_PROVIDER_KEYS: Record<HomeCategoryTabId, string[]> = {
-  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe", "rich88", "inout", "fastspin", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking", "topbet", "twoj", "funkygames", "spadegaming", "psg", "atg", "galaxsys", "smartsoft", "koolbet"],
+  slots: ["pg", "jili", "pragmatic", "playngo", "fachai", "eazygaming", "relaxgaming", "evoplay", "ideal", "jdb", "cq9", "yellowBat", "playtech", "spribe", "rich88", "inout", "fastspin", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking", "topbet", "twoj", "funkygames", "spadegaming", "psg", "atg", "galaxsys", "smartsoft", "koolbet", "pix", "kygaming", "hp", "habanero", "amigo", "sevenfivenine", "rectangle"],
   casino: ["evolution", "ezugi", "jili", "dreamgaming", "hacksaw", "eeai", "auragaming", "funkygames", "spadegaming", "psg", "atg", "smartsoft", "creedroomz"],
-  crash: ["spribe", "pg", "topbet", "turbogames", "twoj", "mini", "auragaming", "funkygames", "spadegaming", "veliplay", "psg", "atg", "galaxsys", "smartsoft", "koolbet"],
+  crash: ["spribe", "pg", "topbet", "turbogames", "twoj", "mini", "auragaming", "funkygames", "spadegaming", "veliplay", "psg", "atg", "galaxsys", "smartsoft", "koolbet", "pix", "hp", "amigo", "rectangle"],
   fishing: ["jili", "fachai", "jdb", "fastspin", "nextspin", "microgaming", "twoj", "spadegaming", "galaxsys"],
-  table: ["km", "jili", "playngo", "rich88", "eeai", "twoj", "creedroomz", "gamesoft", "koolbet"],
-  arcade: ["fachai", "jdb", "cq9", "rich88", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking", "turbogames", "twoj", "funkygames", "atg", "galaxsys", "smartsoft", "koolbet"],
-  lottery: ["cq9", "jdb", "rich88", "yellowBat", "eeai", "turbogames", "mini"],
+  table: ["km", "jili", "playngo", "rich88", "eeai", "twoj", "creedroomz", "gamesoft", "koolbet", "pix", "kygaming", "hp", "habanero", "rectangle"],
+  arcade: ["fachai", "jdb", "cq9", "rich88", "nextspin", "microgaming", "hacksaw", "eeai", "penguinking", "turbogames", "twoj", "funkygames", "atg", "galaxsys", "smartsoft", "koolbet", "pix", "kygaming", "hp", "rectangle"],
+  lottery: ["cq9", "jdb", "rich88", "yellowBat", "eeai", "turbogames", "mini", "pix", "kygaming", "hp", "rectangle"],
   sports: ["bti", "sabasport", "9wicket", "betby", "cmd", "tfgaming", "sabasportsphp", "unitedgaming", "568winsportsbook", "sbosportsbook", "sbovirtualsports", "lucksport", "cockfight"],
 };
 
@@ -149,6 +156,13 @@ export const ACTIVE_CATALOG_PROVIDERS: CatalogProvider[] = [
   { providerKey: "galaxsys", vendorCode: "awcv2_galaxsys", labelKey: "galaxsys", initials: "GX", color: "#6366f1", defaultLobbyKind: "slot" },
   { providerKey: "smartsoft", vendorCode: "awcv2_smartsoft", labelKey: "smartsoft", initials: "SS", color: "#22c55e", defaultLobbyKind: "crash" },
   { providerKey: "koolbet", vendorCode: "awcv2_koolbet", labelKey: "koolbet", initials: "KB", color: "#ef4444", defaultLobbyKind: "slot" },
+  { providerKey: "pix", vendorCode: "awcv2_pix", labelKey: "pix", initials: "PX", color: "#14b8a6", defaultLobbyKind: "slot" },
+  { providerKey: "kygaming", vendorCode: "awcv2_kygaming", labelKey: "kygaming", initials: "KY", color: "#3b82f6", defaultLobbyKind: "slot" },
+  { providerKey: "hp", vendorCode: "awcv2_hp", labelKey: "hp", initials: "HP", color: "#f43f5e", defaultLobbyKind: "slot" },
+  { providerKey: "habanero", vendorCode: "awcv2_habanero", labelKey: "habanero", initials: "HB", color: "#f97316", defaultLobbyKind: "slot" },
+  { providerKey: "amigo", vendorCode: "awcv2_amigo", labelKey: "amigo", initials: "AM", color: "#eab308", defaultLobbyKind: "slot" },
+  { providerKey: "sevenfivenine", vendorCode: "awcv2_sevenfivenine", labelKey: "sevenfivenine", initials: "79", color: "#a855f7", defaultLobbyKind: "slot" },
+  { providerKey: "rectangle", vendorCode: "awcv2_rectangle", labelKey: "rectangle", initials: "RC", color: "#64748b", defaultLobbyKind: "slot" },
 ];
 
 /*
