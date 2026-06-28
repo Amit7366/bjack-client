@@ -6,6 +6,7 @@ import {
   fetchDepositPromotions,
   getPromotionDescription,
   getPromotionLabel,
+  hasSelectedPromotion,
   type DepositPromotion,
 } from "@/lib/deposit-promotions";
 
@@ -81,6 +82,20 @@ export default function DepositPromotionPicker({
     [promotions, selectedCode],
   );
 
+  const selectedLabel = useMemo(() => {
+    if (selected) {
+      if (selected.code === DEFAULT_PROMO_CODE && selected.bonusRate > 0) {
+        const pct = Math.round(selected.bonusRate * 100);
+        return isBn ? `নরমাল · ${pct}% বোনাস` : `Normal · ${pct}% Bonus`;
+      }
+      return getPromotionLabel(selected, isBn);
+    }
+    if (!hasSelectedPromotion(selectedCode)) {
+      return isBn ? "নরমাল · ১০% বোনাস" : "Normal · 10% Bonus";
+    }
+    return isBn ? "নরমাল" : "Normal";
+  }, [selected, selectedCode, isBn]);
+
   const validList = promotions;
   const invalidList: DepositPromotion[] = [];
 
@@ -110,7 +125,7 @@ export default function DepositPromotionPicker({
             {isBn ? "প্রমোশন" : "Promotion"}
           </span>
           <span className="max-w-[45%] truncate text-[13px] text-[#9ca3af]">
-            {selected ? getPromotionLabel(selected, isBn) : isBn ? "নরমাল" : "Normal"}
+            {selectedLabel}
           </span>
           <span className="text-[#9ca3af]">
             <ChevronRight />

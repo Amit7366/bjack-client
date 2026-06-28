@@ -18,6 +18,7 @@ import {
   findActiveAccountForMethod,
 } from "@/lib/deposit-payment-accounts";
 import { memberDepositHref } from "@/lib/member-routes";
+import { DEFAULT_PROMO_CODE } from "@/lib/deposit-promotions";
 
 const PAYMENT_WINDOW_SEC = 10 * 60;
 const VERIFY_WINDOW_SEC = 3 * 60;
@@ -76,6 +77,11 @@ function VerifyContent() {
   const methodParam = searchParams.get("method") ?? "bKash";
   const channel = searchParams.get("channel") ?? "";
   const promoCode = searchParams.get("promo")?.trim() || "NO_PROMO";
+
+  const normalBonusAmount = useMemo(() => {
+    if (promoCode !== DEFAULT_PROMO_CODE || amount <= 0) return 0;
+    return Math.floor(amount * 0.1);
+  }, [promoCode, amount]);
 
   const paymentMethod = useMemo<DepositPaymentMethod>(
     () => mapQuickDepositMethod(methodParam),
@@ -302,6 +308,14 @@ function VerifyContent() {
                       <CopyIcon />
                     </button>
                   </div>
+
+                  {normalBonusAmount > 0 ? (
+                    <p className="text-center text-[12px] text-[#1aa05a]">
+                      {isBn
+                        ? `ভেরিফিকেশনের পর ১০% বোনাস (৳${normalBonusAmount.toLocaleString("en-US")}) পাবেন`
+                        : `You will receive a 10% bonus (৳${normalBonusAmount.toLocaleString("en-US")}) after verification`}
+                    </p>
+                  ) : null}
 
                   <div className="flex items-center gap-3">
                     <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-[#1aa05a]" aria-hidden />
