@@ -75,7 +75,8 @@ function authErrorMessage(err: unknown, fallback: string, networkFallback: strin
 export default function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const refIdFromURL = searchParams.get("refId") || "";
+  const refIdFromURL =
+    searchParams.get("refId") || searchParams.get("ref") || "";
   const { preferences } = useLocale();
   const a = getAuthMessages(preferences.locale);
   const base = `/${preferences.locale}`;
