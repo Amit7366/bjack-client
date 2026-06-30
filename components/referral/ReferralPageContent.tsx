@@ -140,7 +140,7 @@ export default function ReferralPageContent() {
           alt=""
           fill
           priority
-          className="object-cover object-center"
+          className="object-contain object-center"
           sizes="100vw"
         />
       </div>
