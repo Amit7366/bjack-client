@@ -8,7 +8,7 @@ import { dispatchGameDeparting } from "@/lib/game-return-events";
 export const GAME_LAUNCH_PLAYER_PREFIX =
   process.env.NEXT_PUBLIC_GAME_PLAYER_PREFIX ?? "h94044";
 
-export const GAME_LAUNCH_MEMBER_SUFFIX = "bkb777";
+export const GAME_LAUNCH_MEMBER_SUFFIX = "b";
 
 export type GameLaunchClientPayload = {
   game_uid: string;
