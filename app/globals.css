@@ -21,6 +21,24 @@
   }
 }
 
+@keyframes home-tab-icon-sprite-forward {
+  from {
+    background-position: 0 center;
+  }
+  to {
+    background-position: var(--home-tab-sprite-end-x) center;
+  }
+}
+
+@keyframes home-tab-icon-sprite-reverse {
+  from {
+    background-position: var(--home-tab-sprite-end-x) center;
+  }
+  to {
+    background-position: 0 center;
+  }
+}
+
 @keyframes float-slow {
   0%,
   100% {
@@ -111,6 +129,25 @@
 }
 
 @layer utilities {
+  .home-tab-icon-sprite {
+    background-repeat: no-repeat;
+    transition: transform 0.2s ease;
+  }
+
+  .home-tab-icon-sprite--active {
+    transform: scale(1.142857);
+  }
+
+  .home-tab-icon-sprite--forward {
+    animation: home-tab-icon-sprite-forward 0.75s steps(14, end) forwards;
+    will-change: background-position;
+  }
+
+  .home-tab-icon-sprite--reverse {
+    animation: home-tab-icon-sprite-reverse 0.75s steps(14, end) forwards;
+    will-change: background-position;
+  }
+
   .animate-float-slow {
     animation: float-slow 5s ease-in-out infinite;
   }
@@ -244,6 +281,9 @@
   .animate-float-slow,
   .animate-float-medium,
   .animate-float-fast,
+  .home-tab-icon-sprite,
+  .home-tab-icon-sprite--forward,
+  .home-tab-icon-sprite--reverse,
   .animate-otp-shake,
   .animate-slide-up,
   .auth-submit-dot,

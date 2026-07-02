@@ -9,39 +9,10 @@ import {
   type PopularGame,
 } from "@/lib/home-games-data";
 import { categoryProviderHref, lobbyCategoryHref } from "@/lib/vendor-routes";
-import { menuIconFor } from "./SidebarIcons";
 import ProviderLogo from "./ProviderLogo";
 import { useLocale } from "./LocaleProvider";
 import GameCard from "./games/GameCard";
-
-function PopularCrownIcon() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="crownGold" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffe566" />
-          <stop offset="100%" stopColor="#c48a0a" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M5 19h18l-2-11-5.5 6L14 8l-1.5 6L7 8 5 19z"
-        fill="url(#crownGold)"
-        stroke="#a16207"
-        strokeWidth="0.8"
-        strokeLinejoin="round"
-      />
-      <path d="M5 19v3h18v-3" fill="#b8860b" />
-      <circle cx="14" cy="7.5" r="1.3" fill="#fff8dc" />
-      <circle cx="7.5" cy="10" r="1" fill="#fff8dc" />
-      <circle cx="20.5" cy="10" r="1" fill="#fff8dc" />
-    </svg>
-  );
-}
-
-function tabIconFor(id: HomeTabId) {
-  if (id === "popular") return <PopularCrownIcon />;
-  return menuIconFor(id);
-}
+import HomeTabAnimatedIcon from "./HomeTabAnimatedIcon";
 
 function ProviderCard({
   id,
@@ -91,7 +62,13 @@ export default function HomeGameTabs({ popularGames }: { popularGames: PopularGa
                   : "text-[#a3a3a3] hover:bg-[#1f1f1f] hover:text-white"
               }`}
             >
-              <span className="flex h-7 w-7 items-center justify-center">{tabIconFor(tabId)}</span>
+              <span className="flex h-7 w-7 items-center justify-center">
+                <HomeTabAnimatedIcon
+                  tabId={tabId}
+                  isActive={activeTab === tabId}
+                  isInitialActive={tabId === "popular"}
+                />
+              </span>
               <span className="text-center text-[10px] font-medium leading-snug sm:text-[11px]">
                 {t.home.tabs[tabId]}
               </span>
