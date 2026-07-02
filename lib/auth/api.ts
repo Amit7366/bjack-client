@@ -4,6 +4,7 @@ import { clearMemberProfileCache } from "@/lib/member/profile-cache";
 import { clearAuthSession, enrichSession, readAuthSession, saveAuthSession, type AuthSession } from "./session";
 import { isAccountStatus } from "@/lib/account-status";
 import { clearLocalWallet, initWalletFromDb, reanchorWalletFromDb } from "@/lib/wallet-local-state";
+import { getDeviceFingerprint } from "@/lib/device-fingerprint";
 
 async function requestJson<T>(
   path: string,
@@ -26,9 +27,15 @@ export async function loginWithUsername(
   userName: string,
   password: string,
 ): Promise<{ session: AuthSession; message: string }> {
+  const deviceFingerprint = await getDeviceFingerprint().catch(() => undefined);
+
   const { ok, body } = await requestJson<LoginResponseData>("/auth/login", {
     method: "POST",
-    body: JSON.stringify({ userName: userName.trim(), password }),
+    body: JSON.stringify({
+      userName: userName.trim(),
+      password,
+      ...(deviceFingerprint ? { deviceFingerprint } : {}),
+    }),
   });
 
   if (!ok || !body.data?.accessToken) {
@@ -71,8 +78,9 @@ export async function registerUser(input: {
 }): Promise<{ message: string }> {
   const contactNo = formatContactNo(input.contactNo, input.currency);
   const userName = input.userName.trim();
+  const deviceFingerprint = await getDeviceFingerprint();
 
-  const { ok, body } = await requestJson<RegisterResponseData>("/users/create-user", {
+  const { ok, status, body } = await requestJson<RegisterResponseData>("/users/create-user", {
     method: "POST",
     body: JSON.stringify({
       password: input.password,
@@ -81,13 +89,14 @@ export async function registerUser(input: {
         userName,
         contactNo,
         country: input.currency === "INR" ? "India" : "Bangladesh",
+        deviceFingerprint,
         ...(input.referredBy ? { referredBy: input.referredBy } : {}),
       },
     }),
   });
 
   if (!ok) {
-    throw new Error(body.message || "Registration failed");
+    throw new Error(body.message || (status === 409 ? "Registration blocked" : "Registration failed"));
   }
 
   return { message: body.message ?? "Account created" };

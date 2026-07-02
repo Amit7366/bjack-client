@@ -21,6 +21,7 @@ export type AuthMessages = {
   home: string;
   loginError: string;
   registerError: string;
+  selfReferralDeviceError: string;
   networkError: string;
   passwordTooShort: string;
   phoneRequired: string;
@@ -49,6 +50,8 @@ const en: AuthMessages = {
   home: "Home",
   loginError: "Login failed. Check your username and password.",
   registerError: "Sign up failed. That username or phone may already be in use.",
+  selfReferralDeviceError:
+    "You cannot register with your own referral code on this device. Remove the referral link and try again.",
   networkError: "Could not reach the server. Try again.",
   passwordTooShort: "Password must be at least 6 characters.",
   phoneRequired: "Enter your phone number.",
@@ -77,6 +80,8 @@ const bn: AuthMessages = {
   home: "হোম",
   loginError: "লগইন ব্যর্থ। ইউজারনেম ও পাসওয়ার্ড পরীক্ষা করুন।",
   registerError: "সাইন আপ ব্যর্থ। ইউজারনেম বা ফোন ইতিমধ্যে ব্যবহৃত হতে পারে।",
+  selfReferralDeviceError:
+    "এই ডিভাইসে নিজের রেফারেল কোড দিয়ে রেজিস্ট্রেশন করা যাবে না। রেফারেল লিঙ্ক সরিয়ে আবার চেষ্টা করুন।",
   networkError: "সার্ভারে সংযোগ করা যায়নি। আবার চেষ্টা করুন।",
   passwordTooShort: "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।",
   phoneRequired: "আপনার ফোন নম্বর লিখুন।",
@@ -105,6 +110,8 @@ const hi: AuthMessages = {
   home: "होम",
   loginError: "लॉगिन विफल। उपयोगकर्ता नाम और पासवर्ड जाँचें।",
   registerError: "साइन अप विफल। यह उपयोगकर्ता नाम या फ़ोन पहले से उपयोग में हो सकता है।",
+  selfReferralDeviceError:
+    "इस डिवाइस पर अपने रेफरल कोड से पंजीकरण नहीं कर सकते। रेफरल लिंक हटाकर पुनः प्रयास करें।",
   networkError: "सर्वर तक पहुँच नहीं हो सकी। पुनः प्रयास करें।",
   passwordTooShort: "पासवर्ड कम से कम 6 अक्षर का होना चाहिए।",
   phoneRequired: "अपना फ़ोन नंबर दर्ज करें।",

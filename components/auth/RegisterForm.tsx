@@ -66,9 +66,22 @@ function StepIndicator({ step, labels }: { step: number; labels: [string, string
   );
 }
 
-function authErrorMessage(err: unknown, fallback: string, networkFallback: string): string {
+function authErrorMessage(
+  err: unknown,
+  fallback: string,
+  networkFallback: string,
+  selfReferralFallback?: string,
+): string {
   if (err instanceof TypeError) return networkFallback;
-  if (err instanceof Error && err.message) return err.message;
+  if (err instanceof Error && err.message) {
+    if (
+      selfReferralFallback &&
+      err.message.toLowerCase().includes("own referral code on this device")
+    ) {
+      return selfReferralFallback;
+    }
+    return err.message;
+  }
   return fallback;
 }
 
@@ -138,7 +151,7 @@ export default function RegisterForm() {
       router.push(base);
       router.refresh();
     } catch (err) {
-      setError(authErrorMessage(err, a.registerError, a.networkError));
+      setError(authErrorMessage(err, a.registerError, a.networkError, a.selfReferralDeviceError));
     } finally {
       setLoading(false);
     }
