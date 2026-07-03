@@ -80,3 +80,7 @@ export function memberSuggestionHref(locale: string): string {
 export function isMemberSection(value: string): value is MemberSection {
   return (MEMBER_SECTIONS as readonly string[]).includes(value);
 }
+
+export function memberLiveChatHref(locale: string): string {
+  return `/${locale}/member/live-chat`;
+}

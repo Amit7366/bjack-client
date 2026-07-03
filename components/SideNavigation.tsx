@@ -11,6 +11,9 @@ import {
 import { ExternalLinkIcon, LiveSupportIcon, SubItemIcon, menuIconFor } from "./SidebarIcons";
 import { sidebarItemHref, sidebarSubItemHref } from "@/lib/sidebar-routes";
 import { BKBAJI_ANDROID_APP_PATH } from "@/lib/seo/site-config";
+import { useRouter } from "next/navigation";
+import { useAuth } from "./AuthProvider";
+import { memberLiveChatHref } from "@/lib/member-routes";
 import { useLocale } from "./LocaleProvider";
 
 type SideNavigationProps = {
@@ -203,6 +206,18 @@ export default function SideNavigation({
   onExpand,
 }: SideNavigationProps) {
   const { t, preferences } = useLocale();
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+
+  function goLiveChat() {
+    const href = memberLiveChatHref(preferences.locale);
+    if (!isAuthenticated) {
+      router.push(`/${preferences.locale}/login?next=${encodeURIComponent(href)}`);
+      return;
+    }
+    router.push(href);
+    onItemClick("");
+  }
 
   return (
     <aside
@@ -215,7 +230,7 @@ export default function SideNavigation({
       <div className={`shrink-0 p-2 ${expanded ? "" : "flex justify-center"}`}>
         <button
           type="button"
-          onClick={onExpand}
+          onClick={goLiveChat}
           className={
             expanded
               ? "flex w-full items-center gap-3 rounded-lg bg-[#262626] px-3 py-3 text-left text-[14px] font-medium text-white transition-colors hover:bg-[#303030]"

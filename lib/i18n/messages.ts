@@ -20,6 +20,14 @@ export type Messages = {
   slots: string;
   casino: string;
   liveSupport: string;
+  loading: string;
+  chatOnline: string;
+  chatReconnecting: string;
+  chatNoAgent: string;
+  chatEmpty: string;
+  chatTyping: string;
+  chatPlaceholder: string;
+  chatSend: string;
   promoSponsor: string;
   currencyLanguage: string;
   promotions: string;
@@ -123,6 +131,14 @@ const en: Messages = {
   slots: "Slots",
   casino: "Casino",
   liveSupport: "24/7 Live Chat",
+  loading: "Loading…",
+  chatOnline: "Online",
+  chatReconnecting: "Reconnecting…",
+  chatNoAgent: "No dedicated agent is assigned yet. You can still send a message — our support team will reply as soon as possible.",
+  chatEmpty: "Start a conversation with customer service.",
+  chatTyping: "Agent is typing…",
+  chatPlaceholder: "Type your message…",
+  chatSend: "Send",
   promoSponsor: "NEW PRINCIPAL SPONSOR OF MI EMIRATES IN ILT20",
   currencyLanguage: "Currency and Language",
   promotions: "Promotions",
@@ -437,6 +453,14 @@ const bn: Messages = {
   slots: "স্লট",
   casino: "ক্যাসিনো",
   liveSupport: "২৪/৭ লাইভ চ্যাট",
+  loading: "লোড হচ্ছে…",
+  chatOnline: "অনলাইন",
+  chatReconnecting: "পুনরায় সংযোগ…",
+  chatNoAgent: "এখনও নির্দিষ্ট এজেন্ট নির্ধারিত হয়নি। আপনি এখনই বার্তা পাঠাতে পারেন — আমাদের সাপোর্ট দল যত তাড়াতাড়ি সম্ভব উত্তর দেবে।",
+  chatEmpty: "কাস্টমার সার্ভিসের সাথে কথোপকথন শুরু করুন।",
+  chatTyping: "এজেন্ট টাইপ করছেন…",
+  chatPlaceholder: "আপনার বার্তা লিখুন…",
+  chatSend: "পাঠান",
   promoSponsor: "ILT20-তে MI EMIRATES-এর নতুন প্রধান স্পন্সর",
   currencyLanguage: "মুদ্রা ও ভাষা",
   promotions: "প্রমোশন",
@@ -751,6 +775,14 @@ const hi: Messages = {
   slots: "स्लॉट",
   casino: "कैसीनो",
   liveSupport: "24/7 लाइव चैट",
+  loading: "लोड हो रहा है…",
+  chatOnline: "ऑनलाइन",
+  chatReconnecting: "पुन: कनेक्ट…",
+  chatNoAgent: "अभी कोई समर्पित एजेंट नियुक्त नहीं है। आप अभी भी संदेश भेज सकते हैं — हमारी सपोर्ट टीम जल्द जवाब देगी।",
+  chatEmpty: "ग्राहक सेवा से बातचीत शुरू करें।",
+  chatTyping: "एजेंट टाइप कर रहा है…",
+  chatPlaceholder: "अपना संदेश लिखें…",
+  chatSend: "भेजें",
   promoSponsor: "ILT20 में MI EMIRATES का नया प्रमुख प्रायोजक",
   currencyLanguage: "मुद्रा और भाषा",
   promotions: "प्रमोशन",

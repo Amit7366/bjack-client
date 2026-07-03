@@ -19,6 +19,7 @@ import {
   memberMissionHref,
   memberSectionHref,
   memberSignInRewardHref,
+  memberLiveChatHref,
   memberSuggestionHref,
   memberWithdrawHref,
 } from "@/lib/member-routes";
@@ -227,6 +228,8 @@ export default function MemberCenterPage() {
           return memberRebateHref(locale);
         case "suggestion":
           return memberSuggestionHref(locale);
+        case "customer-service":
+          return memberLiveChatHref(locale);
         case "mission":
           return memberMissionHref(locale);
         default:

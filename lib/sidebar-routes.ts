@@ -1,4 +1,5 @@
 import type { HomeTabId } from "./home-games-data";
+import { memberLiveChatHref } from "./member-routes";
 import { BKBAJI_ANDROID_APP_PATH } from "./seo/site-config";
 import {
   categoryProviderHref,
@@ -63,6 +64,10 @@ export function sidebarSubItemHref(
   parentId: string,
   subId: string,
 ): string | null {
+  if (parentId === "contactUs" && subId === "liveChat") {
+    return memberLiveChatHref(locale);
+  }
+
   const kind = SIDEBAR_TO_LOBBY[parentId];
   if (!kind) return null;
 
