@@ -66,7 +66,7 @@ export default function TemuTicketHistoryPage() {
     void fetchTemuTicketHistory()
       .then(setHistory)
       .catch(() => {
-        showToast(labels.loadError, "error");
+        showToast(labels.loadError, { variant: "error" });
         setHistory({ totalClaimed: 0, items: [] });
       })
       .finally(() => setLoading(false));

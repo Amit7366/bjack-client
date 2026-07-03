@@ -252,8 +252,8 @@ export default function MissionPage() {
   const [missions, setMissions] = useState<MissionItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const displayId = profile?.username ?? session?.username ?? "—";
-  const avatarSrc = profile?.avatarUrl?.trim() || session?.avatarUrl?.trim() || "";
+  const displayId = profile?.userName ?? session?.userName ?? session?.memberId ?? "—";
+  const avatarSrc = profile?.profileImg?.trim() || "";
   const balanceDisplay = formatBalance(session?.balance, locale);
 
   const loadMissions = useCallback(
