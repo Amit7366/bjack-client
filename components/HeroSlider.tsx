@@ -5,12 +5,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "./LocaleProvider";
 
 const HERO_SLIDES = [
-  "https://i.ibb.co.com/ynDfHL33/slider1.png",
-  "https://i.ibb.co.com/WWKrzy5j/slider2.png",
-  "https://i.ibb.co.com/ZzLFj2YT/slider3.png",
-  "https://i.ibb.co.com/Fq4KgTqj/slider4.png",
-  "https://i.ibb.co.com/C5KJmpyx/slide5.png",
-  "https://i.ibb.co.com/DDhDV8kM/slide6.png",
+  "https://i.ibb.co.com/1tDnhctp/slide5.png",
+"https://i.ibb.co.com/Wp0vVmTn/slide6.png",
+"https://i.ibb.co.com/m5qMsSJC/slider1.png",
+"https://i.ibb.co.com/0Rg1twk7/slider2.png",
+"https://i.ibb.co.com/SXHtJPf9/slider3.png",
+"https://i.ibb.co.com/p6Bnwcds/slider4.png",
 ];
 
 export default function HeroSlider() {

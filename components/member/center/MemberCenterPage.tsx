@@ -16,6 +16,7 @@ import {
   memberProfitLossHref,
   memberRebateHref,
   memberRewardCenterHref,
+  memberMissionHref,
   memberSectionHref,
   memberSignInRewardHref,
   memberSuggestionHref,
@@ -26,6 +27,10 @@ import {
   fetchMyNormalUserProfile,
   type NormalUserProfile,
 } from "@/lib/member/profile-api";
+import { countAvailableRewards } from "@/lib/reward-center-available";
+import { fetchMissionAvailableCount } from "@/lib/mission-api";
+import { AUTH_CHANGE_EVENT } from "@/lib/auth/session";
+import RewardCountBadge from "./RewardCountBadge";
 import {
   CopyIdIcon,
   DefaultAvatarIcon,
@@ -78,7 +83,7 @@ function formatJoinedDate(value?: string): string {
 }
 
 export default function MemberCenterPage() {
-  const { session, refreshBalance, balanceSyncing, logout } = useAuth();
+  const { session, refreshBalance, balanceSyncing, logout, isAuthenticated } = useAuth();
   const { preferences } = useLocale();
   const { showToast } = useToast();
   const router = useRouter();
@@ -90,6 +95,34 @@ export default function MemberCenterPage() {
   const [profile, setProfile] = useState<NormalUserProfile | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [availableRewardCount, setAvailableRewardCount] = useState(0);
+  const [availableMissionCount, setAvailableMissionCount] = useState(0);
+
+  const refreshAvailableRewardCount = useCallback(() => {
+    if (!isAuthenticated) {
+      setAvailableRewardCount(0);
+      return;
+    }
+
+    void countAvailableRewards()
+      .then(setAvailableRewardCount)
+      .catch(() => {
+        /* keep previous count */
+      });
+  }, [isAuthenticated]);
+
+  const refreshAvailableMissionCount = useCallback(() => {
+    if (!isAuthenticated) {
+      setAvailableMissionCount(0);
+      return;
+    }
+
+    void fetchMissionAvailableCount()
+      .then(setAvailableMissionCount)
+      .catch(() => {
+        /* keep previous count */
+      });
+  }, [isAuthenticated]);
 
   useEffect(() => {
     setMounted(true);
@@ -108,6 +141,24 @@ export default function MemberCenterPage() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    refreshAvailableRewardCount();
+    refreshAvailableMissionCount();
+  }, [refreshAvailableRewardCount, refreshAvailableMissionCount]);
+
+  useEffect(() => {
+    const onFocus = () => {
+      refreshAvailableRewardCount();
+      refreshAvailableMissionCount();
+    };
+    window.addEventListener("focus", onFocus);
+    window.addEventListener(AUTH_CHANGE_EVENT, onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener(AUTH_CHANGE_EVENT, onFocus);
+    };
+  }, [refreshAvailableRewardCount, refreshAvailableMissionCount]);
 
   const displayId = mounted ? (session?.userName ?? session?.memberId ?? "—") : "—";
   const nickname = mounted ? (profile?.name || session?.userName || "—") : "—";
@@ -176,6 +227,8 @@ export default function MemberCenterPage() {
           return memberRebateHref(locale);
         case "suggestion":
           return memberSuggestionHref(locale);
+        case "mission":
+          return memberMissionHref(locale);
         default:
           return null;
       }
@@ -319,8 +372,14 @@ export default function MemberCenterPage() {
             const href = itemHref(id);
             const inner = (
               <>
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#fcf2dd]">
+                <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[#fcf2dd]">
                   <MemberCenterItemIcon name={id} />
+                  {id === "reward-center" ? (
+                    <RewardCountBadge count={availableRewardCount} />
+                  ) : null}
+                  {id === "mission" ? (
+                    <RewardCountBadge count={availableMissionCount} />
+                  ) : null}
                 </span>
                 <span className="text-center text-[13px] font-medium leading-tight text-[#333]">
                   {m.items[id]}

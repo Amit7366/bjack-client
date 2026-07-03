@@ -49,6 +49,26 @@ export function memberBonusRewardHref(locale: string): string {
   return `/${locale}/member/reward-center/bonus`;
 }
 
+export function memberRescueFundHref(locale: string): string {
+  return `/${locale}/member/reward-center/rescue-fund`;
+}
+
+export function memberRescueFundSportsHref(locale: string): string {
+  return `/${locale}/member/reward-center/rescue-fund/sports`;
+}
+
+export function memberRescueFundLossCompensationHref(locale: string): string {
+  return `/${locale}/member/reward-center/rescue-fund/loss-compensation`;
+}
+
+export function memberTemuTicketHref(locale: string): string {
+  return `/${locale}/member/reward-center/temu-ticket`;
+}
+
+export function memberMissionHref(locale: string): string {
+  return `/${locale}/member/mission`;
+}
+
 export function memberSuggestionHref(locale: string): string {
   return `/${locale}/member/suggestion`;
 }

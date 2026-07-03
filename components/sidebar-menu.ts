@@ -6,6 +6,7 @@ export type SidebarSubItem = {
 export type SidebarMenuItem = {
   id: string;
   kind?: "link" | "dropdown" | "external";
+  externalUrl?: string;
   showViewAll?: boolean;
   subItems?: SidebarSubItem[];
 };
@@ -106,7 +107,7 @@ export const sidebarPrimaryItems: SidebarMenuItem[] = [
 export const sidebarSecondaryItems: SidebarMenuItem[] = [
   { id: "vipClub", kind: "link" },
   { id: "referral", kind: "link" },
-  { id: "affiliate", kind: "external" },
+  { id: "affiliate", kind: "external", externalUrl: "https://aff.bkbaji.com/" },
   { id: "brandAmbassadors", kind: "link" },
   { id: "appDownload", kind: "link" },
   {

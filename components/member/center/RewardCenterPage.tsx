@@ -10,13 +10,18 @@ import { getMemberCenterMessages } from "@/lib/i18n/member-center-messages";
 import { getRewardCenterMessages } from "@/lib/i18n/reward-center-messages";
 import {
   memberBonusRewardHref,
+  memberRescueFundHref,
   memberSectionHref,
   memberSignInRewardHref,
+  memberTemuTicketHref,
 } from "@/lib/member-routes";
 import {
   fetchMyNormalUserProfile,
   type NormalUserProfile,
 } from "@/lib/member/profile-api";
+import { countAvailableBonusOffers } from "@/lib/reward-center-available";
+import { AUTH_CHANGE_EVENT } from "@/lib/auth/session";
+import RewardCountBadge from "./RewardCountBadge";
 import {
   CopyIdIcon,
   DefaultAvatarIcon,
@@ -128,16 +133,13 @@ function InviteTileIcon() {
   );
 }
 
-function PromoCodeTileIcon() {
+function TemuTicketTileIcon() {
   return (
     <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden>
-      <path
-        d="M16 3.5l2.7 2 3.3-.6 1.2 3.1 3.1 1.2-.6 3.3 2 2.7-2 2.7.6 3.3-3.1 1.2-1.2 3.1-3.3-.6-2.7 2-2.7-2-3.3.6-1.2-3.1-3.1-1.2.6-3.3-2-2.7 2-2.7-.6-3.3 3.1-1.2 1.2-3.1 3.3.6 2.7-2z"
-        fill="#13b5c4"
-      />
-      <path d="M12.5 19.5l7-7" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="12.8" cy="12.8" r="1.7" fill="#fff" />
-      <circle cx="19.2" cy="19.2" r="1.7" fill="#fff" />
+      <rect x="5" y="9" width="22" height="14" rx="2.5" fill="#ff8c2a" stroke="#fff" strokeWidth="1.2" />
+      <path d="M5 13h22" stroke="#fff" strokeWidth="1.2" strokeDasharray="3 2" />
+      <circle cx="16" cy="16" r="3.2" fill="#ffd54f" stroke="#fff" strokeWidth="1" />
+      <path d="M10 6.5l2 2.5M22 6.5l-2 2.5" stroke="#13b5c4" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
 }
@@ -154,14 +156,14 @@ function TileDots({ className }: { className: string }) {
   );
 }
 
-type TileId = "bonus" | "sign-in" | "rescue-fund" | "invite-friends" | "promo-code";
+type TileId = "bonus" | "sign-in" | "rescue-fund" | "invite-friends" | "temu-ticket";
 
 const TILE_STYLE: Record<TileId, string> = {
   bonus: "bg-gradient-to-br from-[#4fd97f] to-[#1cab57]",
   "sign-in": "bg-gradient-to-br from-[#5f97ff] to-[#2f63ea]",
   "rescue-fund": "bg-gradient-to-br from-[#ffc94f] to-[#ff9326]",
   "invite-friends": "bg-gradient-to-br from-[#ef6a90] to-[#c92e5d]",
-  "promo-code": "bg-gradient-to-br from-[#35d3cd] to-[#0aa9c4]",
+  "temu-ticket": "bg-gradient-to-br from-[#ff9a4d] to-[#ff6b1a]",
 };
 
 function tileIcon(id: TileId) {
@@ -174,13 +176,13 @@ function tileIcon(id: TileId) {
       return <RescueFundTileIcon />;
     case "invite-friends":
       return <InviteTileIcon />;
-    case "promo-code":
-      return <PromoCodeTileIcon />;
+    case "temu-ticket":
+      return <TemuTicketTileIcon />;
   }
 }
 
 export default function RewardCenterPage() {
-  const { session, refreshBalance, balanceSyncing } = useAuth();
+  const { session, refreshBalance, balanceSyncing, isAuthenticated } = useAuth();
   const { preferences } = useLocale();
   const { showToast } = useToast();
   const locale = preferences.locale;
@@ -191,10 +193,38 @@ export default function RewardCenterPage() {
   const [mounted, setMounted] = useState(false);
   const [profile, setProfile] = useState<NormalUserProfile | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [availableBonusCount, setAvailableBonusCount] = useState(0);
+
+  const refreshAvailableBonusCount = useCallback(() => {
+    if (!isAuthenticated) {
+      setAvailableBonusCount(0);
+      return;
+    }
+
+    void countAvailableBonusOffers()
+      .then(setAvailableBonusCount)
+      .catch(() => {
+        /* keep previous count */
+      });
+  }, [isAuthenticated]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    refreshAvailableBonusCount();
+  }, [refreshAvailableBonusCount]);
+
+  useEffect(() => {
+    const onFocus = () => refreshAvailableBonusCount();
+    window.addEventListener("focus", onFocus);
+    window.addEventListener(AUTH_CHANGE_EVENT, onFocus);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener(AUTH_CHANGE_EVENT, onFocus);
+    };
+  }, [refreshAvailableBonusCount]);
 
   useEffect(() => {
     let cancelled = false;
@@ -242,10 +272,10 @@ export default function RewardCenterPage() {
     "sign-in": r.signIn,
     "rescue-fund": r.rescueFund,
     "invite-friends": r.inviteFriends,
-    "promo-code": r.promoCode,
+    "temu-ticket": r.temuTicket,
   };
 
-  const tiles: TileId[] = ["bonus", "sign-in", "rescue-fund", "invite-friends", "promo-code"];
+  const tiles: TileId[] = ["bonus", "sign-in", "rescue-fund", "invite-friends", "temu-ticket"];
 
   return (
     <div className="min-h-full bg-[#eef0f2]">
@@ -383,6 +413,9 @@ export default function RewardCenterPage() {
                 </span>
                 <span className="relative flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm">
                   {tileIcon(id)}
+                  {id === "bonus" ? (
+                    <RewardCountBadge count={availableBonusCount} ringClassName="border-white" />
+                  ) : null}
                 </span>
                 <span className="relative text-[15px] font-semibold text-white">
                   {tileLabels[id]}
@@ -408,6 +441,20 @@ export default function RewardCenterPage() {
             if (id === "bonus") {
               return (
                 <Link key={id} href={memberBonusRewardHref(locale)} className={className}>
+                  {inner}
+                </Link>
+              );
+            }
+            if (id === "rescue-fund") {
+              return (
+                <Link key={id} href={memberRescueFundHref(locale)} className={className}>
+                  {inner}
+                </Link>
+              );
+            }
+            if (id === "temu-ticket") {
+              return (
+                <Link key={id} href={memberTemuTicketHref(locale)} className={className}>
                   {inner}
                 </Link>
               );

@@ -113,9 +113,10 @@ function MenuRow({ item, expandedId, onToggleItem }: MenuRowProps) {
   }
 
   if (kind === "external") {
+    const externalHref = item.externalUrl ?? "#";
     return (
       <a
-        href="#"
+        href={externalHref}
         target="_blank"
         rel="noopener noreferrer"
         className="flex w-full items-center gap-3 px-3 py-[13px] text-left transition-opacity hover:opacity-90"
@@ -264,6 +265,20 @@ export default function SideNavigation({
                     key={item.id}
                     href={href}
                     download
+                    aria-label={label}
+                    className={railClass}
+                  >
+                    {menuIconFor(item.id)}
+                  </a>
+                );
+              }
+              if (item.kind === "external" && item.externalUrl) {
+                return (
+                  <a
+                    key={item.id}
+                    href={item.externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     aria-label={label}
                     className={railClass}
                   >

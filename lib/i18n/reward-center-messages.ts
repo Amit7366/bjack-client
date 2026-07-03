@@ -8,7 +8,7 @@ export type RewardCenterMessages = {
   bonus: string;
   rescueFund: string;
   inviteFriends: string;
-  promoCode: string;
+  temuTicket: string;
 };
 
 const en: RewardCenterMessages = {
@@ -17,9 +17,9 @@ const en: RewardCenterMessages = {
   nicknameLabel: "Nickname",
   benefits: "Benefits",
   bonus: "Bonus",
-  rescueFund: "Rescue fund",
+  rescueFund: "Rescue Fund",
   inviteFriends: "Invite Friends",
-  promoCode: "Promo Code",
+  temuTicket: "TEMU Ticket",
 };
 
 const bn: RewardCenterMessages = {
@@ -28,9 +28,9 @@ const bn: RewardCenterMessages = {
   nicknameLabel: "ডাকনাম",
   benefits: "বেনিফিটস",
   bonus: "বোনাস",
-  rescueFund: "রেসকিউ ফান্ড",
+  rescueFund: "উদ্ধার তহবিল",
   inviteFriends: "বন্ধুদের আমন্ত্রণ",
-  promoCode: "প্রোমো কোড",
+  temuTicket: "TEMU টিকিট",
 };
 
 const hi: RewardCenterMessages = {
@@ -41,7 +41,7 @@ const hi: RewardCenterMessages = {
   bonus: "बोनस",
   rescueFund: "रेस्क्यू फंड",
   inviteFriends: "मित्रों को आमंत्रित करें",
-  promoCode: "प्रोमो कोड",
+  temuTicket: "TEMU टिकट",
 };
 
 const byLocale: Record<Locale, RewardCenterMessages> = { en, bn, hi };
