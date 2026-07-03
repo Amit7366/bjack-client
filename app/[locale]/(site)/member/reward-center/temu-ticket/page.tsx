@@ -1,5 +1,5 @@
-import TemuTicketHistoryPage from "@/components/member/center/TemuTicketHistoryPage";
+import TemuTicketPage from "@/components/member/center/TemuTicketPage";
 
 export default function TemuTicketRoute() {
-  return <TemuTicketHistoryPage />;
+  return <TemuTicketPage />;
 }

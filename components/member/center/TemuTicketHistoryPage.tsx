@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { useToast } from "@/components/ToastProvider";
-import { getTemuTicketHistoryMessages } from "@/lib/i18n/temu-ticket-messages";
-import { memberRewardCenterHref } from "@/lib/member-routes";
+import { getTemuTicketHistoryMessages, getTemuTicketMessages } from "@/lib/i18n/temu-ticket-messages";
+import { memberTemuTicketHref } from "@/lib/member-routes";
 import { TEMU_TICKET_HISTORY_BOX_GIF_URL } from "@/lib/temu-ticket-assets";
 import {
   fetchTemuTicketHistory,
@@ -57,6 +57,7 @@ export default function TemuTicketHistoryPage() {
   const { showToast } = useToast();
   const locale = preferences.locale;
   const labels = getTemuTicketHistoryMessages(locale);
+  const gameLabels = getTemuTicketMessages(locale);
 
   const [history, setHistory] = useState<TemuTicketHistory | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,8 +91,8 @@ export default function TemuTicketHistoryPage() {
         <header className="sticky top-0 z-30 bg-[#1c1c1c]">
           <div className="relative flex min-h-[52px] items-center justify-center px-3">
             <Link
-              href={memberRewardCenterHref(locale)}
-              aria-label={labels.pageTitle}
+              href={memberTemuTicketHref(locale)}
+              aria-label={gameLabels.pageTitle}
               className="focus-ring absolute left-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-white transition-colors hover:bg-white/10"
             >
               <HeaderBackIcon />

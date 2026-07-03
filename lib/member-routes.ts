@@ -65,6 +65,10 @@ export function memberTemuTicketHref(locale: string): string {
   return `/${locale}/member/reward-center/temu-ticket`;
 }
 
+export function memberTemuTicketHistoryHref(locale: string): string {
+  return `/${locale}/member/reward-center/temu-ticket/history`;
+}
+
 export function memberMissionHref(locale: string): string {
   return `/${locale}/member/mission`;
 }

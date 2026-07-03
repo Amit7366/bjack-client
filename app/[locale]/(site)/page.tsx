@@ -5,6 +5,7 @@ import ExclusiveGamesSection from "@/components/ExclusiveGamesSection";
 import HeroSlider from "@/components/HeroSlider";
 import HomeGameTabs from "@/components/HomeGameTabs";
 import HomeAppDownloadGate from "@/components/app-download/HomeAppDownloadGate";
+import HomePromoGate from "@/components/home-promo/HomePromoGate";
 import HomeSpinWheelGate from "@/components/spin-wheel/HomeSpinWheelGate";
 import ProviderSection from "@/components/ProviderSection";
 import HomeJsonLd from "@/components/seo/HomeJsonLd";
@@ -44,6 +45,7 @@ export default async function Home({ params }: PageProps) {
     <>
       <HomeJsonLd locale={locale} />
       <HomeAppDownloadGate />
+      <HomePromoGate />
       <HomeSpinWheelGate />
       <HeroSlider />
       <AnnouncementBar />
