@@ -9,11 +9,15 @@ import {
   memberPagePaddingNarrow,
   MemberPageHeader,
 } from "@/components/member/shared/member-ui";
-import { depositMethodToUrlParam, mapQuickDepositMethod } from "@/lib/deposit-api";
+import { depositMethodToUrlParam, fetchDepositBonusPreview, mapQuickDepositMethod } from "@/lib/deposit-api";
 import DepositPromotionPicker, {
   DEFAULT_PROMO_CODE,
 } from "@/components/member/deposit/DepositPromotionPicker";
 import { getMinimumDepositAmount, hasSelectedPromotion, fetchDepositPromotions } from "@/lib/deposit-promotions";
+import {
+  formatNormalBonusHint,
+  type DepositBonusPreview,
+} from "@/lib/normal-deposit-bonus";
 import {
   channelsForMethod,
   fetchActiveDepositAccounts,
@@ -98,6 +102,7 @@ export default function QuickDepositPage() {
   const [infoOpen, setInfoOpen] = useState(true);
   const [promoCode, setPromoCode] = useState(DEFAULT_PROMO_CODE);
   const [promoMinDeposit, setPromoMinDeposit] = useState(0);
+  const [bonusPreview, setBonusPreview] = useState<DepositBonusPreview | null>(null);
 
   useEffect(() => {
     const promo = searchParams.get("promo")?.trim();
@@ -190,6 +195,31 @@ export default function QuickDepositPage() {
   }, [selectedPaymentMethod, enabledAccounts, activeAccounts, selectedChannel]);
 
   const amountNum = Number.parseFloat(amount || "0");
+
+  useEffect(() => {
+    if (promoCode !== DEFAULT_PROMO_CODE || amountNum <= 0) {
+      setBonusPreview(null);
+      return;
+    }
+
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      void fetchDepositBonusPreview({ amount: amountNum, promoCode })
+        .then((result) => {
+          if (cancelled) return;
+          setBonusPreview(result.applicable ? result : null);
+        })
+        .catch(() => {
+          if (!cancelled) setBonusPreview(null);
+        });
+    }, 300);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [promoCode, amountNum]);
+
   const minDepositRequired = getMinimumDepositAmount(promoCode, promoMinDeposit);
   const promoSelected = hasSelectedPromotion(promoCode);
   const validAmount =
@@ -364,6 +394,11 @@ export default function QuickDepositPage() {
               {isBn
                 ? `এই প্রমোশনের জন্য ন্যূনতম ৳ ${minDepositRequired.toLocaleString("en-US")} ডিপোজিট প্রয়োজন`
                 : `This promotion requires a minimum deposit of ৳ ${minDepositRequired.toLocaleString("en-US")}`}
+            </p>
+          ) : null}
+          {bonusPreview ? (
+            <p className="mt-1 text-[12px] text-[#23c97f]">
+              {formatNormalBonusHint(isBn, bonusPreview)}
             </p>
           ) : null}
           {amountFocused ? (

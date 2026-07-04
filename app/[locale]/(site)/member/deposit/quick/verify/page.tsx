@@ -7,6 +7,7 @@ import { MEMBER_PAGE_BG } from "@/components/member/shared/member-ui";
 import {
   createManualDeposit,
   failAutoPayDeposit,
+  fetchDepositBonusPreview,
   isSupportedQuickDepositMethod,
   mapQuickDepositMethod,
   syncSessionBalance,
@@ -19,6 +20,10 @@ import {
 } from "@/lib/deposit-payment-accounts";
 import { memberDepositHref } from "@/lib/member-routes";
 import { DEFAULT_PROMO_CODE } from "@/lib/deposit-promotions";
+import {
+  formatNormalBonusVerifyMessage,
+  type DepositBonusPreview,
+} from "@/lib/normal-deposit-bonus";
 
 const PAYMENT_WINDOW_SEC = 10 * 60;
 const VERIFY_WINDOW_SEC = 3 * 60;
@@ -78,9 +83,27 @@ function VerifyContent() {
   const channel = searchParams.get("channel") ?? "";
   const promoCode = searchParams.get("promo")?.trim() || "NO_PROMO";
 
-  const normalBonusAmount = useMemo(() => {
-    if (promoCode !== DEFAULT_PROMO_CODE || amount <= 0) return 0;
-    return Math.floor(amount * 0.1);
+  const [bonusPreview, setBonusPreview] = useState<DepositBonusPreview | null>(null);
+
+  useEffect(() => {
+    if (promoCode !== DEFAULT_PROMO_CODE || amount <= 0) {
+      setBonusPreview(null);
+      return;
+    }
+
+    let cancelled = false;
+    void fetchDepositBonusPreview({ amount, promoCode })
+      .then((result) => {
+        if (cancelled) return;
+        setBonusPreview(result.applicable ? result : null);
+      })
+      .catch(() => {
+        if (!cancelled) setBonusPreview(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [promoCode, amount]);
 
   const paymentMethod = useMemo<DepositPaymentMethod>(
@@ -309,11 +332,9 @@ function VerifyContent() {
                     </button>
                   </div>
 
-                  {normalBonusAmount > 0 ? (
+                  {bonusPreview ? (
                     <p className="text-center text-[12px] text-[#1aa05a]">
-                      {isBn
-                        ? `ভেরিফিকেশনের পর ১০% বোনাস (৳${normalBonusAmount.toLocaleString("en-US")}) পাবেন`
-                        : `You will receive a 10% bonus (৳${normalBonusAmount.toLocaleString("en-US")}) after verification`}
+                      {formatNormalBonusVerifyMessage(isBn, bonusPreview)}
                     </p>
                   ) : null}
 

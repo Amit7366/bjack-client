@@ -33,6 +33,36 @@ export type VerifyAutoPayResult = {
 
 export type DepositPaymentMethod = "bkash" | "nagad" | "rocket";
 
+export type DepositBonusPreview = {
+  applicable: true;
+  bonusAmount: number;
+  bonusRate: number;
+  turnoverX: number;
+  totalCredited: number;
+  tierNumber: number | null;
+  isTierBonus: boolean;
+  successfulDeposits: number;
+};
+
+export type DepositBonusPreviewResult =
+  | DepositBonusPreview
+  | { applicable: false };
+
+/** GET /transaction/deposit/bonus-preview — expected Normal deposit bonus. */
+export async function fetchDepositBonusPreview(input: {
+  amount: number;
+  promoCode?: string;
+}): Promise<DepositBonusPreviewResult> {
+  const promoCode = input.promoCode?.trim() || "NO_PROMO";
+  const q = new URLSearchParams({
+    amount: String(input.amount),
+    promoCode,
+  });
+  return authFetchData<DepositBonusPreviewResult>(
+    `/transaction/deposit/bonus-preview?${q.toString()}`,
+  );
+}
+
 /** URL `method` param (bKash | NAGAD | Rocket) → API enum. */
 export function mapQuickDepositMethod(method: string): DepositPaymentMethod {
   const id = method.trim().toLowerCase();
