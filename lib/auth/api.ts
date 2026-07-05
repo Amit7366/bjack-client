@@ -1,4 +1,9 @@
-import type { ApiResponse, LoginResponseData, RegisterResponseData } from "@/lib/api/types";
+import type {
+  ApiResponse,
+  DeviceRegistrationStatusData,
+  LoginResponseData,
+  RegisterResponseData,
+} from "@/lib/api/types";
 import { API_PREFIX, authFetchJson } from "@/lib/auth/auth-fetch";
 import { clearMemberProfileCache } from "@/lib/member/profile-cache";
 import { clearAuthSession, enrichSession, readAuthSession, saveAuthSession, type AuthSession } from "./session";
@@ -100,6 +105,24 @@ export async function registerUser(input: {
   }
 
   return { message: body.message ?? "Account created" };
+}
+
+export async function checkDeviceRegistrationStatus(): Promise<DeviceRegistrationStatusData> {
+  const deviceFingerprint = await getDeviceFingerprint();
+
+  const { ok, body } = await requestJson<DeviceRegistrationStatusData>(
+    "/users/device-registration-status",
+    {
+      method: "POST",
+      body: JSON.stringify({ deviceFingerprint }),
+    },
+  );
+
+  if (!ok || !body.data) {
+    throw new Error(body.message || "Could not verify device registration status");
+  }
+
+  return body.data;
 }
 
 export async function registerAndLogin(input: {

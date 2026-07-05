@@ -22,6 +22,7 @@ export type AuthMessages = {
   loginError: string;
   registerError: string;
   selfReferralDeviceError: string;
+  deviceAccountLimitError: string;
   networkError: string;
   passwordTooShort: string;
   phoneRequired: string;
@@ -52,6 +53,7 @@ const en: AuthMessages = {
   registerError: "Sign up failed. That username or phone may already be in use.",
   selfReferralDeviceError:
     "You cannot register with your own referral code on this device. Remove the referral link and try again.",
+  deviceAccountLimitError: "This device already has the maximum number of accounts (3).",
   networkError: "Could not reach the server. Try again.",
   passwordTooShort: "Password must be at least 6 characters.",
   phoneRequired: "Enter your phone number.",
@@ -82,6 +84,7 @@ const bn: AuthMessages = {
   registerError: "সাইন আপ ব্যর্থ। ইউজারনেম বা ফোন ইতিমধ্যে ব্যবহৃত হতে পারে।",
   selfReferralDeviceError:
     "এই ডিভাইসে নিজের রেফারেল কোড দিয়ে রেজিস্ট্রেশন করা যাবে না। রেফারেল লিঙ্ক সরিয়ে আবার চেষ্টা করুন।",
+  deviceAccountLimitError: "এই ডিভাইসে সর্বোচ্চ ৩টি অ্যাকাউন্টের সীমা পূর্ণ হয়েছে।",
   networkError: "সার্ভারে সংযোগ করা যায়নি। আবার চেষ্টা করুন।",
   passwordTooShort: "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।",
   phoneRequired: "আপনার ফোন নম্বর লিখুন।",
@@ -112,6 +115,7 @@ const hi: AuthMessages = {
   registerError: "साइन अप विफल। यह उपयोगकर्ता नाम या फ़ोन पहले से उपयोग में हो सकता है।",
   selfReferralDeviceError:
     "इस डिवाइस पर अपने रेफरल कोड से पंजीकरण नहीं कर सकते। रेफरल लिंक हटाकर पुनः प्रयास करें।",
+  deviceAccountLimitError: "इस डिवाइस पर अधिकतम 3 खातों की सीमा पूरी हो चुकी है।",
   networkError: "सर्वर तक पहुँच नहीं हो सकी। पुनः प्रयास करें।",
   passwordTooShort: "पासवर्ड कम से कम 6 अक्षर का होना चाहिए।",
   phoneRequired: "अपना फ़ोन नंबर दर्ज करें।",

@@ -20,3 +20,9 @@ export type RegisterResponseData = {
   name?: string;
   id?: string;
 };
+
+export type DeviceRegistrationStatusData = {
+  accountCount: number;
+  maxAccounts: number;
+  canRegister: boolean;
+};

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
-import { registerAndLogin } from "@/lib/auth/api";
+import { checkDeviceRegistrationStatus, registerAndLogin } from "@/lib/auth/api";
 import { getAuthMessages } from "@/lib/i18n/auth-messages";
 import { AuthField, authInputClass } from "./AuthField";
 import AuthSubmitLoader from "./AuthSubmitLoader";
@@ -71,6 +71,7 @@ function authErrorMessage(
   fallback: string,
   networkFallback: string,
   selfReferralFallback?: string,
+  deviceAccountLimitFallback?: string,
 ): string {
   if (err instanceof TypeError) return networkFallback;
   if (err instanceof Error && err.message) {
@@ -79,6 +80,12 @@ function authErrorMessage(
       err.message.toLowerCase().includes("own referral code on this device")
     ) {
       return selfReferralFallback;
+    }
+    if (
+      deviceAccountLimitFallback &&
+      err.message.toLowerCase().includes("maximum number of accounts")
+    ) {
+      return deviceAccountLimitFallback;
     }
     return err.message;
   }
@@ -101,6 +108,38 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [deviceCheckLoading, setDeviceCheckLoading] = useState(true);
+  const [registrationBlocked, setRegistrationBlocked] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function verifyDeviceRegistrationLimit() {
+      try {
+        const status = await checkDeviceRegistrationStatus();
+        if (cancelled) return;
+
+        if (!status.canRegister) {
+          setRegistrationBlocked(true);
+          setError(a.deviceAccountLimitError);
+        }
+      } catch {
+        /* allow registration attempt; server enforces the limit */
+      } finally {
+        if (!cancelled) {
+          setDeviceCheckLoading(false);
+        }
+      }
+    }
+
+    void verifyDeviceRegistrationLimit();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [a.deviceAccountLimitError]);
+
+  const formDisabled = loading || deviceCheckLoading || registrationBlocked;
 
   const stepIndex = STEPS.indexOf(step);
   const stepTitle =
@@ -151,7 +190,15 @@ export default function RegisterForm() {
       router.push(base);
       router.refresh();
     } catch (err) {
-      setError(authErrorMessage(err, a.registerError, a.networkError, a.selfReferralDeviceError));
+      setError(
+        authErrorMessage(
+          err,
+          a.registerError,
+          a.networkError,
+          a.selfReferralDeviceError,
+          a.deviceAccountLimitError,
+        ),
+      );
     } finally {
       setLoading(false);
     }
@@ -181,7 +228,7 @@ export default function RegisterForm() {
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value as "BDT" | "INR")}
                   className={`${authInputClass()} cursor-pointer appearance-none pl-[4.5rem] pr-10 text-transparent`}
-                  disabled={loading}
+                  disabled={formDisabled}
                 >
                   <option value="BDT">BDT</option>
                   <option value="INR">INR</option>
@@ -210,7 +257,7 @@ export default function RegisterForm() {
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, phoneMaxLen))}
                   placeholder="----------"
                   className={`${authInputClass(true)} min-w-0 flex-1 tracking-[0.2em]`}
-                  disabled={loading}
+                  disabled={formDisabled}
                 />
               </div>
             </AuthField>
@@ -226,7 +273,7 @@ export default function RegisterForm() {
               onChange={(e) => setUsername(e.target.value)}
               placeholder={a.enterUsername}
               className={authInputClass()}
-              disabled={loading}
+              disabled={formDisabled}
             />
           </AuthField>
         ) : null}
@@ -245,8 +292,8 @@ export default function RegisterForm() {
 
       <button
         type="submit"
-        disabled={loading}
-        aria-busy={loading}
+        disabled={formDisabled}
+        aria-busy={loading || deviceCheckLoading}
         className="focus-ring mt-8 flex w-full min-h-12 items-center justify-center rounded-md bg-[#0d4a2e] py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-[#178358] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? (
