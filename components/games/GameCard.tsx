@@ -47,6 +47,7 @@ export default function GameCard(props: GameCardProps) {
   const { handleGameClick } = useGamePlayGate();
   const src = normalizeGameImage(props.image);
   const hasImage = isValidGameImageUrl(src);
+  const displayTitle = props.title?.trim() ?? "";
   const providerLabel = props.provider?.trim() ?? "";
   const alt =
     props.title && props.provider ? `${props.title} — ${props.provider}` : "";
@@ -84,12 +85,17 @@ export default function GameCard(props: GameCardProps) {
         ) : (
           <GameImagePlaceholder title={props.title} />
         )}
+        {providerLabel ? (
+          <span className="absolute left-1 top-1 z-[2] max-w-[calc(100%-2rem)] truncate text-[8px] font-bold uppercase leading-none tracking-wide text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] lg:left-2 lg:top-4 lg:max-w-[calc(100%-2.5rem)] lg:text-[11px]">
+            {providerLabel}
+          </span>
+        ) : null}
         <span className="absolute right-1 top-1 z-[2] lg:right-2 lg:top-2">
           <BjMark />
         </span>
-        {providerLabel ? (
+        {displayTitle ? (
           <span className="absolute bottom-1.5 left-1/2 z-[2] max-w-[calc(100%-0.5rem)] -translate-x-1/2 truncate px-1 text-center text-[9px] font-semibold uppercase tracking-wide text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] sm:text-[10px] lg:bottom-2 lg:text-[11px]">
-            {providerLabel}
+            {displayTitle}
           </span>
         ) : null}
       </div>
