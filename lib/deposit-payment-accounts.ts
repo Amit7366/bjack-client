@@ -74,11 +74,14 @@ export function uniqueActiveMethods(accounts: DepositPaymentAccount[]): DepositP
   return order.filter((m) => seen.has(m));
 }
 
+/** Live channels for a method (enabled + active). */
 export function channelsForMethod(
-  enabled: DepositPaymentAccount[],
+  accounts: DepositPaymentAccount[],
   method: DepositPaymentMethod,
 ): DepositPaymentAccount[] {
-  return enabled.filter((row) => row.paymentMethod === method);
+  return accounts.filter(
+    (row) => row.paymentMethod === method && row.isEnabled && row.isActive,
+  );
 }
 
 export function findActiveAccountForMethod(
@@ -86,4 +89,32 @@ export function findActiveAccountForMethod(
   method: DepositPaymentMethod,
 ): DepositPaymentAccount | undefined {
   return active.find((row) => row.paymentMethod === method && row.isActive && row.isEnabled);
+}
+
+/** Resolve cash-out account for a specific method + channel. */
+export function findAccountForMethodChannel(
+  accounts: DepositPaymentAccount[],
+  method: DepositPaymentMethod,
+  channelId: string,
+): DepositPaymentAccount | undefined {
+  const normalized = channelId.trim().toLowerCase();
+  if (!normalized) return undefined;
+  return accounts.find(
+    (row) =>
+      row.paymentMethod === method &&
+      row.isEnabled &&
+      row.isActive &&
+      row.channelId === normalized,
+  );
+}
+
+/** Prefer recommended live channel, else first live channel. */
+export function defaultChannelIdForMethod(
+  accounts: DepositPaymentAccount[],
+  method: DepositPaymentMethod,
+): string {
+  const live = channelsForMethod(accounts, method);
+  if (live.length === 0) return "";
+  const recommended = live.find((row) => row.recommended);
+  return (recommended ?? live[0]).channelId;
 }

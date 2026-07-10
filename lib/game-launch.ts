@@ -124,7 +124,8 @@ export async function requestGameLaunch(
   }
 
   if (data?.code !== 0) {
-    throw new Error(data?.msg ?? "Game launch API error");
+    // throw new Error(data?.msg ?? "Game launch API error");
+    throw new Error("Server is Updating. Please try again later.");
   }
 
   const launchUrl = data.payload?.game_launch_url;

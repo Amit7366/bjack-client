@@ -236,3 +236,28 @@ export async function changePasswordUser(oldPassword: string, newPassword: strin
     throw new Error(body.message || "Failed to change password");
   }
 }
+
+export async function submitPasswordResetRequest(input: {
+  userName: string;
+  contactNo: string;
+  newPassword: string;
+}): Promise<{ message: string }> {
+  const { ok, body } = await requestJson<null>("/password-reset-requests", {
+    method: "POST",
+    body: JSON.stringify({
+      userName: input.userName.trim(),
+      contactNo: input.contactNo.trim(),
+      newPassword: input.newPassword,
+    }),
+  });
+
+  if (!ok) {
+    throw new Error(body.message || "Failed to submit password reset request");
+  }
+
+  return {
+    message:
+      body.message ??
+      "Password reset request submitted. Please wait for admin approval.",
+  };
+}

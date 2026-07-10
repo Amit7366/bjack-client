@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
 import { loginWithUsername } from "@/lib/auth/api";
@@ -98,9 +99,12 @@ export default function LoginForm() {
         </AuthField>
 
         <div className="flex justify-end">
-          <button type="button" className="text-[13px] font-medium text-[#178358] hover:text-[#1a9664]">
+          <Link
+            href={`${base}/forgot-password`}
+            className="text-[13px] font-medium text-[#178358] hover:text-[#1a9664]"
+          >
             {a.forgotPassword}
-          </button>
+          </Link>
         </div>
       </div>
 

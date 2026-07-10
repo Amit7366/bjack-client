@@ -73,6 +73,12 @@ function balanceUpdateFailedMessage(locale: string): string {
   return "Balance update failed. Please try again.";
 }
 
+function serverUpdatingMessage(locale: string): string {
+  if (locale === "bn") return "সার্ভার আপডেট হচ্ছে। অনুগ্রহ করে পরে আবার চেষ্টা করুন।";
+  if (locale === "hi") return "सर्वर अपडेट हो रहा है। कृपया बाद में पुनः प्रयास करें।";
+  return "Server is Updating. Please try again later.";
+}
+
 export function GamePlayGateProvider({ children }: { children: ReactNode }) {
   const { isUser, authReady, session, refreshSession } = useAuth();
   const { preferences } = useLocale();
@@ -150,6 +156,12 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
         } catch (error: unknown) {
           const msg =
             error instanceof Error ? error.message : "Failed to launch game";
+          const isServerUpdating = /server is updating/i.test(msg);
+          if (isServerUpdating) {
+            showToast(serverUpdatingMessage(preferences.locale));
+            clearLaunchState();
+            return;
+          }
           const isPromoBlock =
             /deposit promotion|promo|প্রমো|प्रोमो/i.test(msg);
           showToast(isPromoBlock ? msg : `API Error: ${msg}`);

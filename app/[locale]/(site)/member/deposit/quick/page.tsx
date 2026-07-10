@@ -20,8 +20,8 @@ import {
 } from "@/lib/normal-deposit-bonus";
 import {
   channelsForMethod,
+  defaultChannelIdForMethod,
   fetchActiveDepositAccounts,
-  fetchEnabledDepositAccounts,
   methodBadge,
   methodDisplayLabel,
   methodQuickId,
@@ -74,7 +74,6 @@ export default function QuickDepositPage() {
   const locale = preferences.locale;
   const isBn = locale === "bn";
 
-  const [enabledAccounts, setEnabledAccounts] = useState<DepositPaymentAccount[]>([]);
   const [activeAccounts, setActiveAccounts] = useState<DepositPaymentAccount[]>([]);
   const [accountsLoading, setAccountsLoading] = useState(true);
   const [accountsError, setAccountsError] = useState<string | null>(null);
@@ -135,8 +134,8 @@ export default function QuickDepositPage() {
 
   const channels = useMemo(() => {
     if (!selectedPaymentMethod) return [];
-    return channelsForMethod(enabledAccounts, selectedPaymentMethod);
-  }, [enabledAccounts, selectedPaymentMethod]);
+    return channelsForMethod(activeAccounts, selectedPaymentMethod);
+  }, [activeAccounts, selectedPaymentMethod]);
 
   useEffect(() => {
     let cancelled = false;
@@ -144,12 +143,8 @@ export default function QuickDepositPage() {
       setAccountsLoading(true);
       setAccountsError(null);
       try {
-        const [enabled, active] = await Promise.all([
-          fetchEnabledDepositAccounts(),
-          fetchActiveDepositAccounts(),
-        ]);
+        const active = await fetchActiveDepositAccounts();
         if (cancelled) return;
-        setEnabledAccounts(enabled);
         setActiveAccounts(active);
 
         const methodsList = uniqueActiveMethods(active);
@@ -157,14 +152,7 @@ export default function QuickDepositPage() {
 
         const firstMethod = methodsList[0];
         setSelectedMethod(methodQuickId(firstMethod));
-
-        const activeForMethod = active.find(
-          (row) => row.paymentMethod === firstMethod && row.isActive,
-        );
-        const methodChannels = channelsForMethod(enabled, firstMethod);
-        const defaultChannel =
-          activeForMethod?.channelId ?? methodChannels[0]?.channelId ?? "";
-        setSelectedChannel(defaultChannel);
+        setSelectedChannel(defaultChannelIdForMethod(active, firstMethod));
       } catch (err) {
         if (!cancelled) {
           setAccountsError(err instanceof Error ? err.message : "Failed to load payment options");
@@ -180,7 +168,7 @@ export default function QuickDepositPage() {
 
   useEffect(() => {
     if (!selectedPaymentMethod) return;
-    const methodChannels = channelsForMethod(enabledAccounts, selectedPaymentMethod);
+    const methodChannels = channelsForMethod(activeAccounts, selectedPaymentMethod);
     if (methodChannels.length === 0) {
       setSelectedChannel("");
       return;
@@ -188,11 +176,8 @@ export default function QuickDepositPage() {
     const stillValid = methodChannels.some((row) => row.channelId === selectedChannel);
     if (stillValid) return;
 
-    const activeForMethod = activeAccounts.find(
-      (row) => row.paymentMethod === selectedPaymentMethod && row.isActive,
-    );
-    setSelectedChannel(activeForMethod?.channelId ?? methodChannels[0].channelId);
-  }, [selectedPaymentMethod, enabledAccounts, activeAccounts, selectedChannel]);
+    setSelectedChannel(defaultChannelIdForMethod(activeAccounts, selectedPaymentMethod));
+  }, [selectedPaymentMethod, activeAccounts, selectedChannel]);
 
   const amountNum = Number.parseFloat(amount || "0");
 

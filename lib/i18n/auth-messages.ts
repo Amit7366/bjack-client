@@ -8,6 +8,15 @@ export type AuthMessages = {
   enterUsername: string;
   enterPassword: string;
   forgotPassword: string;
+  forgotPasswordTitle: string;
+  enterPhone: string;
+  newPassword: string;
+  enterNewPassword: string;
+  next: string;
+  backToLogin: string;
+  forgotPasswordSuccess: string;
+  forgotPasswordError: string;
+  passwordStrengthInvalid: string;
   logInButton: string;
   chooseCurrency: string;
   phoneNumber: string;
@@ -38,6 +47,16 @@ const en: AuthMessages = {
   enterUsername: "Enter your username",
   enterPassword: "Enter your password",
   forgotPassword: "Forgot password?",
+  forgotPasswordTitle: "Forgot password",
+  enterPhone: "Enter your phone number",
+  newPassword: "New password",
+  enterNewPassword: "Enter your new password",
+  next: "Next",
+  backToLogin: "Back to login",
+  forgotPasswordSuccess:
+    "Request submitted. Please wait for admin approval, then log in with your new password.",
+  forgotPasswordError: "Could not submit password reset request.",
+  passwordStrengthInvalid: "Password does not meet the required rules.",
   logInButton: "Log in",
   chooseCurrency: "Choose currency",
   phoneNumber: "Phone number",
@@ -64,11 +83,21 @@ const en: AuthMessages = {
 const bn: AuthMessages = {
   logInTab: "লগ ইন",
   signUpTab: "সাইন আপ",
-  username: "ইউজারনেম",
+  username: "ব্যবহারকারীর নাম",
   password: "পাসওয়ার্ড",
-  enterUsername: "আপনার ইউজারনেম লিখুন",
+  enterUsername: "আপনার ইউজার নেম লিখুন",
   enterPassword: "আপনার পাসওয়ার্ড লিখুন",
   forgotPassword: "পাসওয়ার্ড ভুলে গেছেন?",
+  forgotPasswordTitle: "ফরগেট পাসওয়ার্ড",
+  enterPhone: "আপনার ফোন নম্বর লিখুন",
+  newPassword: "নতুন পাসওয়ার্ড",
+  enterNewPassword: "আপনার নতুন পাসওয়ার্ড লিখুন",
+  next: "পরবর্তী",
+  backToLogin: "লগইনে ফিরে যান",
+  forgotPasswordSuccess:
+    "অনুরোধ জমা হয়েছে। অ্যাডমিন অনুমোদনের পর নতুন পাসওয়ার্ড দিয়ে লগইন করুন।",
+  forgotPasswordError: "পাসওয়ার্ড রিসেট অনুরোধ জমা দেওয়া যায়নি।",
+  passwordStrengthInvalid: "পাসওয়ার্ড প্রয়োজনীয় নিয়ম পূরণ করে না।",
   logInButton: "লগ ইন",
   chooseCurrency: "মুদ্রা বেছে নিন",
   phoneNumber: "ফোন নম্বর",
@@ -100,6 +129,16 @@ const hi: AuthMessages = {
   enterUsername: "अपना उपयोगकर्ता नाम दर्ज करें",
   enterPassword: "अपना पासवर्ड दर्ज करें",
   forgotPassword: "पासवर्ड भूल गए?",
+  forgotPasswordTitle: "पासवर्ड भूल गए",
+  enterPhone: "अपना फ़ोन नंबर दर्ज करें",
+  newPassword: "नया पासवर्ड",
+  enterNewPassword: "अपना नया पासवर्ड दर्ज करें",
+  next: "अगला",
+  backToLogin: "लॉगिन पर वापस जाएँ",
+  forgotPasswordSuccess:
+    "अनुरोध जमा हो गया। एडमिन स्वीकृति के बाद नए पासवर्ड से लॉगिन करें।",
+  forgotPasswordError: "पासवर्ड रीसेट अनुरोध जमा नहीं हो सका।",
+  passwordStrengthInvalid: "पासवर्ड आवश्यक नियमों को पूरा नहीं करता।",
   logInButton: "लॉग इन",
   chooseCurrency: "मुद्रा चुनें",
   phoneNumber: "फ़ोन नंबर",

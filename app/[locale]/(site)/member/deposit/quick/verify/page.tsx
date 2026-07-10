@@ -16,7 +16,7 @@ import {
 } from "@/lib/deposit-api";
 import {
   fetchActiveDepositAccounts,
-  findActiveAccountForMethod,
+  findAccountForMethodChannel,
 } from "@/lib/deposit-payment-accounts";
 import { memberDepositHref } from "@/lib/member-routes";
 import { DEFAULT_PROMO_CODE } from "@/lib/deposit-promotions";
@@ -132,16 +132,19 @@ function VerifyContent() {
     (async () => {
       setAccountLoading(true);
       try {
+        if (!channel.trim()) {
+          router.replace(memberDepositHref(locale));
+          return;
+        }
         const active = await fetchActiveDepositAccounts();
         if (cancelled) return;
-        const account = findActiveAccountForMethod(active, paymentMethod);
+        const account = findAccountForMethodChannel(active, paymentMethod, channel);
         if (!account) {
           router.replace(memberDepositHref(locale));
           return;
         }
         setCashoutNumber(account.accountNumber);
-        const matchedChannel = account.channelId === channel ? account.channelName : "";
-        setChannelName(matchedChannel || account.channelName);
+        setChannelName(account.channelName);
       } catch {
         if (!cancelled) router.replace(memberDepositHref(locale));
       } finally {

@@ -1,7 +1,7 @@
 "use client";
 
 import ImageCarouselSection from "./ImageCarouselSection";
-import { eventSlideImages } from "@/lib/home-carousel-data";
+import { eventCarouselSlides } from "@/lib/home-carousel-data";
 import { useLocale } from "./LocaleProvider";
 
 export default function EventSection() {
@@ -10,10 +10,7 @@ export default function EventSection() {
   return (
     <ImageCarouselSection
       title={t.home.eventTitle}
-      slides={eventSlideImages.map((image, index) => ({
-        image,
-        title: `${t.home.eventTitle} ${index + 1}`,
-      }))}
+      slides={eventCarouselSlides}
       variant="banner"
       autoSlideMs={4500}
     />

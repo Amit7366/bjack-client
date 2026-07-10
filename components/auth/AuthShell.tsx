@@ -17,7 +17,7 @@ function BjFooterMark() {
 }
 
 type AuthShellProps = {
-  mode: "login" | "register";
+  mode: "login" | "register" | "forgot";
   children: React.ReactNode;
 };
 
@@ -25,6 +25,7 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
   const { preferences } = useLocale();
   const a = getAuthMessages(preferences.locale);
   const base = `/${preferences.locale}`;
+  const showTabs = mode === "login" || mode === "register";
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col bg-[#0a0a0a]">
@@ -46,30 +47,32 @@ export default function AuthShell({ mode, children }: AuthShellProps) {
 
         <div className="flex w-full shrink-0 flex-col bg-[#0a0a0a] lg:w-[min(100%,480px)] xl:w-[520px]">
           <div className="flex flex-1 flex-col px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
-            <nav className="mb-8 flex border-b border-[#2a2a2a]" aria-label="Authentication">
-              <Link
-                href={`${base}/login`}
-                className={`focus-ring relative flex min-h-11 flex-1 items-center justify-center pb-3 text-center text-[15px] font-semibold transition-colors ${
-                  mode === "login" ? "text-white" : "text-[#6b7280] hover:text-[#9ca3af]"
-                }`}
-              >
-                {a.logInTab}
-                {mode === "login" ? (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#178358]" />
-                ) : null}
-              </Link>
-              <Link
-                href={`${base}/register`}
-                className={`focus-ring relative flex min-h-11 flex-1 items-center justify-center pb-3 text-center text-[15px] font-semibold transition-colors ${
-                  mode === "register" ? "text-white" : "text-[#6b7280] hover:text-[#9ca3af]"
-                }`}
-              >
-                {a.signUpTab}
-                {mode === "register" ? (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#178358]" />
-                ) : null}
-              </Link>
-            </nav>
+            {showTabs ? (
+              <nav className="mb-8 flex border-b border-[#2a2a2a]" aria-label="Authentication">
+                <Link
+                  href={`${base}/login`}
+                  className={`focus-ring relative flex min-h-11 flex-1 items-center justify-center pb-3 text-center text-[15px] font-semibold transition-colors ${
+                    mode === "login" ? "text-white" : "text-[#6b7280] hover:text-[#9ca3af]"
+                  }`}
+                >
+                  {a.logInTab}
+                  {mode === "login" ? (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#178358]" />
+                  ) : null}
+                </Link>
+                <Link
+                  href={`${base}/register`}
+                  className={`focus-ring relative flex min-h-11 flex-1 items-center justify-center pb-3 text-center text-[15px] font-semibold transition-colors ${
+                    mode === "register" ? "text-white" : "text-[#6b7280] hover:text-[#9ca3af]"
+                  }`}
+                >
+                  {a.signUpTab}
+                  {mode === "register" ? (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#178358]" />
+                  ) : null}
+                </Link>
+              </nav>
+            ) : null}
 
             {children}
           </div>
