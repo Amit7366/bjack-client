@@ -47,9 +47,18 @@ export function generateGameTransferId(): string {
   return `tx_${timestamp}_${random}`;
 }
 
-export function buildGameMemberAccount(memberId: string): string {
+export function buildGameMemberAccount(memberId: string, gameCode?: string): string {
   const id = memberId.trim();
   if (!id) throw new Error("Member id is required to launch a game");
+  const plainMemberAccountGameCodes = new Set([
+    "c4b2813f6bbc5abf502ddfb857e604eb",
+    "341827d4370bb198b18364e2d75e6916",
+    "07baf9e1388d32cd4cee0c0c91b23020",
+    "171ffc7c5df076a4a4aedf892cd43212",
+  ]);
+  if (gameCode && plainMemberAccountGameCodes.has(gameCode)) {
+    return `${GAME_LAUNCH_PLAYER_PREFIX}${id}`;
+  }
   return `${GAME_LAUNCH_PLAYER_PREFIX}_${id}_${GAME_LAUNCH_MEMBER_SUFFIX}`;
 }
 
@@ -82,7 +91,7 @@ export function buildGameLaunchPayload(
 
   return {
     game_uid: gameCode.toString(),
-    member_account: buildGameMemberAccount(memberId),
+    member_account: buildGameMemberAccount(memberId, gameCode),
     timestamp: Date.now().toString(),
     credit_amount: resolveGameCreditAmount(session).toString(),
     currency_code: "BDT",
