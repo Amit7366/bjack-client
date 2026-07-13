@@ -161,6 +161,6 @@ export async function launchGameInBrowser(
     }
     markNeedsBalanceRefresh();
     dispatchGameDeparting();
-    window.location.assign(launchUrl);
+    // window.location.assign(launchUrl);
   }
 }
