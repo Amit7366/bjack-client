@@ -10,24 +10,12 @@ import {
   memberRescueFundSportsHref,
   memberRewardCenterHref,
 } from "@/lib/member-routes";
+import { formatDisplayBalance } from "@/lib/format-balance";
 import {
   fetchMyNormalUserProfile,
   type NormalUserProfile,
 } from "@/lib/member/profile-api";
 import { DefaultAvatarIcon, HeaderBackIcon } from "./MemberCenterIcons";
-
-function formatBalance(amount: string | undefined, locale: string): string {
-  const num = Number.parseFloat(amount ?? "0");
-  if (Number.isNaN(num)) return "0.00";
-  try {
-    return new Intl.NumberFormat(locale === "bn" ? "bn-BD" : locale === "hi" ? "hi-IN" : "en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(num);
-  } catch {
-    return num.toFixed(2);
-  }
-}
 
 function TrophyIcon() {
   return (
@@ -115,7 +103,7 @@ export default function RescueFundPage() {
   }, []);
 
   const displayId = mounted ? (session?.userName ?? session?.memberId ?? "—") : "—";
-  const balanceDisplay = mounted ? formatBalance(session?.balance, locale) : "0.00";
+  const balanceDisplay = mounted ? formatDisplayBalance(session?.balance, locale) : "0.00";
   const avatarSrc = profile?.profileImg;
 
   const itemLabels: Record<RescueFundItemId, string> = {

@@ -60,7 +60,7 @@ export default function WithdrawPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const balanceNum = Number.parseFloat(session?.balance ?? "0") || 0;
+  const balanceNum = Math.max(0, Number.parseFloat(session?.balance ?? "0") || 0);
   const amountNum = Number.parseFloat(amount || "0");
   const minWithdraw = 100;
   const accountStatus = session?.accountStatus;

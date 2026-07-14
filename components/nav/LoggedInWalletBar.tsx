@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
+import { formatDisplayBalance } from "@/lib/format-balance";
 import { memberDepositHref, memberWithdrawHref } from "@/lib/member-routes";
 
 function VipCoinIcon() {
@@ -125,19 +126,6 @@ function maskValue(value: string, hidden: boolean): string {
   return "***********";
 }
 
-function formatBalance(amount: string | undefined, locale: string): string {
-  const num = Number.parseFloat(amount ?? "0");
-  if (Number.isNaN(num)) return "0.00";
-  try {
-    return new Intl.NumberFormat(locale === "bn" ? "bn-BD" : locale === "hi" ? "hi-IN" : "en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(num);
-  } catch {
-    return num.toFixed(2);
-  }
-}
-
 export default function LoggedInWalletBar() {
   const { session, refreshBalance, balanceSyncing } = useAuth();
   const { preferences, t } = useLocale();
@@ -153,7 +141,7 @@ export default function LoggedInWalletBar() {
 
   const vipPoints = session?.vipPoints ?? "0";
   const balanceDisplay = mounted
-    ? formatBalance(session?.balance, preferences.locale)
+    ? formatDisplayBalance(session?.balance, preferences.locale)
     : "0.00";
 
   const onRefresh = useCallback(async () => {

@@ -3,6 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/components/LocaleProvider";
+import { useToast } from "@/components/ToastProvider";
 import { MEMBER_PAGE_BG } from "@/components/member/shared/member-ui";
 import {
   createManualDeposit,
@@ -28,6 +29,20 @@ import {
 const PAYMENT_WINDOW_SEC = 10 * 60;
 const VERIFY_WINDOW_SEC = 3 * 60;
 const VERIFY_POLL_MS = 2500;
+
+function duplicateTxnIdMessage(locale: string): string {
+  if (locale === "bn") {
+    return "এই ট্রানজেকশন আইডি ইতিমধ্যে সাবমিট করা হয়েছে। অন্য আইডি ব্যবহার করুন।";
+  }
+  if (locale === "hi") {
+    return "यह ट्रांजेक्शन ID पहले ही सबमिट हो चुका है। कृपया दूसरा ID इस्तेमाल करें।";
+  }
+  return "This transaction ID has already been submitted. Please use a different ID.";
+}
+
+function isDuplicateTxnIdError(message: string): boolean {
+  return /already been submitted|already.?used|duplicate transaction/i.test(message);
+}
 
 function formatClock(totalSec: number): string {
   const safe = Math.max(0, totalSec);
@@ -69,10 +84,12 @@ function BrandLogo() {
 
 function VerifyContent() {
   const { preferences } = useLocale();
+  const { showToast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const locale = preferences.locale;
   const isBn = locale === "bn";
+  const isHi = locale === "hi";
 
   const amount = useMemo(() => {
     const raw = Number.parseFloat(searchParams.get("amount") ?? "0");
@@ -268,7 +285,22 @@ function VerifyContent() {
       setStage("verifying");
       setVerifySecLeft(VERIFY_WINDOW_SEC);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not submit deposit");
+      const raw =
+        err instanceof Error
+          ? err.message
+          : isBn
+            ? "ডিপোজিট সাবমিট করা যায়নি"
+            : isHi
+              ? "डिपॉज़िट सबमिट नहीं हो सका"
+              : "Could not submit deposit";
+      if (isDuplicateTxnIdError(raw)) {
+        const msg = duplicateTxnIdMessage(locale);
+        setError(msg);
+        showToast(msg, { variant: "error" });
+      } else {
+        setError(raw);
+        showToast(raw, { variant: "error" });
+      }
     } finally {
       setSubmitting(false);
     }

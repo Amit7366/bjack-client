@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { useToast } from "@/components/ToastProvider";
+import { formatDisplayBalance } from "@/lib/format-balance";
 import { getMissionMessages, type MissionTab } from "@/lib/i18n/mission-messages";
 import { memberCenterHref } from "@/lib/member-routes";
 import { fetchMissions, type MissionItem } from "@/lib/mission-api";
@@ -14,19 +15,6 @@ import {
 } from "@/lib/member/profile-api";
 import { AUTH_CHANGE_EVENT } from "@/lib/auth/session";
 import { DefaultAvatarIcon, HeaderBackIcon, RefreshBalanceIcon } from "../center/MemberCenterIcons";
-
-function formatBalance(amount: string | undefined, locale: string): string {
-  const num = Number.parseFloat(amount ?? "0");
-  if (Number.isNaN(num)) return "0.00";
-  try {
-    return new Intl.NumberFormat(locale === "bn" ? "bn-BD" : locale === "hi" ? "hi-IN" : "en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(num);
-  } catch {
-    return num.toFixed(2);
-  }
-}
 
 function formatCountdown(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600);
@@ -254,7 +242,7 @@ export default function MissionPage() {
 
   const displayId = profile?.userName ?? session?.userName ?? session?.memberId ?? "—";
   const avatarSrc = profile?.profileImg?.trim() || "";
-  const balanceDisplay = formatBalance(session?.balance, locale);
+  const balanceDisplay = formatDisplayBalance(session?.balance, locale);
 
   const loadMissions = useCallback(
     (tab: MissionTab) => {

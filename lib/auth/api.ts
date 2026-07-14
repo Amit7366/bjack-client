@@ -154,12 +154,12 @@ export type WalletMeta = {
   lastGameSyncAt?: string;
 };
 
-/** Normalize wallet amount from API / login payload. */
+/** Normalize wallet amount from API / login payload. Floors ≤ 0 to 0.00 for session/UI. */
 export function formatWalletBalance(value: number | string | undefined | null): string | undefined {
   if (value == null || value === "") return undefined;
   const num = typeof value === "number" ? value : Number.parseFloat(String(value));
   if (!Number.isFinite(num)) return undefined;
-  return num.toFixed(2);
+  return Math.max(0, num).toFixed(2);
 }
 
 /** Authoritative balance from UserBalance collection (by member id). */

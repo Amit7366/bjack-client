@@ -6,6 +6,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { useToast } from "@/components/ToastProvider";
 import { copyTextToClipboard } from "@/lib/copy-text";
+import { formatDisplayBalance } from "@/lib/format-balance";
 import { getMemberCenterMessages } from "@/lib/i18n/member-center-messages";
 import { getRewardCenterMessages } from "@/lib/i18n/reward-center-messages";
 import {
@@ -30,19 +31,6 @@ import {
   RefreshBalanceIcon,
   SignInEnvelopeIcon,
 } from "./MemberCenterIcons";
-
-function formatBalance(amount: string | undefined, locale: string): string {
-  const num = Number.parseFloat(amount ?? "0");
-  if (Number.isNaN(num)) return "0.00";
-  try {
-    return new Intl.NumberFormat(locale === "bn" ? "bn-BD" : locale === "hi" ? "hi-IN" : "en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(num);
-  } catch {
-    return num.toFixed(2);
-  }
-}
 
 function CrownIcon() {
   return (
@@ -242,7 +230,7 @@ export default function RewardCenterPage() {
 
   const displayId = mounted ? (session?.userName ?? session?.memberId ?? "—") : "—";
   const nickname = mounted ? (profile?.name || session?.userName || "—") : "—";
-  const balanceDisplay = mounted ? formatBalance(session?.balance, locale) : "0.00";
+  const balanceDisplay = mounted ? formatDisplayBalance(session?.balance, locale) : "0.00";
   const avatarSrc = profile?.profileImg;
 
   const onCopyId = useCallback(async () => {
