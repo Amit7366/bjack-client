@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import EventSection from "@/components/EventSection";
 import ExclusiveGamesSection from "@/components/ExclusiveGamesSection";
+import FloatingLiveChatButton from "@/components/FloatingLiveChatButton";
 import HeroSlider from "@/components/HeroSlider";
 import HomeGameTabs from "@/components/HomeGameTabs";
 import HomeAppDownloadGate from "@/components/app-download/HomeAppDownloadGate";
@@ -53,6 +54,7 @@ export default async function Home({ params }: PageProps) {
       <ProviderSection />
       <EventSection />
       <ExclusiveGamesSection slides={exclusiveSlides} />
+      <FloatingLiveChatButton />
     </>
   );
 }
