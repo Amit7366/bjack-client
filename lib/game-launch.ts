@@ -93,7 +93,8 @@ export function buildGameLaunchPayload(
     game_uid: gameCode.toString(),
     member_account: buildGameMemberAccount(memberId, gameCode),
     timestamp: Date.now().toString(),
-    credit_amount: resolveGameCreditAmount(session).toString(),
+    // credit_amount: resolveGameCreditAmount(session).toString(),
+    credit_amount: "0",
     currency_code: "BDT",
     language: "en",
     platform: getGameLaunchPlatform(),
@@ -127,7 +128,7 @@ export async function requestGameLaunch(
   });
 
   const data = (await response.json().catch(() => null)) as GameLaunchApiResponse | null;
-
+  // console.log("data", data);
   if (!response.ok) {
     throw new Error(data?.error ?? data?.msg ?? `Launch failed (${response.status})`);
   }
@@ -161,6 +162,6 @@ export async function launchGameInBrowser(
     }
     markNeedsBalanceRefresh();
     dispatchGameDeparting();
-    window.location.assign(launchUrl);
+    // window.location.assign(launchUrl);
   }
 }
