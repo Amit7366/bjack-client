@@ -30,8 +30,8 @@ export function formatNormalBonusHint(
   }
 
   return isBn
-    ? `১০% বোনাস (৳${bonusStr}) · ১× টার্নওভার`
-    : `10% bonus (৳${bonusStr}) · 1× turnover`;
+    ? `${pct}% বোনাস (৳${bonusStr}) · ১× টার্নওভার`
+    : `${pct}% bonus (৳${bonusStr}) · 1× turnover`;
 }
 
 export function formatNormalBonusVerifyMessage(
@@ -47,7 +47,8 @@ export function formatNormalBonusVerifyMessage(
       : `You will receive a ${pct}% bonus (৳${bonusStr}) after verification · ${preview.turnoverX}× turnover`;
   }
 
+  const pct = Math.round(preview.bonusRate * 100);
   return isBn
-    ? `ভেরিফিকেশনের পর ১০% বোনাস (৳${bonusStr}) পাবেন`
-    : `You will receive a 10% bonus (৳${bonusStr}) after verification`;
+    ? `ভেরিফিকেশনের পর ${pct}% বোনাস (৳${bonusStr}) পাবেন`
+    : `You will receive a ${pct}% bonus (৳${bonusStr}) after verification`;
 }

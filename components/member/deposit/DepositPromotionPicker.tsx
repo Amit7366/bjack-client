@@ -91,7 +91,7 @@ export default function DepositPromotionPicker({
       return getPromotionLabel(selected, isBn);
     }
     if (!hasSelectedPromotion(selectedCode)) {
-      return isBn ? "নরমাল · ১০% বোনাস" : "Normal · 10% Bonus";
+      return isBn ? "নরমাল · ৫% বোনাস" : "Normal · 5% Bonus";
     }
     return isBn ? "নরমাল" : "Normal";
   }, [selected, selectedCode, isBn]);
