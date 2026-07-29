@@ -164,6 +164,6 @@ export async function launchGameInBrowser(
 
   if (typeof window !== "undefined") {
     dispatchGameDeparting();
-    // window.location.assign(launchUrl);
+    window.location.assign(launchUrl);
   }
 }

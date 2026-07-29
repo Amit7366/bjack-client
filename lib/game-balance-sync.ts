@@ -184,3 +184,32 @@ export async function refreshBalanceAfterGameReturn(): Promise<string | undefine
 export async function manualReanchorBalance(): Promise<string | undefined> {
   return refreshWalletBalance();
 }
+
+/** @deprecated Use handleGameReturnBalance — kept for backup/legacy imports. */
+export async function syncGameTransactionsAndBalance(): Promise<{
+  currentBalance: number;
+  syncedAt: string;
+  providerTotal: number;
+  stats: {
+    accepted: number;
+    duplicates: number;
+    errors: number;
+    balancesUpdated: number;
+    skippedNoBalance: number;
+  };
+} | null> {
+  const result = await handleGameReturnBalance();
+  if (!result) return null;
+  return {
+    currentBalance: result.currentBalance,
+    syncedAt: new Date().toISOString(),
+    providerTotal: 0,
+    stats: {
+      accepted: 0,
+      duplicates: 0,
+      errors: 0,
+      balancesUpdated: 0,
+      skippedNoBalance: 0,
+    },
+  };
+}
