@@ -1,7 +1,10 @@
 import type { AuthSession } from "@/lib/auth/session";
+import { refreshWalletBalance } from "@/lib/auth/api";
 import { checkGameLaunchEligibility } from "@/lib/game-eligibility-api";
-import { markNeedsBalanceRefresh } from "@/lib/game-balance-sync";
-import { getLocalBalance, saveGameSessionSnapshot } from "@/lib/wallet-local-state";
+import {
+  markGameSessionPending,
+  prepareGameLaunchZero,
+} from "@/lib/game-balance-sync";
 import { dispatchGameDeparting } from "@/lib/game-return-events";
 
 /** bm24api-20251210 — public launch settings (secrets stay server-side / PHP). */
@@ -62,21 +65,15 @@ export function buildGameMemberAccount(memberId: string, gameCode?: string): str
   return `${GAME_LAUNCH_PLAYER_PREFIX}_${id}_${GAME_LAUNCH_MEMBER_SUFFIX}`;
 }
 
+/** Mongo / session balance only — no localStorage wallet. */
 export function resolveGameCreditAmount(session: AuthSession | null): number {
-  const memberId = session?.memberId;
-  if (memberId) {
-    const local = getLocalBalance(memberId);
-    if (local != null && local >= 0) {
-      return parseFloat(local.toFixed(1));
-    }
-  }
   if (session?.balance) {
     const parsed = parseFloat(session.balance);
     if (!Number.isNaN(parsed) && parsed >= 0) {
       return parseFloat(parsed.toFixed(1));
     }
   }
-  return parseFloat((100).toFixed(1));
+  return 0;
 }
 
 export function buildGameLaunchPayload(
@@ -94,7 +91,6 @@ export function buildGameLaunchPayload(
     member_account: buildGameMemberAccount(memberId, gameCode),
     timestamp: Date.now().toString(),
     credit_amount: resolveGameCreditAmount(session).toString(),
-    // credit_amount: "0",
     currency_code: "BDT",
     language: "en",
     platform: getGameLaunchPlatform(),
@@ -128,13 +124,11 @@ export async function requestGameLaunch(
   });
 
   const data = (await response.json().catch(() => null)) as GameLaunchApiResponse | null;
-  // console.log("data", data);
   if (!response.ok) {
     throw new Error(data?.error ?? data?.msg ?? `Launch failed (${response.status})`);
   }
 
   if (data?.code !== 0) {
-    // throw new Error(data?.msg ?? "Game launch API error");
     throw new Error("Server is Updating. Please try again later.");
   }
 
@@ -146,240 +140,30 @@ export async function requestGameLaunch(
   return launchUrl;
 }
 
+/**
+ * Fetch Mongo balance → launch with that credit → zero Mongo → redirect.
+ */
 export async function launchGameInBrowser(
   gameCode: string,
   session: AuthSession | null,
 ): Promise<void> {
-  const launchUrl = await requestGameLaunch(gameCode, session);
+  const freshBalance = await refreshWalletBalance();
+  const launchSession: AuthSession | null = session
+    ? { ...session, balance: freshBalance ?? session.balance }
+    : session;
+
+  const credit = resolveGameCreditAmount(launchSession);
+  if (!(credit > 0)) {
+    throw new Error("Your balance is 0. Please deposit.");
+  }
+
+  const launchUrl = await requestGameLaunch(gameCode, launchSession);
+
+  await prepareGameLaunchZero();
+  markGameSessionPending();
+
   if (typeof window !== "undefined") {
-    const transferId = buildGameLaunchPayload(gameCode, session).transfer_id;
-    if (session?.memberId) {
-      saveGameSessionSnapshot({
-        memberId: session.memberId,
-        gameCode,
-        transferId,
-      });
-    }
-    markNeedsBalanceRefresh();
     dispatchGameDeparting();
-    window.location.assign(launchUrl);
+    // window.location.assign(launchUrl);
   }
 }
-
-// import type { AuthSession } from "@/lib/auth/session";
-// import { checkGameLaunchEligibility } from "@/lib/game-eligibility-api";
-// import { markNeedsBalanceRefresh } from "@/lib/game-balance-sync";
-// import { getLocalBalance, saveGameSessionSnapshot } from "@/lib/wallet-local-state";
-// import { dispatchGameDeparting } from "@/lib/game-return-events";
-
-// /** bm24api-20251210 — public launch settings (secrets stay server-side / PHP). */
-// export const GAME_LAUNCH_PLAYER_PREFIX =
-//   process.env.NEXT_PUBLIC_GAME_PLAYER_PREFIX ?? "h94044";
-
-// export const GAME_LAUNCH_MEMBER_SUFFIX = "b";
-
-// export type GameLaunchClientPayload = {
-//   game_uid: string;
-//   member_account: string;
-//   timestamp: string;
-//   credit_amount: string;
-//   currency_code: string;
-//   language: string;
-//   platform: number;
-//   home_url: string;
-//   transfer_id: string;
-// };
-
-// export type GameLaunchApiResponse = {
-//   code: number;
-//   msg?: string;
-//   step1?: {
-//     payload?: {
-//       after_amount?: string | number;
-//       [key: string]: unknown;
-//     };
-//   };
-//   payload?: {
-//     game_launch_url?: string;
-//     [key: string]: unknown;
-//   };
-//   error?: string;
-// };
-
-// export function getGameLaunchPlatform(): number {
-//   if (typeof navigator === "undefined") return 1;
-//   const ua = navigator.userAgent || "";
-//   if (/android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua.toLowerCase())) {
-//     return 2;
-//   }
-//   return 1;
-// }
-
-// export function generateGameTransferId(): string {
-//   const timestamp = Date.now();
-//   const random = Math.floor(Math.random() * 1e6);
-//   return `tx_${timestamp}_${random}`;
-// }
-
-// export function buildGameMemberAccount(memberId: string, gameCode?: string): string {
-//   const id = memberId.trim();
-//   if (!id) throw new Error("Member id is required to launch a game");
-//   const plainMemberAccountGameCodes = new Set([
-//     "c4b2813f6bbc5abf502ddfb857e604eb",
-//     "341827d4370bb198b18364e2d75e6916",
-//     "07baf9e1388d32cd4cee0c0c91b23020",
-//     "171ffc7c5df076a4a4aedf892cd43212",
-//   ]);
-//   if (gameCode && plainMemberAccountGameCodes.has(gameCode)) {
-//     return `${GAME_LAUNCH_PLAYER_PREFIX}${id}`;
-//   }
-//   return `${GAME_LAUNCH_PLAYER_PREFIX}_${id}_${GAME_LAUNCH_MEMBER_SUFFIX}`;
-// }
-
-// export function resolveGameCreditAmount(session: AuthSession | null): number {
-//   const memberId = session?.memberId;
-//   if (memberId) {
-//     const local = getLocalBalance(memberId);
-//     if (local != null && local >= 0) {
-//       return parseFloat(local.toFixed(1));
-//     }
-//   }
-//   if (session?.balance) {
-//     const parsed = parseFloat(session.balance);
-//     if (!Number.isNaN(parsed) && parsed >= 0) {
-//       return parseFloat(parsed.toFixed(1));
-//     }
-//   }
-//   return parseFloat((100).toFixed(1));
-// }
-
-// /** Prefer provider after_amount when within 1 of platform balance; else use platform. */
-// export function resolveCreditFromProbe(
-//   platform: number,
-//   afterAmount: string | number | undefined | null,
-// ): number {
-//   const after =
-//     afterAmount == null || afterAmount === ""
-//       ? Number.NaN
-//       : typeof afterAmount === "number"
-//         ? afterAmount
-//         : parseFloat(afterAmount);
-
-//   if (Number.isNaN(after) || after < 0) {
-//     return parseFloat(platform.toFixed(1));
-//   }
-
-//   const afterFixed = parseFloat(after.toFixed(1));
-//   if (Math.abs(platform - afterFixed) <= 1) {
-//     return afterFixed;
-//   }
-//   return parseFloat(platform.toFixed(1));
-// }
-
-// export function buildGameLaunchPayload(
-//   gameCode: string,
-//   session: AuthSession | null,
-//   creditAmount?: string | number,
-// ): GameLaunchClientPayload {
-//   const memberId = session?.memberId ?? "";
-//   const homeUrl =
-//     typeof window !== "undefined"
-//       ? `${window.location.protocol}//${window.location.host}`
-//       : "";
-
-//   const credit =
-//     creditAmount === undefined || creditAmount === null
-//       ? "0"
-//       : String(creditAmount);
-
-//   return {
-//     game_uid: gameCode.toString(),
-//     member_account: buildGameMemberAccount(memberId, gameCode),
-//     timestamp: Date.now().toString(),
-//     credit_amount: credit,
-//     currency_code: "BDT",
-//     language: "en",
-//     platform: getGameLaunchPlatform(),
-//     home_url: homeUrl,
-//     transfer_id: generateGameTransferId(),
-//   };
-// }
-
-// async function postGameLaunch(
-//   body: GameLaunchClientPayload,
-//   headers: Record<string, string>,
-// ): Promise<GameLaunchApiResponse> {
-//   const response = await fetch("/api/game-launch", {
-//     method: "POST",
-//     headers,
-//     body: JSON.stringify(body),
-//   });
-
-//   const data = (await response.json().catch(() => null)) as GameLaunchApiResponse | null;
-//   if (!response.ok) {
-//     throw new Error(data?.error ?? data?.msg ?? `Launch failed (${response.status})`);
-//   }
-
-//   if (data?.code !== 0) {
-//     throw new Error("Server is Updating. Please try again later.");
-//   }
-
-//   return data;
-// }
-
-// export async function requestGameLaunch(
-//   gameCode: string,
-//   session: AuthSession | null,
-// ): Promise<{ launchUrl: string; transferId: string }> {
-//   const eligibility = await checkGameLaunchEligibility(gameCode);
-//   if (!eligibility.allowed) {
-//     throw new Error(
-//       eligibility.reason ?? "This game is not allowed under your deposit promotion"
-//     );
-//   }
-
-//   const headers: Record<string, string> = { "Content-Type": "application/json" };
-//   if (session?.accessToken) {
-//     headers.Authorization = `Bearer ${session.accessToken}`;
-//   }
-
-//   // POST 1: probe with credit 0 — read provider after_amount from step1
-//   const probeBody = buildGameLaunchPayload(gameCode, session, "0");
-//   const probeData = await postGameLaunch(probeBody, headers);
-//   // console.log("probe data", probeData);
-
-//   const platform = resolveGameCreditAmount(session);
-//   const afterAmount = probeData.step1?.payload?.after_amount;
-//   const credit = resolveCreditFromProbe(platform, afterAmount);
-
-//   // POST 2: launch with decided credit
-//   const launchBody = buildGameLaunchPayload(gameCode, session, credit.toString());
-//   const launchData = await postGameLaunch(launchBody, headers);
-//   // console.log("launch data", launchData);
-
-//   const launchUrl = launchData.payload?.game_launch_url;
-//   if (!launchUrl || typeof launchUrl !== "string") {
-//     throw new Error("Game launch URL missing from response");
-//   }
-
-//   return { launchUrl, transferId: launchBody.transfer_id };
-// }
-
-// export async function launchGameInBrowser(
-//   gameCode: string,
-//   session: AuthSession | null,
-// ): Promise<void> {
-//   const { launchUrl, transferId } = await requestGameLaunch(gameCode, session);
-//   if (typeof window !== "undefined") {
-//     if (session?.memberId) {
-//       saveGameSessionSnapshot({
-//         memberId: session.memberId,
-//         gameCode,
-//         transferId,
-//       });
-//     }
-//     markNeedsBalanceRefresh();
-//     dispatchGameDeparting();
-//     window.location.assign(launchUrl);
-//   }
-// }

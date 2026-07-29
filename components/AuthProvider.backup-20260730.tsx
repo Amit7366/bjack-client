@@ -10,12 +10,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { logoutUser as logoutApi, fetchWalletMeta, refreshWalletBalance } from "@/lib/auth/api";
+import { logoutUser as logoutApi, fetchWalletMeta } from "@/lib/auth/api";
 import { fetchMyNormalUserProfile } from "@/lib/member/profile-api";
 import { expireSessionIfNeeded } from "@/lib/auth/session-expired";
 import {
-  handleGameReturnBalance,
-  isBalanceUpdatePending,
+  refreshBalanceAfterGameReturn,
+  shouldRefreshBalanceAfterGame,
   manualReanchorBalance,
 } from "@/lib/game-balance-sync";
 import { USER_ROLE } from "@/lib/auth/constants";
@@ -25,6 +25,13 @@ import {
   saveAuthSession,
   type AuthSession,
 } from "@/lib/auth/session";
+import {
+  ensureWalletReady,
+  mergeFromStorageEvent,
+  readLocalWallet,
+  reanchorIfServerAhead,
+  subscribeWalletLocalChange,
+} from "@/lib/wallet-local-state";
 
 type AuthContextValue = {
   session: AuthSession | null;
@@ -63,12 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       walletSyncRef.current = true;
       setBalanceSyncing(true);
       try {
-        if (opts?.gameReturn || isBalanceUpdatePending()) {
-          await handleGameReturnBalance();
+        if (opts?.gameReturn && shouldRefreshBalanceAfterGame()) {
+          await refreshBalanceAfterGameReturn();
         } else if (opts?.forceDb) {
           await manualReanchorBalance();
         } else {
-          await fetchWalletMeta();
+          const local = readLocalWallet(current.memberId);
+          if (local?.pendingPersist) {
+            refreshSession();
+            return;
+          }
+          const meta = await fetchWalletMeta();
+          if (meta?.walletRevision != null) {
+            await reanchorIfServerAhead(current.memberId, meta.walletRevision);
+          } else {
+            await ensureWalletReady(current.memberId);
+          }
         }
         refreshSession();
       } finally {
@@ -137,16 +154,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
   }, [authReady, session?.accessToken, session?.role, refreshSession]);
 
-  /** On load: pull authoritative Mongo balance into auth session. */
+  useEffect(() => {
+    return subscribeWalletLocalChange(refreshSession);
+  }, [refreshSession]);
+
+  /** On load: init local wallet from DB if missing or expired. */
   useEffect(() => {
     if (!authReady || !session?.accessToken || !session.memberId) return;
     void (async () => {
-      await refreshWalletBalance();
+      await ensureWalletReady(session.memberId!);
       refreshSession();
     })();
   }, [authReady, session?.accessToken, session?.memberId, refreshSession]);
 
-  /** Tab focus: return-withdraw if pending, else refresh Mongo balance. */
+  /** Multi-tab: merge wallet state when another tab writes localStorage. */
+  useEffect(() => {
+    if (!session?.memberId) return;
+
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key?.startsWith("walletLocal:")) return;
+      if (mergeFromStorageEvent(session.memberId!)) {
+        refreshSession();
+      }
+    };
+
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [session?.memberId, refreshSession]);
+
+  /** Tab focus: cross-device revision check (debounced). */
   useEffect(() => {
     if (!authReady || !session?.accessToken || !session.memberId) return;
 
@@ -155,7 +191,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const elapsed = Date.now() - lastWalletSyncRef.current;
       if (elapsed < WALLET_FOCUS_DEBOUNCE_MS) return;
 
-      if (isBalanceUpdatePending()) {
+      if (shouldRefreshBalanceAfterGame()) {
         void syncWalletFromServer({ gameReturn: true });
         return;
       }
@@ -184,7 +220,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshBalance = useCallback(async () => {
     await syncWalletFromServer({
-      gameReturn: isBalanceUpdatePending(),
+      gameReturn: shouldRefreshBalanceAfterGame(),
       forceDb: true,
     });
   }, [syncWalletFromServer]);

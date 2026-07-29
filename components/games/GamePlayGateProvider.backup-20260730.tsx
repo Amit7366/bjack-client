@@ -23,6 +23,7 @@ import { launchGameInBrowser } from "@/lib/game-launch";
 import { readAuthSession } from "@/lib/auth/session";
 import { canPlayGames } from "@/lib/account-status";
 import { getAccountRestrictionMessage } from "@/lib/i18n/account-status-messages";
+import { getLocalBalance } from "@/lib/wallet-local-state";
 import GameLaunchOverlay from "./GameLaunchOverlay";
 
 export type GameClickOptions = {
@@ -85,7 +86,11 @@ function zeroBalanceMessage(locale: string): string {
   return "Your balance is 0. Please deposit.";
 }
 
-function resolvePlayableBalance(sessionBalance?: string): number {
+function resolvePlayableBalance(memberId?: string, sessionBalance?: string): number {
+  if (memberId) {
+    const local = getLocalBalance(memberId);
+    if (local != null && Number.isFinite(local)) return local;
+  }
   const parsed = Number.parseFloat(sessionBalance ?? "0");
   return Number.isFinite(parsed) ? parsed : 0;
 }
@@ -149,20 +154,20 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
 
         if (balanceStillUpdating) {
           showToast(balanceUpdatingMessage(preferences.locale));
-          setLaunchPhase("balance");
+          const previewOk = await awaitBalancePreviewForLaunch();
+          if (!previewOk) {
+            showToast(balanceUpdateFailedMessage(preferences.locale));
+            clearLaunchState();
+            return;
+          }
+          refreshSession();
         }
-
-        // Idempotent — waits if getWithdraw still running after page return.
-        const previewOk = await awaitBalancePreviewForLaunch();
-        if (!previewOk) {
-          showToast(balanceUpdateFailedMessage(preferences.locale));
-          clearLaunchState();
-          return;
-        }
-        refreshSession();
 
         const currentSession = readAuthSession() ?? session;
-        const playableBalance = resolvePlayableBalance(currentSession?.balance);
+        const playableBalance = resolvePlayableBalance(
+          currentSession?.memberId,
+          currentSession?.balance,
+        );
         if (playableBalance <= 0) {
           showToast(zeroBalanceMessage(preferences.locale), { variant: "error" });
           clearLaunchState();
@@ -177,12 +182,6 @@ export function GamePlayGateProvider({ children }: { children: ReactNode }) {
         } catch (error: unknown) {
           const msg =
             error instanceof Error ? error.message : "Failed to launch game";
-          const isZero = /balance is 0/i.test(msg);
-          if (isZero) {
-            showToast(zeroBalanceMessage(preferences.locale), { variant: "error" });
-            clearLaunchState();
-            return;
-          }
           const isServerUpdating = /server is updating/i.test(msg);
           if (isServerUpdating) {
             showToast(serverUpdatingMessage(preferences.locale));

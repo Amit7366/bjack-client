@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Apivexo — Client Platform Feature Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet" />
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @page :first {
+      margin: 0;
+    }
+
+    @page content {
+      margin: 18mm 16mm 20mm 16mm;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+      font-size: 9.5pt;
+      line-height: 1.55;
+      color: #1a2332;
+      margin: 0;
+      background: #fff;
+    }
+
+    /* Cover page */
+    .cover {
+      page-break-after: always;
+      min-height: 297mm;
+      background: linear-gradient(145deg, #0b1f3a 0%, #123456 45%, #0d2847 100%);
+      color: #fff;
+      padding: 22mm 20mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: "";
+      position: absolute;
+      top: -80mm;
+      right: -60mm;
+      width: 180mm;
+      height: 180mm;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .cover::after {
+      content: "";
+      position: absolute;
+      bottom: -40mm;
+      left: -30mm;
+      width: 120mm;
+      height: 120mm;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .cover-brand {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-logo {
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 42pt;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 4pt;
+    }
+
+    .cover-tagline {
+      font-size: 11pt;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.72);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .cover-main {
+      position: relative;
+      z-index: 1;
+      margin-top: 28mm;
+    }
+
+    .cover-title {
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 28pt;
+      font-weight: 700;
+      line-height: 1.2;
+      margin: 0 0 10pt;
+      max-width: 140mm;
+    }
+
+    .cover-subtitle {
+      font-size: 13pt;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.85);
+      margin: 0 0 18pt;
+      max-width: 130mm;
+    }
+
+    .cover-meta {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 10pt;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8pt 16pt;
+      font-size: 9pt;
+    }
+
+    .cover-meta dt {
+      color: rgba(255, 255, 255, 0.55);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 7.5pt;
+      margin: 0 0 2pt;
+    }
+
+    .cover-meta dd {
+      margin: 0 0 6pt;
+      font-weight: 600;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(34, 197, 94, 0.18);
+      border: 1px solid rgba(34, 197, 94, 0.45);
+      color: #86efac;
+      font-size: 8pt;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4pt 10pt;
+      border-radius: 999px;
+      margin-bottom: 14pt;
+    }
+
+    /* Content pages */
+    .content {
+      page: content;
+      padding: 0;
+    }
+
+    .page-header {
+      border-bottom: 2px solid #0f766e;
+      padding-bottom: 8pt;
+      margin-bottom: 14pt;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .page-header-brand {
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 14pt;
+      font-weight: 700;
+      color: #0b1f3a;
+    }
+
+    .page-header-doc {
+      font-size: 7.5pt;
+      color: #64748b;
+      text-align: right;
+    }
+
+    h1.section-title {
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 20pt;
+      font-weight: 700;
+      color: #0b1f3a;
+      margin: 0 0 6pt;
+      page-break-after: avoid;
+    }
+
+    h2 {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #0f766e;
+      margin: 16pt 0 6pt;
+      page-break-after: avoid;
+      border-left: 3px solid #14b8a6;
+      padding-left: 8pt;
+    }
+
+    h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #1e3a5f;
+      margin: 10pt 0 4pt;
+      page-break-after: avoid;
+    }
+
+    p { margin: 5pt 0; }
+
+    .lead {
+      font-size: 10.5pt;
+      color: #334155;
+      margin-bottom: 10pt;
+    }
+
+    .toc {
+      page-break-after: always;
+      padding: 18mm 16mm;
+    }
+
+    .toc h1 {
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 18pt;
+      color: #0b1f3a;
+      margin: 0 0 12pt;
+    }
+
+    .toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-list li {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dotted #cbd5e1;
+      padding: 5pt 0;
+      font-size: 9.5pt;
+    }
+
+    .toc-list li span:first-child { font-weight: 500; }
+    .toc-list li span:last-child { color: #64748b; font-size: 8.5pt; }
+
+    .section {
+      page-break-before: always;
+      padding: 18mm 16mm 8mm;
+    }
+
+    .section:first-of-type {
+      page-break-before: auto;
+    }
+
+    .feature-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6pt;
+      padding: 10pt 12pt;
+      margin: 8pt 0;
+      page-break-inside: avoid;
+    }
+
+    .feature-card h3 {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 6pt;
+    }
+
+    .status-live {
+      display: inline-block;
+      font-size: 7pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #dcfce7;
+      color: #166534;
+      padding: 2pt 6pt;
+      border-radius: 999px;
+      vertical-align: middle;
+    }
+
+    .status-partial {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .status-planned {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    .feature-meta {
+      font-size: 8pt;
+      color: #64748b;
+      margin-top: 6pt;
+    }
+
+    .feature-meta strong { color: #475569; }
+
+    ul, ol {
+      margin: 4pt 0 8pt;
+      padding-left: 16pt;
+    }
+
+    li { margin: 3pt 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8pt 0 12pt;
+      font-size: 8.5pt;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 5pt 7pt;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #0f766e;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) td { background: #f8fafc; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8pt;
+      margin: 10pt 0 14pt;
+    }
+
+    .summary-stat {
+      background: linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 100%);
+      border: 1px solid #99f6e4;
+      border-radius: 6pt;
+      padding: 10pt;
+      text-align: center;
+    }
+
+    .summary-stat .num {
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: 22pt;
+      font-weight: 700;
+      color: #0f766e;
+      line-height: 1;
+    }
+
+    .summary-stat .label {
+      font-size: 7.5pt;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 4pt;
+    }
+
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 8pt 12pt;
+      margin: 10pt 0;
+      font-size: 9pt;
+      page-break-inside: avoid;
+    }
+
+    .callout strong { color: #1e40af; }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6pt;
+      margin: 8pt 0;
+    }
+
+    .tech-pill {
+      background: #0b1f3a;
+      color: #fff;
+      font-size: 7.5pt;
+      font-weight: 600;
+      padding: 4pt 8pt;
+      border-radius: 4pt;
+    }
+
+    .footer-note {
+      margin-top: 16pt;
+      padding-top: 8pt;
+      border-top: 1px solid #e2e8f0;
+      font-size: 7.5pt;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .confidential {
+      font-size: 7pt;
+      color: rgba(255, 255, 255, 0.45);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-brand">
+    <p class="confidential">Confidential — Client Delivery Document</p>
+    <h1 class="cover-logo">Apivexo</h1>
+    <p class="cover-tagline">Digital Gaming Platform</p>
+  </div>
+
+  <div class="cover-main">
+    <span class="cover-badge">Development Progress Report</span>
+    <h2 class="cover-title">Client Platform<br/>Feature &amp; Functionality Overview</h2>
+    <p class="cover-subtitle">
+      Comprehensive documentation of all end-user facing features, modules, and capabilities
+      delivered in the Apivexo web client application.
+    </p>
+  </div>
+
+  <dl class="cover-meta">
+    <div>
+      <dt>Document Version</dt>
+      <dd>1.0</dd>
+    </div>
+    <div>
+      <dt>Report Date</dt>
+      <dd>July 27, 2026</dd>
+    </div>
+    <div>
+      <dt>Document Type</dt>
+      <dd>Client Feature Specification</dd>
+    </div>
+    <div>
+      <dt>Scope</dt>
+      <dd>End-User Web Client Only</dd>
+    </div>
+    <div>
+      <dt>Prepared For</dt>
+      <dd>Client Stakeholders</dd>
+    </div>
+    <div>
+      <dt>Classification</dt>
+      <dd>Confidential</dd>
+    </div>
+  </dl>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0</div>
+  </div>
+  <h1>Table of Contents</h1>
+  <ul class="toc-list">
+    <li><span>1. Executive Summary</span><span>3</span></li>
+    <li><span>2. Platform Architecture Overview</span><span>3</span></li>
+    <li><span>3. Application Shell &amp; Navigation</span><span>4</span></li>
+    <li><span>4. Authentication &amp; Account Security</span><span>5</span></li>
+    <li><span>5. Home Page &amp; Discovery</span><span>6</span></li>
+    <li><span>6. Gaming &amp; Casino Modules</span><span>7</span></li>
+    <li><span>7. Wallet, Deposits &amp; Withdrawals</span><span>9</span></li>
+    <li><span>8. Member Center</span><span>10</span></li>
+    <li><span>9. Reward Center &amp; Loyalty Programs</span><span>12</span></li>
+    <li><span>10. Promotions &amp; Marketing</span><span>14</span></li>
+    <li><span>11. Referral &amp; Affiliate Program</span><span>15</span></li>
+    <li><span>12. VIP Club</span><span>16</span></li>
+    <li><span>13. Records, Reports &amp; Analytics</span><span>16</span></li>
+    <li><span>14. Customer Support</span><span>17</span></li>
+    <li><span>15. Internationalization &amp; Localization</span><span>18</span></li>
+    <li><span>16. Mobile Experience &amp; App Distribution</span><span>18</span></li>
+    <li><span>17. SEO &amp; Compliance</span><span>19</span></li>
+    <li><span>18. Feature Implementation Summary</span><span>19</span></li>
+    <li><span>Appendix A — Route Reference</span><span>20</span></li>
+  </ul>
+</div>
+
+<!-- SECTION 1: EXECUTIVE SUMMARY -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 1</div>
+  </div>
+  <h1 class="section-title">1. Executive Summary</h1>
+  <p class="lead">
+    Apivexo is a full-featured, multi-language online gaming platform designed for the South Asian market,
+    with primary support for Bangladesh (BDT) and India (INR). The client application is a modern, responsive
+    web platform built on Next.js 16 and React 19, delivering a premium casino, sports betting, and
+    entertainment experience accessible from desktop and mobile browsers.
+  </p>
+
+  <div class="summary-grid">
+    <div class="summary-stat">
+      <div class="num">40+</div>
+      <div class="label">User-Facing Pages</div>
+    </div>
+    <div class="summary-stat">
+      <div class="num">9</div>
+      <div class="label">Game Categories</div>
+    </div>
+    <div class="summary-stat">
+      <div class="num">3</div>
+      <div class="label">Languages Supported</div>
+    </div>
+    <div class="summary-stat">
+      <div class="num">16</div>
+      <div class="label">Member Center Modules</div>
+    </div>
+    <div class="summary-stat">
+      <div class="num">7</div>
+      <div class="label">Reward Programs</div>
+    </div>
+    <div class="summary-stat">
+      <div class="num">100+</div>
+      <div class="label">UI Components</div>
+    </div>
+  </div>
+
+  <h2>Key Deliverables Completed</h2>
+  <ul>
+    <li><strong>Complete user registration and authentication</strong> with device fingerprinting, session management, and password recovery.</li>
+    <li><strong>Multi-category gaming lobbies</strong> covering Sports, Live Casino, Slots, Crash, Table, Fishing, Arcade, Lottery, and Exclusive games.</li>
+    <li><strong>Integrated wallet system</strong> with quick deposit via bKash, Nagad, and Rocket, plus withdrawal to saved payout wallets.</li>
+    <li><strong>Comprehensive Member Center</strong> with profile management, KYC verification, betting records, and transaction history.</li>
+    <li><strong>Reward Center ecosystem</strong> including daily sign-in, bonus offers, rescue funds, missions, rebates, and spin wheel promotions.</li>
+    <li><strong>Referral program</strong> with public landing page, member dashboard, QR sharing, and registration integration.</li>
+    <li><strong>Real-time live chat support</strong> via WebSocket connection with typing indicators and agent assignment.</li>
+    <li><strong>Full trilingual support</strong> in English, Bengali, and Hindi with country-specific currency handling.</li>
+    <li><strong>Mobile-optimized experience</strong> with bottom navigation, PWA install prompt, and Android APK distribution.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Scope Note:</strong> This document covers exclusively the end-user web client application.
+    Administrative dashboards, advertiser portals, and server-side infrastructure are outside the scope
+    of this report.
+  </div>
+</div>
+
+<!-- SECTION 2: PLATFORM ARCHITECTURE -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 2</div>
+  </div>
+  <h1 class="section-title">2. Platform Architecture Overview</h1>
+
+  <h2>Technology Stack</h2>
+  <div class="tech-stack">
+    <span class="tech-pill">Next.js 16 (App Router)</span>
+    <span class="tech-pill">React 19</span>
+    <span class="tech-pill">TypeScript</span>
+    <span class="tech-pill">Tailwind CSS 4</span>
+    <span class="tech-pill">Socket.IO Client</span>
+    <span class="tech-pill">FingerprintJS</span>
+  </div>
+
+  <h2>Application Structure</h2>
+  <p>
+    The Apivexo client follows a locale-first routing architecture. All user-facing pages are prefixed
+    with a language code (<code>/en</code>, <code>/bn</code>, <code>/hi</code>), enabling seamless
+    multilingual navigation without separate deployments.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Route Group</th>
+        <th>Access Level</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>/(site)</code></td>
+        <td>Public</td>
+        <td>Home page, game lobbies, promotions, VIP, referral landing</td>
+      </tr>
+      <tr>
+        <td><code>/(auth)</code></td>
+        <td>Public</td>
+        <td>Login, registration, forgot password</td>
+      </tr>
+      <tr>
+        <td><code>/member/*</code></td>
+        <td>Authenticated</td>
+        <td>Member center, wallet, rewards, profile, records (auth-guarded)</td>
+      </tr>
+      <tr>
+        <td><code>/api/*</code></td>
+        <td>Internal</td>
+        <td>Game launch proxy and backend API gateway</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Core Design Principles</h2>
+  <ul>
+    <li><strong>Mobile-first responsive design</strong> — Optimized for smartphones with dedicated bottom navigation and touch-friendly controls.</li>
+    <li><strong>Server-side rendering</strong> — Game lobbies and public pages are server-rendered for SEO and fast initial load.</li>
+    <li><strong>Secure session management</strong> — JWT-based authentication with automatic session expiry and balance synchronization.</li>
+    <li><strong>Modular component architecture</strong> — Feature domains are isolated into reusable component libraries with dedicated API layers.</li>
+    <li><strong>Localized content catalogs</strong> — 31 dedicated translation modules ensure consistent multilingual UX across all features.</li>
+  </ul>
+</div>
+
+<!-- SECTION 3: NAVIGATION -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 3</div>
+  </div>
+  <h1 class="section-title">3. Application Shell &amp; Navigation</h1>
+
+  <div class="feature-card">
+    <h3>Application Shell <span class="status-live">Live</span></h3>
+    <p>
+      The master layout wrapping all site pages, providing a consistent frame across the entire platform.
+      Includes sidebar navigation, top navigation bar, site footer, mobile bottom navigation, toast
+      notifications, game play gate, and game return handler for seamless session continuity.
+    </p>
+    <div class="feature-meta"><strong>Components:</strong> AppShell, TopNavbar, SideNavigation, SiteFooter, MobileBottomNav, ToastProvider</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Desktop Sidebar Navigation <span class="status-live">Live</span></h3>
+    <p>
+      Collapsible left navigation rail providing access to all game categories with expandable sub-menus
+      for provider filtering. Includes secondary links to VIP Club, Referral Program, Affiliate Portal,
+      App Download, and Contact options. Features a sponsor promotion banner and rotating promotion slider
+      when expanded.
+    </p>
+    <div class="feature-meta"><strong>Categories:</strong> Exclusive, Sports, Casino, Slots, Crash, Table, Fishing, Arcade, Lottery, Promotions</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Top Navigation Bar <span class="status-live">Live</span></h3>
+    <p>
+      Persistent header displaying the Apivexo logo, quick-access links to Sports, Slots, and Casino,
+      language/currency switcher, and authentication controls. Logged-in users see a wallet balance bar
+      with hide/show toggle, refresh action, and profile dropdown menu.
+    </p>
+    <div class="feature-meta"><strong>Components:</strong> TopNavbar, LoggedInWalletBar, ProfileDropdown, LocaleMenuButton</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Mobile Bottom Navigation <span class="status-live">Live</span></h3>
+    <p>
+      Fixed bottom navigation bar visible on mobile devices, providing one-tap access to Menu, Slots,
+      Promotions, Member Center, and a profile sheet with wallet summary and account shortcuts.
+    </p>
+    <div class="feature-meta"><strong>Components:</strong> MobileBottomNav, ProfileMobileSheet, ProfileMenuPanel</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Profile Menu &amp; Wallet Display <span class="status-live">Live</span></h3>
+    <p>
+      Accessible from the top navigation (desktop) or bottom navigation (mobile), the profile menu
+      displays member ID with copy functionality, real-time wallet balance with privacy toggle, VIP points,
+      and quick links to all member center sections. Supports logout with session cleanup.
+    </p>
+    <div class="feature-meta"><strong>Components:</strong> ProfileDropdown, ProfileWalletSection, ProfileMenuIcons</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Currency &amp; Language Modal <span class="status-live">Live</span></h3>
+    <p>
+      Settings modal allowing users to switch between Bangladesh (BDT) and India (INR) regions, and
+      select interface language (English, Bengali, Hindi). Preferences are persisted via cookies and
+      applied across the entire application.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 4: AUTH -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 4</div>
+  </div>
+  <h1 class="section-title">4. Authentication &amp; Account Security</h1>
+
+  <div class="feature-card">
+    <h3>User Login <span class="status-live">Live</span></h3>
+    <p>
+      Secure username and password authentication with device fingerprint collection for fraud prevention.
+      Supports redirect to intended destination via <code>?next=</code> URL parameter. Handles forced
+      password change flows and displays localized error messages.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /[locale]/login</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Three-Step Registration <span class="status-live">Live</span></h3>
+    <p>
+      Guided registration wizard: Step 1 — phone number with country-specific formatting (BDT/INR);
+      Step 2 — username selection; Step 3 — password creation with strength validation. Supports referral
+      code capture from URL parameters, device registration limit enforcement, and automatic login upon
+      successful signup.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /[locale]/register · <strong>Referral param:</strong> ?refId= or ?ref=</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Forgot Password <span class="status-live">Live</span></h3>
+    <p>
+      Self-service password recovery requiring username, registered phone number, and new password with
+      validation rules. Submits reset request to the backend API for verification and update.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /[locale]/forgot-password</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Change Password <span class="status-live">Live</span></h3>
+    <p>
+      Authenticated password change with real-time validation enforcing minimum length, uppercase letter,
+      numeric digit, and special character requirements. Accessible from the Security Center in Member Center.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/login-security/change-password</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Session Management <span class="status-live">Live</span></h3>
+    <p>
+      JWT-based session stored securely in browser local storage with automatic expiry detection,
+      balance synchronization with server revision tracking, account status validation (active/restricted),
+      and auth guard protection on all member-area routes.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Personal Information Management <span class="status-live">Live</span></h3>
+    <p>
+      Tabbed profile hub for managing full legal name, date of birth, phone number, and email address.
+      Phone and email updates include OTP verification flows. Privacy notice displayed on all personal
+      information pages.
+    </p>
+    <div class="feature-meta"><strong>Routes:</strong> /member/personal-info/* (full-legal-name, date-of-birth, phone, email + verify pages)</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>KYC Document Verification <span class="status-live">Live</span></h3>
+    <p>
+      Identity verification module allowing users to upload government-issued documents for account
+      verification. Supports document type selection and secure file upload to the backend KYC service.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/verification/documents</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Account Status Enforcement <span class="status-live">Live</span></h3>
+    <p>
+      Platform-wide account restriction system that blocks game play, withdrawals, and other sensitive
+      actions based on account status (active, suspended, restricted). Displays localized restriction
+      messages explaining the limitation to the user.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 5: HOME -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 5</div>
+  </div>
+  <h1 class="section-title">5. Home Page &amp; Discovery</h1>
+
+  <div class="feature-card">
+    <h3>Hero Carousel <span class="status-live">Live</span></h3>
+    <p>
+      Full-width promotional banner carousel on the home page showcasing featured promotions, new games,
+      and platform highlights. Auto-rotates with manual navigation controls.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Announcement Bar <span class="status-live">Live</span></h3>
+    <p>
+      Scrolling ticker bar displaying platform announcements, maintenance notices, and promotional
+      messages at the top of the home page.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Game Category Tabs <span class="status-live">Live</span></h3>
+    <p>
+      Interactive tabbed interface on the home page with categories: Popular, Sports, Casino, Slots,
+      Crash, Table, Fishing, Arcade, and Lottery. The Popular tab displays a curated game grid;
+      other tabs show provider shortcuts linking to filtered lobby pages.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Provider Showcase <span class="status-live">Live</span></h3>
+    <p>
+      Grid of game provider logos on the home page, each linking to the corresponding vendor-filtered
+      game lobby. Showcases partnerships with Evolution, Pragmatic Play, JDB, PG Soft, Jili, Spribe,
+      and other leading providers.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Exclusive Games Section <span class="status-live">Live</span></h3>
+    <p>
+      Curated carousel of Apivexo-exclusive game titles, prominently featured on the home page and
+      accessible via a dedicated Exclusive games lobby.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Events Section <span class="status-live">Live</span></h3>
+    <p>
+      Promotional events block highlighting time-limited tournaments, seasonal campaigns, and special
+      platform events with visual cards and call-to-action links.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Home Engagement Modals <span class="status-live">Live</span></h3>
+    <p>
+      Smart modal system on the home page including: promotional slider (once per day dismiss),
+      daily spin wheel for authenticated users, and mobile app download prompt. Each modal respects
+      session-based dismissal to avoid user fatigue.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Floating Live Chat Button <span class="status-live">Live</span></h3>
+    <p>
+      Persistent floating action button on the home page providing quick access to customer support
+      live chat without navigating away from the current page.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 6: GAMING -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 6</div>
+  </div>
+  <h1 class="section-title">6. Gaming &amp; Casino Modules</h1>
+  <p class="lead">
+    Apivexo provides nine distinct game category lobbies, each with provider filtering, game type
+    filtering, sorting, and paginated game grids. All lobbies share a unified game card interface
+    and integrated launch system.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Route</th>
+        <th>Key Providers</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Exclusive</strong></td>
+        <td>/exclusive</td>
+        <td>Apivexo Originals</td>
+        <td>Platform-exclusive curated game titles</td>
+      </tr>
+      <tr>
+        <td><strong>Sports</strong></td>
+        <td>/sports</td>
+        <td>Cricket, FB Sports, BTI Tennis</td>
+        <td>Sports betting with cricket, football, and tennis markets</td>
+      </tr>
+      <tr>
+        <td><strong>Live Casino</strong></td>
+        <td>/casino</td>
+        <td>Evolution, Pragmatic, Sexy Gaming</td>
+        <td>Live dealer games — baccarat, roulette, blackjack, game shows</td>
+      </tr>
+      <tr>
+        <td><strong>Slots</strong></td>
+        <td>/slot</td>
+        <td>JDB, PG Soft, Jili</td>
+        <td>Video slot games with diverse themes and mechanics</td>
+      </tr>
+      <tr>
+        <td><strong>Crash</strong></td>
+        <td>/crash</td>
+        <td>Aviator, Spribe</td>
+        <td>Crash/multiplier games with real-time betting</td>
+      </tr>
+      <tr>
+        <td><strong>Table Games</strong></td>
+        <td>/table</td>
+        <td>Multiple vendors</td>
+        <td>Digital table games — baccarat, roulette, poker variants</td>
+      </tr>
+      <tr>
+        <td><strong>Fishing</strong></td>
+        <td>/fishing</td>
+        <td>JDB, Jili</td>
+        <td>Arcade-style fishing and shooter games</td>
+      </tr>
+      <tr>
+        <td><strong>Arcade</strong></td>
+        <td>/arcade</td>
+        <td>JDB, FaChai, Pragmatic, Rich88, Hacksaw</td>
+        <td>Casual arcade and instant-win games</td>
+      </tr>
+      <tr>
+        <td><strong>Lottery</strong></td>
+        <td>/lottery</td>
+        <td>TC, King Midas</td>
+        <td>Lottery and number-draw products</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Game Lobby Features</h2>
+  <ul>
+    <li><strong>Vendor filtering</strong> — Filter games by provider via URL parameter (<code>?vendor=</code>) or sidebar sub-navigation.</li>
+    <li><strong>Game type filtering</strong> — Additional type filters within categories (<code>?type=</code>).</li>
+    <li><strong>Sorting &amp; pagination</strong> — Server-side paginated game grids with sort options.</li>
+    <li><strong>Provider filter sheet</strong> — Mobile-optimized bottom sheet for provider selection on smaller screens.</li>
+    <li><strong>Category header menu</strong> — Quick navigation between game categories from within any lobby.</li>
+  </ul>
+
+  <h2>Game Launch System</h2>
+  <div class="feature-card">
+    <h3>Game Play Gate <span class="status-live">Live</span></h3>
+    <p>
+      Comprehensive pre-launch validation system triggered when a user clicks any game card:
+    </p>
+    <ul>
+      <li>Authentication check — prompts login modal for unauthenticated users</li>
+      <li>Zero-balance block — prevents launch when wallet balance is insufficient</li>
+      <li>Account restriction check — blocks play for restricted/suspended accounts</li>
+      <li>Balance preview — displays current balance before launch confirmation</li>
+      <li>Eligibility API validation — server-side check for game access permissions</li>
+      <li>Launch overlay — loading state during game initialization</li>
+      <li>Platform detection — sends mobile (platform=2) or desktop (platform=1) flag to game provider</li>
+      <li>Return handler — automatic balance refresh and vendor transaction sync when returning from a game</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SECTION 7: WALLET -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 7</div>
+  </div>
+  <h1 class="section-title">7. Wallet, Deposits &amp; Withdrawals</h1>
+
+  <div class="feature-card">
+    <h3>Real-Time Wallet Balance <span class="status-live">Live</span></h3>
+    <p>
+      Live wallet balance display in the top navigation bar and member center with hide/show privacy
+      toggle, manual refresh action, VIP points display, and local state synchronization with server
+      revision tracking to prevent stale balance display.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Deposit Hub <span class="status-live">Live</span></h3>
+    <p>
+      Central deposit method selection screen. Currently active: Quick Deposit (mobile financial services).
+      Additional methods (E-wallet, Cryptocurrency, Local Bank Transfer) are architecturally prepared
+      for future activation.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/deposit</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Quick Deposit <span class="status-live">Live</span></h3>
+    <p>
+      Streamlined deposit flow for Bangladesh mobile financial services. Users select payment method
+      (bKash, Nagad, or Rocket), choose a payment channel/account, enter deposit amount, optionally
+      select a deposit promotion/bonus, preview bonus calculation, and proceed to payment verification.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/deposit/quick · <strong>Methods:</strong> bKash, Nagad, Rocket</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Deposit Payment Verification <span class="status-live">Live</span></h3>
+    <p>
+      Payment instruction page displaying the assigned payment account details with copy-to-clipboard
+      functionality. Features countdown timers (10-minute payment window, 3-minute verification window),
+      transaction ID submission, automatic payment verification polling, manual deposit fallback,
+      duplicate transaction ID detection, and bonus confirmation messaging.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/deposit/quick/verify</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Deposit Promotion Picker <span class="status-live">Live</span></h3>
+    <p>
+      Integrated bonus selection during the deposit flow. Users can choose from available deposit
+      promotions and see a real-time preview of the bonus amount before confirming the deposit.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Withdrawal <span class="status-live">Live</span></h3>
+    <p>
+      Withdrawal submission form allowing users to select a saved payout wallet (bKash, Nagad, Rocket),
+      enter withdrawal amount (minimum 100), and submit the request. Includes account status validation,
+      insufficient balance checks, and redirect to add-wallet page if no payout wallets are configured.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/withdraw</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Payout Wallet Management <span class="status-live">Live</span></h3>
+    <p>
+      Add and manage payout wallets for withdrawals. Users can register wallets with holder name and
+      account number for bKash, Nagad, and Rocket. Supports adding up to the maximum allowed wallets
+      and deleting existing ones.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/add-wallet</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Transaction Records <span class="status-live">Live</span></h3>
+    <p>
+      Comprehensive transaction history with filtering by status, payment type, and date range.
+      Separate views for deposit records, withdrawal records, and general account records. Includes
+      detail modals for individual transaction inspection.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/transaction-records</div>
+  </div>
+</div>
+
+<!-- SECTION 8: MEMBER CENTER -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 8</div>
+  </div>
+  <h1 class="section-title">8. Member Center</h1>
+  <p class="lead">
+    The Member Center serves as the authenticated user's command hub, providing centralized access
+    to all account management, financial, and engagement features through a 16-item action grid.
+  </p>
+
+  <div class="feature-card">
+    <h3>Member Center Dashboard <span class="status-live">Live</span></h3>
+    <p>
+      Central hub displaying user avatar, nickname, member ID, join date, real-time balance with
+      refresh, VIP badge/medal, sign-in reward shortcut, and a 16-item action grid. Badge counts
+      highlight available rewards and active missions. Includes logout functionality.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Module</th>
+        <th>Status</th>
+        <th>Route</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Reward Center</td>
+        <td>Live</td>
+        <td>/member/reward-center</td>
+        <td>Hub for all reward programs and claimable offers</td>
+      </tr>
+      <tr>
+        <td>Betting Records</td>
+        <td>Live</td>
+        <td>/member/betting-records</td>
+        <td>Tabbed bet history with settled/unsettled filters</td>
+      </tr>
+      <tr>
+        <td>Profit &amp; Loss</td>
+        <td>Live</td>
+        <td>/member/profit-and-loss</td>
+        <td>Personal P&amp;L report by game category and date range</td>
+      </tr>
+      <tr>
+        <td>Deposit Record</td>
+        <td>Live</td>
+        <td>/member/transaction-records</td>
+        <td>Filtered deposit transaction history</td>
+      </tr>
+      <tr>
+        <td>Withdrawal Record</td>
+        <td>Live</td>
+        <td>/member/transaction-records</td>
+        <td>Filtered withdrawal transaction history</td>
+      </tr>
+      <tr>
+        <td>Account Record</td>
+        <td>Live</td>
+        <td>/member/transaction-records</td>
+        <td>General account transaction history</td>
+      </tr>
+      <tr>
+        <td>My Account</td>
+        <td>Live</td>
+        <td>/member/personal-info</td>
+        <td>Personal information management hub</td>
+      </tr>
+      <tr>
+        <td>Security Center</td>
+        <td>Live</td>
+        <td>/member/login-security</td>
+        <td>Password change and security settings</td>
+      </tr>
+      <tr>
+        <td>Invite Friends</td>
+        <td>Live</td>
+        <td>/member/my-referral</td>
+        <td>Personal referral dashboard with sharing tools</td>
+      </tr>
+      <tr>
+        <td>Mission</td>
+        <td>Live</td>
+        <td>/member/mission</td>
+        <td>Active missions with rewards and countdown timers</td>
+      </tr>
+      <tr>
+        <td>Rebate</td>
+        <td>Live</td>
+        <td>/member/rebate</td>
+        <td>Daily rebate claim and history</td>
+      </tr>
+      <tr>
+        <td>Internal Message</td>
+        <td>Live</td>
+        <td>/member/notification</td>
+        <td>Inbox with read/delete management</td>
+      </tr>
+      <tr>
+        <td>Suggestion</td>
+        <td>Live</td>
+        <td>/member/suggestion</td>
+        <td>Feedback submission with image upload</td>
+      </tr>
+      <tr>
+        <td>Download App</td>
+        <td>Live</td>
+        <td>Direct APK</td>
+        <td>Android application download</td>
+      </tr>
+      <tr>
+        <td>Customer Service</td>
+        <td>Live</td>
+        <td>/member/live-chat</td>
+        <td>Real-time support chat</td>
+      </tr>
+      <tr>
+        <td>My VIP</td>
+        <td>Planned</td>
+        <td>/member/my-vip</td>
+        <td>Member VIP dashboard (placeholder — public VIP page live)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="feature-card">
+    <h3>Turnover / Wagering Requirements <span class="status-live">Live</span></h3>
+    <p>
+      Displays active turnover progress bars for each bonus or promotion requiring wagering completion.
+      Automatically refreshes when the user returns from a game session.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/turnover</div>
+  </div>
+</div>
+
+<!-- SECTION 9: REWARDS -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 9</div>
+  </div>
+  <h1 class="section-title">9. Reward Center &amp; Loyalty Programs</h1>
+
+  <div class="feature-card">
+    <h3>Reward Center Hub <span class="status-live">Live</span></h3>
+    <p>
+      Central rewards dashboard with branded header, user card showing balance and VIP tier, and
+      navigable tiles for all reward programs. Available-count badges highlight claimable rewards
+      across programs.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/reward-center</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Daily Sign-In Rewards <span class="status-live">Live</span></h3>
+    <p>
+      Calendar-style daily check-in system with visual reward envelopes. Tracks consecutive sign-in
+      streaks, displays claimable rewards, and integrates with the sign-in reward API for balance
+      crediting upon claim.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/reward-center/sign-in</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Bonus Offers <span class="status-live">Live</span></h3>
+    <p>
+      List of claimable bonus vouchers with eligibility criteria, expiry dates, countdown timers,
+      and one-tap claim actions. Displays bonus terms and credited amounts upon successful claim.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/reward-center/bonus</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Rescue Fund Programs <span class="status-live">Live</span></h3>
+    <p>
+      Multi-program rescue fund hub offering financial recovery incentives for players. Includes
+      Sports Cashback (returns on sports betting losses) and Loss Compensation (general loss recovery
+      programs) as sub-programs with individual claim flows.
+    </p>
+    <div class="feature-meta"><strong>Routes:</strong> /member/reward-center/rescue-fund, /sports, /loss-compensation</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Temu Ticket Promotion <span class="status-live">Live</span></h3>
+    <p>
+      Gamified ticket and coupon mechanic inspired by social commerce promotions. Users collect
+      tickets through platform activity, share referral links to earn additional tickets, claim
+      rewards, and view complete claim history.
+    </p>
+    <div class="feature-meta"><strong>Routes:</strong> /member/reward-center/temu-ticket, /history</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Daily Spin Wheel <span class="status-live">Live</span></h3>
+    <p>
+      Animated prize wheel modal auto-displayed on the home page for authenticated users with
+      available spins. Features spinning animation, countdown timer for next spin availability,
+      winner ticker display, and automatic balance refresh upon winning.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Member Missions <span class="status-live">Live</span></h3>
+    <p>
+      Mission system with tabbed views (Active, Upcoming, Closed, Coming Soon). Each mission displays
+      objectives, countdown timers, medal reward icons, and claim actions. Available mission count
+      shown as badge on Member Center grid.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/mission</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Rebate (Cashback) <span class="status-live">Live</span></h3>
+    <p>
+      Dual-tab rebate system: Manual Rebate tab for daily cashback claims, and Rebate History tab
+      with date range filtering and expandable detail sheets showing per-game rebate breakdowns.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/rebate</div>
+  </div>
+</div>
+
+<!-- SECTION 10: PROMOTIONS -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 10</div>
+  </div>
+  <h1 class="section-title">10. Promotions &amp; Marketing</h1>
+
+  <div class="feature-card">
+    <h3>Promotions Catalog Page <span class="status-live">Live</span></h3>
+    <p>
+      Public-facing promotions page fetching live promotion data from the API. Features filter tabs
+      (All, Welcome, Cashback), a featured promotion hero banner, and a grid of promotion cards with
+      details and terms.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /[locale]/promotion</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Home Promotional Modal <span class="status-live">Live</span></h3>
+    <p>
+      Auto-displaying promotional slider modal on the home page, shown once per day per user
+      (sessionStorage-based dismissal). Showcases current campaigns with image carousel and CTA links.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Sidebar Promotion Slider <span class="status-live">Live</span></h3>
+    <p>
+      Rotating promotion cards displayed in the expanded desktop sidebar, providing persistent
+      visibility of active campaigns during navigation.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Deposit-Linked Promotions <span class="status-live">Live</span></h3>
+    <p>
+      Promotion selection integrated directly into the deposit flow, allowing users to activate
+      deposit bonuses at the point of funding with real-time bonus amount preview.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 11: REFERRAL -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 11</div>
+  </div>
+  <h1 class="section-title">11. Referral &amp; Affiliate Program</h1>
+
+  <div class="feature-card">
+    <h3>Public Referral Landing Page <span class="status-live">Live</span></h3>
+    <p>
+      Marketing page promoting the Apivexo referral program. Includes hero banner, three-step
+      how-it-works guide, reward level tier display, top ranks leaderboard, recent winners feed,
+      range statistics carousel, detailed rules modal, and registration call-to-action.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /[locale]/referral</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>My Referral Dashboard <span class="status-live">Live</span></h3>
+    <p>
+      Authenticated member referral dashboard displaying personal referral ID, shareable referral link,
+      QR code for easy sharing, copy and native share actions, referral statistics, list of referred
+      users, monthly milestone progress tracker, reward level information, and rules modal.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/my-referral</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Registration Referral Integration <span class="status-live">Live</span></h3>
+    <p>
+      Referral codes are automatically captured from URL parameters (<code>?refId=</code> or
+      <code>?ref=</code>) during the registration flow and submitted to the backend API to
+      establish the referral relationship.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Affiliate Portal Link <span class="status-live">Live</span></h3>
+    <p>
+      External link to the dedicated affiliate partner portal accessible from the sidebar navigation,
+      enabling advanced affiliate partners to manage their programs separately.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 12: VIP -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 12–13</div>
+  </div>
+  <h1 class="section-title">12. VIP Club</h1>
+
+  <div class="feature-card">
+    <h3>VIP Club Public Page <span class="status-live">Live</span></h3>
+    <p>
+      Marketing page showcasing VIP Club benefits including enhanced cashback rates, dedicated account
+      manager, faster withdrawal processing, birthday bonus, exclusive promotions, and priority support.
+      Features hero artwork, benefit cards with icons, and a "Join Now" call-to-action.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /[locale]/vip</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>VIP Points Display <span class="status-live">Live</span></h3>
+    <p>
+      VIP loyalty points are displayed in the profile wallet section and logged-in wallet bar,
+      providing constant visibility of the user's VIP progression.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>VIP Badge in Member Center <span class="status-live">Live</span></h3>
+    <p>
+      Visual VIP tier indicators including silver badge watermark and VIP medal icon displayed
+      on the Member Center header, reinforcing the user's VIP status.
+    </p>
+  </div>
+
+  <h1 class="section-title" style="margin-top: 20pt;">13. Records, Reports &amp; Analytics</h1>
+
+  <div class="feature-card">
+    <h3>Betting Records <span class="status-live">Live</span></h3>
+    <p>
+      Comprehensive bet history with tabbed views for settled and unsettled bets. Features date range
+      filtering, expandable bet detail rows, pagination, and result badges (Won, Lost, Pending).
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/betting-records</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Profit &amp; Loss Report <span class="status-live">Live</span></h3>
+    <p>
+      Personal financial report broken down by game category (Sports, Casino, Slots, etc.) with
+      date presets (Today, Yesterday, Last 7 Days) and custom date range selection via a mobile-friendly
+      date picker sheet.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/profit-and-loss</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Transaction Records <span class="status-live">Live</span></h3>
+    <p>
+      Filterable transaction history supporting status, payment type, and date range filters with
+      detail modals for individual transaction inspection.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/transaction-records</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Turnover Tracking <span class="status-live">Live</span></h3>
+    <p>
+      Active wagering requirement tracker showing progress bars for each bonus or promotion with
+      outstanding turnover obligations.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/turnover</div>
+  </div>
+</div>
+
+<!-- SECTION 14: SUPPORT -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 14–15</div>
+  </div>
+  <h1 class="section-title">14. Customer Support</h1>
+
+  <div class="feature-card">
+    <h3>Live Chat Support <span class="status-live">Live</span></h3>
+    <p>
+      Real-time customer support chat powered by WebSocket connection. Features typing indicators,
+      agent assignment status display, message history, and automatic redirect to login for
+      unauthenticated users. Accessible from Member Center, sidebar contact menu, and floating button
+      on the home page.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/live-chat · <strong>Technology:</strong> Socket.IO</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Suggestion / Feedback <span class="status-live">Live</span></h3>
+    <p>
+      Structured feedback submission form with category selection, message text area, optional image
+      upload, captcha verification, and API submission for platform improvement suggestions.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/suggestion</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Internal Messages / Notifications <span class="status-live">Live</span></h3>
+    <p>
+      In-platform messaging inbox with select-all, mark-as-read, and delete functionality for
+      platform announcements and personal notifications.
+    </p>
+    <div class="feature-meta"><strong>Route:</strong> /member/notification</div>
+  </div>
+
+  <div class="feature-card">
+    <h3>Contact Options <span class="status-live">Live</span></h3>
+    <p>
+      Sidebar contact dropdown providing access to Live Chat, Email support, and Telegram channel
+      for multi-channel customer communication.
+    </p>
+  </div>
+
+  <h1 class="section-title" style="margin-top: 20pt;">15. Internationalization &amp; Localization</h1>
+
+  <div class="feature-card">
+    <h3>Multi-Language Support <span class="status-live">Live</span></h3>
+    <p>
+      Full trilingual platform supporting English, Bengali (Bangla), and Hindi. URL-based locale
+      routing (<code>/en/</code>, <code>/bn/</code>, <code>/hi/</code>) with Bengali as the default
+      locale. 31 dedicated translation modules covering every feature area.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Multi-Currency Support <span class="status-live">Live</span></h3>
+    <p>
+      Country-specific currency handling: Bangladesh (BDT — Bangladeshi Taka) and India (INR — Indian
+      Rupee). Currency affects phone number formatting during registration, balance display formatting,
+      and deposit/withdrawal flows.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Locale-Aware Typography <span class="status-live">Live</span></h3>
+    <p>
+      Font selection adapts to the active locale, ensuring proper rendering of Bengali and Devanagari
+      (Hindi) scripts alongside Latin characters.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 16: MOBILE -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 16–17</div>
+  </div>
+  <h1 class="section-title">16. Mobile Experience &amp; App Distribution</h1>
+
+  <div class="feature-card">
+    <h3>Mobile-First Responsive Design <span class="status-live">Live</span></h3>
+    <p>
+      Entire platform optimized for mobile devices with responsive breakpoints, sidebar-to-overlay
+      transformation, dedicated bottom navigation bar, safe-area-inset padding for notched devices,
+      and touch-target sizing standards (minimum 44px touch targets).
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>App-Like Mobile Experience <span class="status-live">Live</span></h3>
+    <p>
+      Pinch-zoom and double-tap zoom disabled on mobile for native app-like feel. Mobile filter sheets
+      replace desktop dropdowns for game lobby filtering.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Android APK Distribution <span class="status-live">Live</span></h3>
+    <p>
+      Direct Android APK download available from Member Center grid and sidebar navigation. Mobile
+      home page displays an app download prompt (bottom sheet) encouraging APK installation.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>PWA Install Support <span class="status-live">Live</span></h3>
+    <p>
+      Progressive Web App install prompt on mobile browsers, enabling users to add Apivexo to their
+      home screen for quick access without app store distribution.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Mobile Game Launch <span class="status-live">Live</span></h3>
+    <p>
+      Automatic platform detection sends the appropriate platform flag (mobile vs. desktop) to game
+      providers during launch, ensuring games render in mobile-optimized mode.
+    </p>
+  </div>
+
+  <h1 class="section-title" style="margin-top: 20pt;">17. SEO &amp; Compliance</h1>
+
+  <div class="feature-card">
+    <h3>Search Engine Optimization <span class="status-live">Live</span></h3>
+    <p>
+      Per-locale metadata generation, JSON-LD structured data on the home page, XML sitemap covering
+      home, VIP, referral, and promotion pages across all locales, and robots.txt configuration.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Site Footer &amp; Legal Content <span class="status-live">Live</span></h3>
+    <p>
+      Localized footer on the home page including about text, social media links, accepted payment
+      method icons, responsible gaming notice, and copyright information.
+    </p>
+  </div>
+
+  <div class="feature-card">
+    <h3>Device Fingerprinting <span class="status-live">Live</span></h3>
+    <p>
+      FingerprintJS integration for device identification during login and registration, supporting
+      fraud prevention and device registration limit enforcement.
+    </p>
+  </div>
+</div>
+
+<!-- SECTION 18: SUMMARY -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Client Feature Report v1.0 · Section 18</div>
+  </div>
+  <h1 class="section-title">18. Feature Implementation Summary</h1>
+
+  <h2>Implementation Status Overview</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature Area</th>
+        <th>Modules</th>
+        <th>Status</th>
+        <th>Completion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Application Shell &amp; Navigation</td>
+        <td>6</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Authentication &amp; Security</td>
+        <td>8</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Home Page &amp; Discovery</td>
+        <td>8</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Gaming &amp; Casino (9 categories)</td>
+        <td>10</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Wallet &amp; Payments</td>
+        <td>7</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Member Center</td>
+        <td>16</td>
+        <td>15 Live, 1 Planned</td>
+        <td>94%</td>
+      </tr>
+      <tr>
+        <td>Reward Center &amp; Loyalty</td>
+        <td>8</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Promotions &amp; Marketing</td>
+        <td>4</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Referral Program</td>
+        <td>4</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>VIP Club</td>
+        <td>3</td>
+        <td>2 Live, 1 Planned</td>
+        <td>67%</td>
+      </tr>
+      <tr>
+        <td>Records &amp; Reports</td>
+        <td>4</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Customer Support</td>
+        <td>4</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Internationalization</td>
+        <td>3</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>Mobile &amp; App Distribution</td>
+        <td>5</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+      <tr>
+        <td>SEO &amp; Compliance</td>
+        <td>3</td>
+        <td>Live</td>
+        <td>100%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Planned / Future Enhancements</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Current Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Member VIP Dashboard</td>
+        <td>Placeholder page</td>
+        <td>Public VIP marketing page is live; authenticated dashboard pending</td>
+      </tr>
+      <tr>
+        <td>E-wallet Deposit</td>
+        <td>Architecturally prepared</td>
+        <td>UI slot exists in deposit hub, pending activation</td>
+      </tr>
+      <tr>
+        <td>Cryptocurrency Deposit</td>
+        <td>Architecturally prepared</td>
+        <td>UI slot exists in deposit hub, pending activation</td>
+      </tr>
+      <tr>
+        <td>Local Bank Transfer Deposit</td>
+        <td>Architecturally prepared</td>
+        <td>UI slot exists in deposit hub, pending activation</td>
+      </tr>
+      <tr>
+        <td>Brand Ambassadors Page</td>
+        <td>Menu item only</td>
+        <td>Sidebar link present, dedicated page pending</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Overall Platform Readiness:</strong> The Apivexo client platform is production-ready with
+    93+ live feature modules across 15 functional areas. All core user journeys — registration,
+    deposit, gaming, withdrawal, rewards, and support — are fully operational.
+  </div>
+
+  <div class="footer-note">
+    Apivexo Client Platform Feature Report · Version 1.0 · July 27, 2026<br/>
+    This document is confidential and intended solely for the recipient. © 2026 Apivexo. All rights reserved.
+  </div>
+</div>
+
+<!-- APPENDIX -->
+<div class="section content">
+  <div class="page-header">
+    <div class="page-header-brand">Apivexo</div>
+    <div class="page-header-doc">Appendix A · Route Reference</div>
+  </div>
+  <h1 class="section-title">Appendix A — Route Reference</h1>
+  <p class="lead">Complete listing of all user-facing routes in the Apivexo client application. All routes are prefixed with <code>/[locale]</code> where locale is <code>en</code>, <code>bn</code>, or <code>hi</code>.</p>
+
+  <h2>Public Routes</h2>
+  <table>
+    <thead>
+      <tr><th>Route</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>/</td><td>Home page</td></tr>
+      <tr><td>/exclusive</td><td>Exclusive games lobby</td></tr>
+      <tr><td>/slot</td><td>Slots games lobby</td></tr>
+      <tr><td>/casino</td><td>Live casino lobby</td></tr>
+      <tr><td>/sports</td><td>Sports betting lobby</td></tr>
+      <tr><td>/crash</td><td>Crash games lobby</td></tr>
+      <tr><td>/table</td><td>Table games lobby</td></tr>
+      <tr><td>/fishing</td><td>Fishing games lobby</td></tr>
+      <tr><td>/arcade</td><td>Arcade games lobby</td></tr>
+      <tr><td>/lottery</td><td>Lottery games lobby</td></tr>
+      <tr><td>/promotion</td><td>Promotions catalog</td></tr>
+      <tr><td>/referral</td><td>Referral program landing</td></tr>
+      <tr><td>/vip</td><td>VIP Club marketing page</td></tr>
+      <tr><td>/login</td><td>User login</td></tr>
+      <tr><td>/register</td><td>User registration</td></tr>
+      <tr><td>/forgot-password</td><td>Password recovery</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Authenticated Member Routes</h2>
+  <table>
+    <thead>
+      <tr><th>Route</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>/member</td><td>Member Center dashboard</td></tr>
+      <tr><td>/member/deposit</td><td>Deposit method selection</td></tr>
+      <tr><td>/member/deposit/quick</td><td>Quick deposit form</td></tr>
+      <tr><td>/member/deposit/quick/verify</td><td>Payment verification</td></tr>
+      <tr><td>/member/withdraw</td><td>Withdrawal submission</td></tr>
+      <tr><td>/member/add-wallet</td><td>Payout wallet management</td></tr>
+      <tr><td>/member/reward-center</td><td>Reward Center hub</td></tr>
+      <tr><td>/member/reward-center/sign-in</td><td>Daily sign-in rewards</td></tr>
+      <tr><td>/member/reward-center/bonus</td><td>Bonus offers</td></tr>
+      <tr><td>/member/reward-center/rescue-fund</td><td>Rescue fund programs</td></tr>
+      <tr><td>/member/reward-center/temu-ticket</td><td>Temu ticket promotion</td></tr>
+      <tr><td>/member/mission</td><td>Member missions</td></tr>
+      <tr><td>/member/rebate</td><td>Daily rebate</td></tr>
+      <tr><td>/member/betting-records</td><td>Betting history</td></tr>
+      <tr><td>/member/profit-and-loss</td><td>P&amp;L report</td></tr>
+      <tr><td>/member/transaction-records</td><td>Transaction history</td></tr>
+      <tr><td>/member/turnover</td><td>Wagering requirements</td></tr>
+      <tr><td>/member/my-referral</td><td>Referral dashboard</td></tr>
+      <tr><td>/member/notification</td><td>Internal messages</td></tr>
+      <tr><td>/member/suggestion</td><td>Feedback submission</td></tr>
+      <tr><td>/member/live-chat</td><td>Live chat support</td></tr>
+      <tr><td>/member/personal-info/*</td><td>Personal information pages</td></tr>
+      <tr><td>/member/login-security/*</td><td>Security settings</td></tr>
+      <tr><td>/member/verification/documents</td><td>KYC document upload</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer-note">
+    Apivexo Client Platform Feature Report · Version 1.0 · July 27, 2026<br/>
+    End of Document
+  </div>
+</div>
+
+</body>
+</html>

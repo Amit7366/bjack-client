@@ -5,18 +5,21 @@ import {
   GAME_RETURN_EVENT,
   dispatchGameReturn,
 } from "@/lib/game-return-events";
-import { handleGameReturnBalance } from "@/lib/game-balance-sync";
+import {
+  handleGameReturnBalance,
+  shouldRefreshBalanceAfterGame,
+} from "@/lib/game-balance-sync";
 import { AUTH_CHANGE_EVENT, readAuthSession } from "@/lib/auth/session";
 
 /**
- * After a game session: call return-withdraw (getWithdraw via Node) and update UI balance.
- * Idempotent when no active game session on the server.
+ * After a game session: fast preview → local balance update → silent DB persist.
  */
 export default function GameReturnHandler() {
   const runningRef = useRef(false);
 
   useEffect(() => {
     const runIfNeeded = async () => {
+      if (!shouldRefreshBalanceAfterGame()) return;
       if (!readAuthSession()?.accessToken) return;
       if (runningRef.current) return;
 
@@ -27,7 +30,7 @@ export default function GameReturnHandler() {
         await handleGameReturnBalance();
         window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
       } catch {
-        /* gameSessionActive stays true on server; retry on next focus / game tap */
+        /* flag stays set; user can tap refresh */
       } finally {
         runningRef.current = false;
       }
