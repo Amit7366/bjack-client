@@ -31,7 +31,6 @@ jobs:
           timeout: 180s
           command_timeout: 30m
           envs: GITHUB_TOKEN
-          script_stop: true
           script: |
             set -euo pipefail
             export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
@@ -109,7 +108,6 @@ jobs:
           timeout: 180s
           command_timeout: 30m
           envs: GITHUB_TOKEN
-          script_stop: true
           script: |
             set -euo pipefail
             export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
