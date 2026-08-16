@@ -108,6 +108,14 @@ const PROVIDER_ICONS: Record<string, ProviderIcon> = {
   tfgaming: sportbookIcon,
   "568winsportsbook": sportbookIcon,
   lucksport: sportbookIcon,
+  cockfight: "https://i.ibb.co.com/gLnGZ491/035-Cock-Fighting.png",
+  psg: "https://i.ibb.co/TBYydXML/logo.png",
+  ideal: "https://i.ibb.co.com/B5xzZGCf/logo.jpg",
+  pix: "https://i.ibb.co/Ldw3jQg0/logo.png",
+  kygaming: "https://i.ibb.co.com/993xKmfD/logo.jpg",
+  hp: "https://i.ibb.co/TDQVyJK9/logo.jpg",
+  rectangle: "https://i.ibb.co.com/DgzvKy5w/logo.jpg",
+  mini: "https://i.ibb.co/DHrk32n4/logo.jpg",
 };
 
 const PROVIDER_ICON_ALIASES: Record<string, string> = {
