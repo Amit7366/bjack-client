@@ -1,6 +1,10 @@
 import type { HomeTabId } from "./home-games-data";
 import { memberLiveChatHref } from "./member-routes";
-import { BKBAJI_ANDROID_APP_PATH } from "./seo/site-config";
+import {
+  BKBAJI_ANDROID_APP_PATH,
+  SITE_SUPPORT_EMAIL,
+  SITE_TELEGRAM_URL,
+} from "./seo/site-config";
 import {
   categoryProviderHref,
   lobbyCategoryHref,
@@ -64,8 +68,10 @@ export function sidebarSubItemHref(
   parentId: string,
   subId: string,
 ): string | null {
-  if (parentId === "contactUs" && subId === "liveChat") {
-    return memberLiveChatHref(locale);
+  if (parentId === "contactUs") {
+    if (subId === "liveChat") return memberLiveChatHref(locale);
+    if (subId === "email") return `mailto:${SITE_SUPPORT_EMAIL}`;
+    if (subId === "telegram") return SITE_TELEGRAM_URL;
   }
 
   const kind = SIDEBAR_TO_LOBBY[parentId];

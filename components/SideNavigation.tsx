@@ -178,6 +178,20 @@ function MenuRow({ item, expandedId, onToggleItem }: MenuRowProps) {
                   </>
                 );
                 if (href) {
+                  const isExternal = href.startsWith("http") || href.startsWith("mailto:");
+                  if (isExternal) {
+                    return (
+                      <a
+                        key={sub.id}
+                        href={href}
+                        target={href.startsWith("mailto:") ? undefined : "_blank"}
+                        rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                        className={rowClass}
+                      >
+                        {content}
+                      </a>
+                    );
+                  }
                   return (
                     <Link key={sub.id} href={href} className={rowClass}>
                       {content}
