@@ -37,6 +37,7 @@ export async function proxyToBackend(request: NextRequest, pathSegments: string[
     method: request.method,
     headers,
     redirect: "manual",
+    cache: "no-store",
   };
 
   if (request.method !== "GET" && request.method !== "HEAD") {
@@ -52,6 +53,7 @@ export async function proxyToBackend(request: NextRequest, pathSegments: string[
     }
     responseHeaders.set(key, value);
   });
+  responseHeaders.set("Cache-Control", "no-store, no-cache, must-revalidate");
 
   return new NextResponse(upstream.body, {
     status: upstream.status,
