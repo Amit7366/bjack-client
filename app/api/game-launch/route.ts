@@ -4,27 +4,62 @@ import { parseJwtPayload } from "@/lib/auth/jwt";
 const API_BASE = (process.env.API_URL ?? "http://localhost:8000").replace(/\/$/, "");
 
 type GameLaunchBody = {
-  game_uid?: string;
-  member_account?: string;
+  gameCode?: string;
+  playerId?: string;
   timestamp?: string;
-  credit_amount?: string;
-  currency_code?: string;
+  balance?: number | string;
+  currencyCode?: string;
   language?: string;
   platform?: number | string;
-  home_url?: string;
+  homeUrl?: string;
   transfer_id?: string;
 };
 
 type RemoteLaunchResponse = {
-  code?: number;
-  msg?: string;
-  payload?: {
+  success?: boolean;
+  message?: string;
+  error?: string;
+  data?: {
     game_launch_url?: string;
     [key: string]: unknown;
   };
-  error?: string;
+  details?: {
+    code?: number;
+    msg?: string;
+    payload?: unknown;
+  };
   [key: string]: unknown;
 };
+
+function generateTransferId(): string {
+  const timestamp = Date.now();
+  const random = Math.floor(Math.random() * 1e6);
+  return `tx_${timestamp}_${random}`;
+}
+
+function isTransferOrderExists(data: RemoteLaunchResponse | null): boolean {
+  if (!data) return false;
+  if (data.details?.code === 10027) return true;
+  const msg = `${data.message ?? ""} ${data.details?.msg ?? ""}`;
+  return /transfer order already exists/i.test(msg);
+}
+
+function remoteErrorMessage(data: RemoteLaunchResponse | null, fallback: string): string {
+  return data?.message ?? data?.error ?? data?.details?.msg ?? fallback;
+}
+
+async function postGameLaunch(
+  url: string,
+  payload: Record<string, unknown>,
+): Promise<{ ok: boolean; status: number; statusText: string; data: RemoteLaunchResponse | null }> {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = (await response.json().catch(() => null)) as RemoteLaunchResponse | null;
+  return { ok: response.ok, status: response.status, statusText: response.statusText, data };
+}
 
 export async function POST(request: Request) {
   try {
@@ -55,68 +90,76 @@ export async function POST(request: Request) {
       );
     }
 
-    const proxyUrl = process.env.GAME_LAUNCH_PROXY_URL;
-    const agencyUid = process.env.GAME_AGENCY_UID;
+    const launchUrl = process.env.GAME_LAUNCH_URL;
+    const apiSecret = process.env.GAME_API_SECRET;
+    const prefix = process.env.GAME_API_PREFIX;
 
-    if (!proxyUrl) {
+    if (!launchUrl) {
       return NextResponse.json(
-        { error: "GAME_LAUNCH_PROXY_URL is not configured" },
+        { error: "GAME_LAUNCH_URL is not configured" },
         { status: 500 },
       );
     }
 
-    if (!agencyUid) {
+    if (!apiSecret) {
       return NextResponse.json(
-        { error: "GAME_AGENCY_UID is not configured" },
+        { error: "GAME_API_SECRET is not configured" },
+        { status: 500 },
+      );
+    }
+
+    if (!prefix) {
+      return NextResponse.json(
+        { error: "GAME_API_PREFIX is not configured" },
         { status: 500 },
       );
     }
 
     const body = (await request.json()) as GameLaunchBody;
 
-    if (!body.game_uid?.trim()) {
-      return NextResponse.json({ error: "game_uid is required" }, { status: 400 });
+    if (!body.gameCode?.toString().trim()) {
+      return NextResponse.json({ error: "gameCode is required" }, { status: 400 });
     }
 
-    if (!body.member_account?.trim()) {
-      return NextResponse.json({ error: "member_account is required" }, { status: 400 });
+    if (!body.playerId?.trim()) {
+      return NextResponse.json({ error: "playerId is required" }, { status: 400 });
     }
 
-    const payload = {
-      agency_uid: agencyUid,
-      game_uid: body.game_uid.toString(),
-      member_account: body.member_account,
+    const payload: Record<string, unknown> = {
+      apiSecret,
+      prefix,
+      gameCode: body.gameCode.toString(),
+      playerId: body.playerId.trim(),
       timestamp: body.timestamp ?? Date.now().toString(),
-      credit_amount: body.credit_amount ?? "100.0",
-      currency_code: body.currency_code ?? "BDT",
+      balance: Number(body.balance ?? 0),
+      currencyCode: body.currencyCode ?? "BDT",
       language: body.language ?? "en",
-      platform: body.platform ?? 1,
-      home_url: body.home_url ?? "",
-      transfer_id: body.transfer_id ?? `tx_${Date.now()}`,
+      platform: String(body.platform ?? 1),
+      homeUrl: body.homeUrl ?? "",
+      transfer_id: body.transfer_id ?? generateTransferId(),
     };
 
-    const response = await fetch(proxyUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    let result = await postGameLaunch(launchUrl, payload);
 
-    const data = (await response.json().catch(() => null)) as RemoteLaunchResponse | null;
+    if (isTransferOrderExists(result.data)) {
+      payload.transfer_id = generateTransferId();
+      result = await postGameLaunch(launchUrl, payload);
+    }
 
-    if (!response.ok) {
+    if (!result.ok || result.data?.success === false) {
       return NextResponse.json(
         {
-          error:
-            data?.error ??
-            data?.msg ??
-            `Remote server error: ${response.statusText}`,
-          status: response.status,
+          error: remoteErrorMessage(
+            result.data,
+            `Remote server error: ${result.statusText}`,
+          ),
+          status: result.status,
         },
-        { status: response.status },
+        { status: result.status || 502 },
       );
     }
 
-    return NextResponse.json(data, { status: 200 });
+    return NextResponse.json(result.data, { status: 200 });
   } catch (error: unknown) {
     const message =
       error instanceof Error

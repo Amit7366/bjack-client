@@ -6,15 +6,14 @@ services:
       args:
         NEXT_PUBLIC_SOCKET_URL: https://bkbajiapi.xyz
         NEXT_PUBLIC_SITE_URL: https://bkbaji.com
-        NEXT_PUBLIC_GAME_PLAYER_PREFIX: h94044
     ports:
       - "3020:3000" # VPS host 3020 (3000 is used by another service)
     environment:
       NODE_ENV: production
       API_URL: https://bkbajiapi.xyz
-      GAME_LAUNCH_PROXY_URL: https://txserver.site/newGameLaunch.php
-      GAME_AGENCY_UID: 214391ef6669df671affeb79414d400e
-      NEXT_PUBLIC_GAME_PLAYER_PREFIX: h94044
+      GAME_LAUNCH_URL: https://apivexo.com/api/game/v1/gamelaunch
+      GAME_API_SECRET: 483fb0fd241d4f37feea9dc36a7f00e669941c5837cff2aca072aa909f6be8f8
+      GAME_API_PREFIX: CTT2J
       NEXT_PUBLIC_SITE_URL: https://bkbaji.com
       NEXT_PUBLIC_SOCKET_URL: https://bkbajiapi.xyz
     restart: unless-stopped

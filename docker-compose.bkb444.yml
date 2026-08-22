@@ -8,16 +8,15 @@ services:
       args:
         NEXT_PUBLIC_SOCKET_URL: https://api.bkb444.site
         NEXT_PUBLIC_SITE_URL: https://bkb444.site
-        NEXT_PUBLIC_GAME_PLAYER_PREFIX: h94044
     ports:
       # Unique host port so this stack does not collide with other apps on the VPS
       - "127.0.0.1:3044:3000"
     environment:
       NODE_ENV: production
       API_URL: https://api.bkb444.site
-      GAME_LAUNCH_PROXY_URL: https://txserver.site/newGameLaunch.php
-      GAME_AGENCY_UID: 214391ef6669df671affeb79414d400e
-      NEXT_PUBLIC_GAME_PLAYER_PREFIX: h94044
+      GAME_LAUNCH_URL: https://apivexo.com/api/game/v1/gamelaunch
+      GAME_API_SECRET: 483fb0fd241d4f37feea9dc36a7f00e669941c5837cff2aca072aa909f6be8f8
+      GAME_API_PREFIX: CTT2J
       NEXT_PUBLIC_SITE_URL: https://bkb444.site
       NEXT_PUBLIC_SOCKET_URL: https://api.bkb444.site
     restart: unless-stopped
