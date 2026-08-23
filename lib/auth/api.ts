@@ -10,6 +10,7 @@ import { clearAuthSession, enrichSession, readAuthSession, saveAuthSession, type
 import { isAccountStatus } from "@/lib/account-status";
 import { clearLocalWallet, initWalletFromDb, reanchorWalletFromDb } from "@/lib/wallet-local-state";
 import { getDeviceFingerprint } from "@/lib/device-fingerprint";
+import { isGameSessionPending } from "@/lib/game-session-pending";
 
 async function requestJson<T>(
   path: string,
@@ -170,6 +171,10 @@ export async function refreshWalletBalance(): Promise<string | undefined> {
 
 /** DB balance + revision for cross-device / re-anchor checks. */
 export async function fetchWalletMeta(): Promise<WalletMeta | undefined> {
+  // While returning from a game, Mongo is still 0 until getwithdraw finishes.
+  // Do not paint that 0 into the navbar.
+  if (isGameSessionPending()) return undefined;
+
   const current = readAuthSessionForRequest();
   const memberId = current?.memberId;
   if (!current?.accessToken || !memberId) return undefined;

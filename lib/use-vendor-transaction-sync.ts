@@ -3,7 +3,12 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { fetchWalletMeta } from "@/lib/auth/api";
-import { prepareBalanceForGameLaunch } from "@/lib/game-balance-sync";
+import {
+  handleGameReturnBalance,
+  isBalanceUpdatePending,
+  prepareBalanceForGameLaunch,
+} from "@/lib/game-balance-sync";
+import { isGameSessionPending } from "@/lib/game-session-pending";
 import {
   ensureWalletReady,
   readLocalWallet,
@@ -23,6 +28,17 @@ export function useVendorTransactionSync(enabled = true) {
 
     runningRef.current = true;
     try {
+      try {
+        await handleGameReturnBalance();
+      } catch {
+        /* retry on next focus */
+      }
+
+      if (isBalanceUpdatePending() || isGameSessionPending()) {
+        refreshSession();
+        return;
+      }
+
       const local = readLocalWallet(session.memberId);
       // While silent persist runs, keep showing preview balance — do not pull stale DB.
       if (local?.pendingPersist) {

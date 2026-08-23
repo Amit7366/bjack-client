@@ -4,9 +4,20 @@ import { authFetchJson } from "@/lib/auth/auth-fetch";
 import { isJwtExpired } from "@/lib/auth/jwt";
 import { handleSessionExpired } from "@/lib/auth/session-expired";
 import { AUTH_CHANGE_EVENT, readAuthSession, saveAuthSession } from "@/lib/auth/session";
+import {
+  clearGameSessionPending,
+  isGameSessionPending,
+  markGameSessionPending,
+} from "@/lib/game-session-pending";
 import { notifyTurnoverRefresh } from "@/lib/game-return-events";
 
-const SYNC_TIMEOUT_MS = 20_000;
+export {
+  clearGameSessionPending,
+  isGameSessionPending,
+  markGameSessionPending,
+};
+
+const SYNC_TIMEOUT_MS = 45_000;
 
 export type GameReturnWithdrawResult = {
   currentBalance: number;
@@ -17,17 +28,8 @@ export type GameReturnWithdrawResult = {
   walletRevision: number;
 };
 
-/** In-memory only — no localStorage. Survives until page unload / redirect. */
+/** In-memory only for the current page lifetime; pending flag also lives in sessionStorage. */
 let inflightReturn: Promise<GameReturnWithdrawResult | null> | null = null;
-let gameSessionPending = false;
-
-export function markGameSessionPending() {
-  gameSessionPending = true;
-}
-
-export function clearGameSessionPending() {
-  gameSessionPending = false;
-}
 
 /** True while return-withdraw is in flight. */
 export function isBalancePreviewInflight(): boolean {
@@ -35,11 +37,11 @@ export function isBalancePreviewInflight(): boolean {
 }
 
 /**
- * True when UI must wait before launching another game
- * (in-flight return withdraw, or prepare-launch just ran this page lifetime).
+ * True when UI must wait before launching another game or GET-ing Mongo balance.
+ * sessionStorage survives redirect to the game provider in the same tab.
  */
 export function isBalanceUpdatePending(): boolean {
-  return inflightReturn != null || gameSessionPending;
+  return inflightReturn != null || isGameSessionPending();
 }
 
 /** @deprecated localStorage tracker removed — always false. */
@@ -144,7 +146,9 @@ export async function handleGameReturnBalance(): Promise<GameReturnWithdrawResul
       Number(result.currentBalance).toFixed(2);
 
     saveAuthSession({ ...readAuthSession()!, balance: formatted });
-    clearGameSessionPending();
+    if (!result.gameSessionActive) {
+      clearGameSessionPending();
+    }
     notifyTurnoverRefresh();
 
     if (typeof window !== "undefined") {

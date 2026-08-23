@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
   }, [authReady, session?.accessToken, session?.role, refreshSession]);
 
-  /** On load: restore game wallet first, then read Mongo (avoid GET 0 overwriting withdraw). */
+  /** On load: restore game wallet. Do not GET Mongo until withdraw has cleared the pending flag. */
   useEffect(() => {
     if (!authReady || !session?.accessToken || !session.memberId) return;
     void (async () => {
@@ -146,7 +146,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch {
         /* gameSessionActive stays true; retry on next focus / game tap */
       }
-      await refreshWalletBalance();
+      if (!isBalanceUpdatePending()) {
+        await refreshWalletBalance();
+      }
       refreshSession();
     })();
   }, [authReady, session?.accessToken, session?.memberId, refreshSession]);
@@ -183,10 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [authReady, session?.memberId, syncWalletFromServer]);
 
   const refreshBalance = useCallback(async () => {
-    await syncWalletFromServer({
-      gameReturn: isBalanceUpdatePending(),
-      forceDb: true,
-    });
+    await syncWalletFromServer({ gameReturn: true });
   }, [syncWalletFromServer]);
 
   const logout = useCallback(async () => {

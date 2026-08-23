@@ -64,6 +64,7 @@ export async function authFetch(path: string, init?: RequestInit): Promise<Respo
   const res = await fetch(`${API_PREFIX}${path}`, {
     ...init,
     credentials: "include",
+    cache: "no-store",
     headers: buildAuthHeaders(session, init),
   });
 
@@ -86,6 +87,7 @@ export async function authFetchJson<T>(
   const res = await fetch(`${API_PREFIX}${path}`, {
     ...init,
     credentials: "include",
+    cache: "no-store",
     headers: buildAuthHeaders(session, init),
   });
 
