@@ -13,9 +13,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# NEXT_PUBLIC_* must be present at `next build` (baked into client JS)
-ARG NEXT_PUBLIC_SOCKET_URL=https://bkbajiapi.xyz
-ARG NEXT_PUBLIC_SITE_URL=https://bkbaji.com
+# NEXT_PUBLIC_* must be present at `next build` (baked into client JS).
+# Pass production URLs as build args on the new VPS.
+ARG NEXT_PUBLIC_SOCKET_URL=http://localhost:8000
+ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ENV NEXT_PUBLIC_SOCKET_URL=$NEXT_PUBLIC_SOCKET_URL
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
