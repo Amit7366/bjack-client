@@ -148,7 +148,7 @@ export default function FooterBottomSection() {
 
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
         <a href="#" className="text-[26px] font-bold tracking-tight">
-          <span className="text-white">bk</span>
+          <span className="text-white">Raja</span>
           <span className="text-[#ed1c24]">baji</span>
         </a>
         <div>

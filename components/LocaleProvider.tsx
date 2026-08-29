@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import type { LocalePreferences } from "@/lib/locale";
-import { buildPreferences, savePreferences } from "@/lib/locale-storage";
+import { buildPreferences, savePreferences } from "@/lib/locale-storage-client";
 import type { Country, Locale } from "@/lib/locale";
 import { getMessages, type Messages } from "@/lib/i18n/messages";
 

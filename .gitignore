@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/game-launch
+/docs
 
 # next.js
 /.next/
