@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { getHomePromoMessages } from "@/lib/i18n/home-promo-messages";
-import { BKBAJI_ANDROID_APP_PATH, SITE_ICONS, SITE_NAME } from "@/lib/seo/site-config";
+import { rajabaji_ANDROID_APP_PATH, SITE_ICONS, SITE_NAME } from "@/lib/seo/site-config";
 
 type HomePromoSliderModalProps = {
   open: boolean;
@@ -140,7 +140,7 @@ function AppDownloadSlide() {
         </div>
 
         <a
-          href={BKBAJI_ANDROID_APP_PATH}
+          href={rajabaji_ANDROID_APP_PATH}
           download
           className="focus-ring mx-auto mt-3 block w-full max-w-[92%] rounded-full bg-gradient-to-r from-[#27ae60] to-[#1e8449] py-2.5 text-center text-[13px] font-bold text-white shadow-md"
         >

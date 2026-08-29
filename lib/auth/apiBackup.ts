@@ -27,7 +27,7 @@ async function requestJson<T>(
 
 function readAuthSessionForRequest(): AuthSession | null {
   try {
-    const raw = localStorage.getItem("bkbaji.auth");
+    const raw = localStorage.getItem("rajabaji.auth");
     if (!raw) return null;
     return enrichSession(JSON.parse(raw) as AuthSession);
   } catch {

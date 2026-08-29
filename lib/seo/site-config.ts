@@ -1,11 +1,11 @@
 /** Canonical public site URL (no trailing slash). */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://bkbaji.com").replace(
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://rajabaji.com").replace(
   /\/$/,
   "",
 );
 
-export const SITE_NAME = "BKBaji";
-export const SITE_SHORT_NAME = "BKBaji";
+export const SITE_NAME = "rajabaji";
+export const SITE_SHORT_NAME = "rajabaji";
 
 export const SITE_LEGAL_NAME = "Northern Lights Limited Holdings Limited";
 export const SITE_CONTACT_EMAIL = "legal@northernlightsltd.com";
@@ -17,7 +17,7 @@ export const SITE_LICENSE = "ALSI-202410030-FI1";
 export const SITE_DEFAULT_LOCALE = "bn" as const;
 
 /** Official Android APK served from `public/download/`. */
-export const BKBAJI_ANDROID_APP_PATH = "/download/bkbaji/bkbaji.apk";
+export const rajabaji_ANDROID_APP_PATH = "/download/rajabaji/rajabaji.apk";
 
 /** Brand & PWA icons — self-hosted from `public/icons/`. */
 export const SITE_ICONS = {
@@ -29,7 +29,7 @@ export const SITE_ICONS = {
 } as const;
 
 export const SITE_SOCIAL = {
-  twitter: "@bkbaji",
+  twitter: "@rajabaji",
 } as const;
 
 export function absoluteUrl(path = ""): string {

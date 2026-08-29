@@ -54,7 +54,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="utf-8" />
-  <title>BKBaji QA Test Script (BN)</title>
+  <title>rajabaji QA Test Script (BN)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet" />

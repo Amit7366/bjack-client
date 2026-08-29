@@ -31,7 +31,7 @@ const en: ReferralMessages = {
   pageTitle: "Referral Program",
   whatIsTitle: "What is the Referral Program?",
   whatIsP1:
-    "The BKBaji Referral Program is one of the most rewarding ways to earn extra cash. Invite your friends to join BKBaji and earn unlimited commission when they play or bet on our platform.",
+    "The rajabaji Referral Program is one of the most rewarding ways to earn extra cash. Invite your friends to join rajabaji and earn unlimited commission when they play or bet on our platform.",
   whatIsP2:
     "There is no limit to how much you can earn. The more friends you refer, the more rewards you receive. Start sharing your referral link today and watch your earnings grow!",
   rules: "Rules",
@@ -60,7 +60,7 @@ const bn: ReferralMessages = {
   pageTitle: "রেফারেল প্রোগ্রাম",
   whatIsTitle: "রেফারেল প্রোগ্রাম কি?",
   whatIsP1:
-    "BKBaji রেফারেল প্রোগ্রাম অতিরিক্ত ক্যাশ উপার্জনের সবচেয়ে লাভজনক উপায়গুলির মধ্যে একটি। আপনার বন্ধুদের BKBaji-তে যোগ দিতে আমন্ত্রণ জানান এবং তারা যখন আমাদের প্ল্যাটফর্মে খেলবে বা বেট ধরবে তখন আনলিমিটেড কমিশন উপার্জন করুন।",
+    "rajabaji রেফারেল প্রোগ্রাম অতিরিক্ত ক্যাশ উপার্জনের সবচেয়ে লাভজনক উপায়গুলির মধ্যে একটি। আপনার বন্ধুদের rajabaji-তে যোগ দিতে আমন্ত্রণ জানান এবং তারা যখন আমাদের প্ল্যাটফর্মে খেলবে বা বেট ধরবে তখন আনলিমিটেড কমিশন উপার্জন করুন।",
   whatIsP2:
     "আপনি কতটা উপার্জন করতে পারবেন তার কোনো সীমা নেই। যত বেশি বন্ধুকে রেফার করবেন, তত বেশি রিওয়ার্ড পাবেন। আজই আপনার রেফারেল লিংক শেয়ার করা শুরু করুন এবং আপনার আয় বাড়তে দেখুন!",
   rules: "নিয়মাবলী",
@@ -89,7 +89,7 @@ const hi: ReferralMessages = {
   pageTitle: "रेफरल प्रोग्राम",
   whatIsTitle: "रेफरल प्रोग्राम क्या है?",
   whatIsP1:
-    "BKBaji रेफरल प्रोग्राम अतिरिक्त कैश कमाने के सबसे लाभकारी तरीकों में से एक है। अपने दोस्तों को BKBaji में शामिल होने के लिए आमंत्रित करें और जब वे खेलें या बेट लगाएं तो असीमित कमीशन कमाएं।",
+    "rajabaji रेफरल प्रोग्राम अतिरिक्त कैश कमाने के सबसे लाभकारी तरीकों में से एक है। अपने दोस्तों को rajabaji में शामिल होने के लिए आमंत्रित करें और जब वे खेलें या बेट लगाएं तो असीमित कमीशन कमाएं।",
   whatIsP2:
     "आप कितना कमा सकते हैं इसकी कोई सीमा नहीं है। जितने अधिक दोस्तों को रेफर करेंगे, उतने अधिक रिवॉर्ड पाएंगे। आज ही अपना रेफरल लिंक शेयर करना शुरू करें!",
   rules: "नियम",

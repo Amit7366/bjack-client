@@ -18,7 +18,7 @@ export type VipMessages = {
 const en: VipMessages = {
   pageTitle: "VIP Details",
   back: "Back",
-  heroTitle: "BKBaji VIP Club",
+  heroTitle: "rajabaji VIP Club",
   heroSubtitle: "The most exclusive VIP program yet",
   joinNow: "Join Now!",
   benefits: {
@@ -30,12 +30,12 @@ const en: VipMessages = {
     exclusiveRewards: {
       title: "VIP Exclusive Rewards",
       description:
-        "Who doesn't love getting something extra? Stay on your way to increasing the fun in the casino with exclusive rewards! Getting the chance to benefit from exclusive offers is one of the biggest advantages of joining our BKBaji VIP Club. We provide plenty of bonuses, cash prizes, level-up rewards, and surprise gifts throughout the year.",
+        "Who doesn't love getting something extra? Stay on your way to increasing the fun in the casino with exclusive rewards! Getting the chance to benefit from exclusive offers is one of the biggest advantages of joining our rajabaji VIP Club. We provide plenty of bonuses, cash prizes, level-up rewards, and surprise gifts throughout the year.",
     },
     pointsToCash: {
       title: "'VIP Points to Cash' Redemption",
       description:
-        "You can exchange your VIP points for cash without any limitations. When you play or bet on BKBaji, you will earn VIP points—an exchangeable currency that can be used to earn extra cash across all BKBaji products!",
+        "You can exchange your VIP points for cash without any limitations. When you play or bet on rajabaji, you will earn VIP points—an exchangeable currency that can be used to earn extra cash across all rajabaji products!",
     },
     paymentChannel: {
       title: "VIP Payment Channel",
@@ -48,7 +48,7 @@ const en: VipMessages = {
 const bn: VipMessages = {
   pageTitle: "ভিআইপি বিবরণ",
   back: "পিছনে",
-  heroTitle: "BKBaji ভিআইপি ক্লাব",
+  heroTitle: "rajabaji ভিআইপি ক্লাব",
   heroSubtitle: "এখনও পর্যন্ত সবচেয়ে এক্সক্লুসিভ ভিআইপি প্রোগ্রাম",
   joinNow: "এখনই যোগ দিন!",
   benefits: {
@@ -60,12 +60,12 @@ const bn: VipMessages = {
     exclusiveRewards: {
       title: "ভিআইপি এক্সক্লুসিভ রিওয়ার্ড",
       description:
-        "এক্সট্রা কিছু পেতে কে না পছন্দ করে? এক্সক্লুসিভ রিওয়ার্ড সহ ক্যাসিনোতে আনন্দ বৃদ্ধি করতে আপনার পথেই থাকুন! এক্সক্লুসিভ অফার থেকে উপকৃত হওয়ার সুযোগ পাওয়া মানে হল আমাদের BKBaji ভিআইপি ক্লাবে যোগদানের সবচেয়ে বড় সুবিধাগুলির মধ্যে একটি। আমরা সারা বছর ধরে প্রচুর পরিমাণে বোনাস, ক্যাশ প্রাইজ, লেভেল আপ রিওয়ার্ড এবং চমক গিফট দিয়ে থাকি।",
+        "এক্সট্রা কিছু পেতে কে না পছন্দ করে? এক্সক্লুসিভ রিওয়ার্ড সহ ক্যাসিনোতে আনন্দ বৃদ্ধি করতে আপনার পথেই থাকুন! এক্সক্লুসিভ অফার থেকে উপকৃত হওয়ার সুযোগ পাওয়া মানে হল আমাদের rajabaji ভিআইপি ক্লাবে যোগদানের সবচেয়ে বড় সুবিধাগুলির মধ্যে একটি। আমরা সারা বছর ধরে প্রচুর পরিমাণে বোনাস, ক্যাশ প্রাইজ, লেভেল আপ রিওয়ার্ড এবং চমক গিফট দিয়ে থাকি।",
     },
     pointsToCash: {
       title: "'ভিআইপি পয়েন্টস টু ক্যাশ' রিডেম্পশন",
       description:
-        "আপনি কোন সীমাবদ্ধতা ছাড়াই ক্যাশের সাথে আপনার ভিআইপি পয়েন্ট এক্সচেঞ্জ করতে পারবেন। আপনি যখন BKBaji-তে খেলবেন বা বেট ধরবেন, তখন আপনি ভিআইপি পয়েন্ট অর্জন করবেন, এটি একটি বিনিময়যোগ্য কারেন্সি যা BKBaji-র সকল প্রোডাক্ট জুড়ে অতিরিক্ত ক্যাশ উপার্জন করতে ব্যবহার করা যাবে!",
+        "আপনি কোন সীমাবদ্ধতা ছাড়াই ক্যাশের সাথে আপনার ভিআইপি পয়েন্ট এক্সচেঞ্জ করতে পারবেন। আপনি যখন rajabaji-তে খেলবেন বা বেট ধরবেন, তখন আপনি ভিআইপি পয়েন্ট অর্জন করবেন, এটি একটি বিনিময়যোগ্য কারেন্সি যা rajabaji-র সকল প্রোডাক্ট জুড়ে অতিরিক্ত ক্যাশ উপার্জন করতে ব্যবহার করা যাবে!",
     },
     paymentChannel: {
       title: "ভিআইপি পেমেন্ট চ্যানেল",
@@ -78,7 +78,7 @@ const bn: VipMessages = {
 const hi: VipMessages = {
   pageTitle: "VIP विवरण",
   back: "वापस",
-  heroTitle: "BKBaji VIP क्लब",
+  heroTitle: "rajabaji VIP क्लब",
   heroSubtitle: "अब तक का सबसे विशेष VIP प्रोग्राम",
   joinNow: "अभी जुड़ें!",
   benefits: {
@@ -90,12 +90,12 @@ const hi: VipMessages = {
     exclusiveRewards: {
       title: "VIP एक्सक्लूसिव रिवॉर्ड्स",
       description:
-        "कौन अतिरिक्त लाभ पाना पसंद नहीं करता? एक्सक्लूसिव रिवॉर्ड्स के साथ कैसीनो में मज़ा बढ़ाएँ! विशेष ऑफ़र का लाभ पाने का मौका BKBaji VIP क्लब में शामिल होने के सबसे बड़े फायदों में से एक है। हम पूरे साल बोनस, कैश प्राइज़, लेवल-अप रिवॉर्ड्स और सरप्राइज़ गिफ्ट देते हैं।",
+        "कौन अतिरिक्त लाभ पाना पसंद नहीं करता? एक्सक्लूसिव रिवॉर्ड्स के साथ कैसीनो में मज़ा बढ़ाएँ! विशेष ऑफ़र का लाभ पाने का मौका rajabaji VIP क्लब में शामिल होने के सबसे बड़े फायदों में से एक है। हम पूरे साल बोनस, कैश प्राइज़, लेवल-अप रिवॉर्ड्स और सरप्राइज़ गिफ्ट देते हैं।",
     },
     pointsToCash: {
       title: "'VIP पॉइंट्स टू कैश' रिडेम्प्शन",
       description:
-        "आप बिना किसी सीमा के अपने VIP पॉइंट्स को कैश में बदल सकते हैं। BKBaji पर खेलते या बेट लगाते समय आप VIP पॉइंट्स कमाएँगे—यह एक विनिमेय मुद्रा है जिसे सभी BKBaji प्रोडक्ट्स में अतिरिक्त कैश कमाने के लिए इस्तेमाल किया जा सकता है!",
+        "आप बिना किसी सीमा के अपने VIP पॉइंट्स को कैश में बदल सकते हैं। rajabaji पर खेलते या बेट लगाते समय आप VIP पॉइंट्स कमाएँगे—यह एक विनिमेय मुद्रा है जिसे सभी rajabaji प्रोडक्ट्स में अतिरिक्त कैश कमाने के लिए इस्तेमाल किया जा सकता है!",
     },
     paymentChannel: {
       title: "VIP पेमेंट चैनल",

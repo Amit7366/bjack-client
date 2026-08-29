@@ -6,7 +6,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { fetchSpinStatus, type SpinStatus } from "@/lib/spin-api";
 import SpinWheelModal from "./SpinWheelModal";
 
-const DISMISS_KEY_PREFIX = "bkbaji.spin.dismissed.";
+const DISMISS_KEY_PREFIX = "rajabaji.spin.dismissed.";
 
 function todayKey(): string {
   return new Date().toISOString().slice(0, 10);

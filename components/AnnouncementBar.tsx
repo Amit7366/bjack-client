@@ -1,6 +1,6 @@
 "use client";
 
-import { absoluteUrl, BKBAJI_ANDROID_APP_PATH } from "@/lib/seo/site-config";
+import { absoluteUrl, rajabaji_ANDROID_APP_PATH } from "@/lib/seo/site-config";
 import { useLocale } from "./LocaleProvider";
 
 function MegaphoneIcon() {
@@ -15,7 +15,7 @@ function MegaphoneIcon() {
   );
 }
 
-const ANNOUNCEMENT_DOWNLOAD_URL = absoluteUrl(BKBAJI_ANDROID_APP_PATH);
+const ANNOUNCEMENT_DOWNLOAD_URL = absoluteUrl(rajabaji_ANDROID_APP_PATH);
 
 function AnnouncementText({ text }: { text: string }) {
   const linkIndex = text.indexOf(ANNOUNCEMENT_DOWNLOAD_URL);
@@ -27,7 +27,7 @@ function AnnouncementText({ text }: { text: string }) {
     <span>
       {text.slice(0, linkIndex)}
       <a
-        href={BKBAJI_ANDROID_APP_PATH}
+        href={rajabaji_ANDROID_APP_PATH}
         download
         className="pointer-events-auto font-medium text-[#2cb86e] underline decoration-[#2cb86e]/50 underline-offset-2 transition-colors hover:text-[#8ef0b4] hover:decoration-[#8ef0b4]"
       >

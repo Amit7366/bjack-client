@@ -10,7 +10,7 @@ import {
 } from "./sidebar-menu";
 import { ExternalLinkIcon, LiveSupportIcon, SubItemIcon, menuIconFor } from "./SidebarIcons";
 import { sidebarItemHref, sidebarSubItemHref } from "@/lib/sidebar-routes";
-import { BKBAJI_ANDROID_APP_PATH } from "@/lib/seo/site-config";
+import { rajabaji_ANDROID_APP_PATH } from "@/lib/seo/site-config";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./AuthProvider";
 import { memberLiveChatHref } from "@/lib/member-routes";
@@ -88,7 +88,7 @@ function MenuRow({ item, expandedId, onToggleItem }: MenuRowProps) {
     const href = sidebarItemHref(preferences.locale, item.id);
     const rowClass =
       "flex w-full items-center gap-3 px-3 py-[13px] text-left transition-opacity hover:opacity-90";
-    if (href === BKBAJI_ANDROID_APP_PATH) {
+    if (href === rajabaji_ANDROID_APP_PATH) {
       return (
         <a href={href} download className={rowClass}>
           {icon}
@@ -288,7 +288,7 @@ export default function SideNavigation({
               const label = t.sidebar[item.id] ?? item.id;
               const railClass =
                 "focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-[#262626]";
-              if (href === BKBAJI_ANDROID_APP_PATH) {
+              if (href === rajabaji_ANDROID_APP_PATH) {
                 return (
                   <a
                     key={item.id}

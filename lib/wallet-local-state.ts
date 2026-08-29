@@ -3,7 +3,7 @@
 import { formatWalletBalance, refreshWalletBalance } from "@/lib/auth/api";
 import { readAuthSession, saveAuthSession } from "@/lib/auth/session";
 
-export const WALLET_LOCAL_CHANGE_EVENT = "bkbaji-wallet-local-change";
+export const WALLET_LOCAL_CHANGE_EVENT = "rajabaji-wallet-local-change";
 export const ANCHOR_TTL_MS = 2 * 60 * 60 * 1000;
 const DRIFT_TOLERANCE = 0.01;
 

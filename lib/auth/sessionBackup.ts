@@ -6,8 +6,8 @@ import {
 } from "./constants";
 import { parseJwtPayload } from "./jwt";
 
-const AUTH_STORAGE_KEY = "bkbaji.auth";
-export const AUTH_CHANGE_EVENT = "bkbaji-auth-change";
+const AUTH_STORAGE_KEY = "rajabaji.auth";
+export const AUTH_CHANGE_EVENT = "rajabaji-auth-change";
 
 export type AuthSession = {
   accessToken: string;

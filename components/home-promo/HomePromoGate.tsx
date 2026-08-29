@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import HomePromoSliderModal from "./HomePromoSliderModal";
 
-const DISMISS_KEY_PREFIX = "bkbaji.homePromo.dismissed.";
+const DISMISS_KEY_PREFIX = "rajabaji.homePromo.dismissed.";
 
 function todayKey(): string {
   return new Date().toISOString().slice(0, 10);

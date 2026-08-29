@@ -1,11 +1,11 @@
 /** Fired when user is about to leave for the external game URL. */
-export const GAME_DEPARTING_EVENT = "bkbaji:game-departing";
+export const GAME_DEPARTING_EVENT = "rajabaji:game-departing";
 
 /** Fired when user returns to the site after playing (pageshow / focus). */
-export const GAME_RETURN_EVENT = "bkbaji:game-return";
+export const GAME_RETURN_EVENT = "rajabaji:game-return";
 
 /** Fired after game txn sync so turnover UI can refresh immediately. */
-export const TURNOVER_REFRESH_EVENT = "bkbaji:turnover-refresh";
+export const TURNOVER_REFRESH_EVENT = "rajabaji:turnover-refresh";
 
 export function notifyTurnoverRefresh() {
   if (typeof window === "undefined") return;

@@ -161,7 +161,7 @@ export default function FooterBottomSection() {
 
       <div className="space-y-3 text-[11px] leading-[1.7] text-[#6b7280]">
         <p>
-          <span className="text-[#4ade80]">bkbaji.com</span> {b.legalOwnership}
+          <span className="text-[#4ade80]">rajabaji.com</span> {b.legalOwnership}
         </p>
         <p>
           {b.legalContactPrefix}{" "}
@@ -171,10 +171,10 @@ export default function FooterBottomSection() {
           .
         </p>
         <p>
-          <span className="text-[#4ade80]">bkbaji.com</span> {b.legalLicense}
+          <span className="text-[#4ade80]">rajabaji.com</span> {b.legalLicense}
         </p>
         <p>
-          <span className="text-[#4ade80]">bkbaji.com</span> {b.legalCompliance}
+          <span className="text-[#4ade80]">rajabaji.com</span> {b.legalCompliance}
         </p>
       </div>
     </>

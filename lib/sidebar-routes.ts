@@ -1,7 +1,7 @@
 import type { HomeTabId } from "./home-games-data";
 import { memberLiveChatHref } from "./member-routes";
 import {
-  BKBAJI_ANDROID_APP_PATH,
+  rajabaji_ANDROID_APP_PATH,
   SITE_SUPPORT_EMAIL,
   SITE_TELEGRAM_URL,
 } from "./seo/site-config";
@@ -54,7 +54,7 @@ export function sidebarLobbyKind(itemId: string): LobbyKind | undefined {
 
 /** Internal sidebar link targets; `null` = placeholder (#). */
 export function sidebarItemHref(locale: string, itemId: string): string | null {
-  if (itemId === "appDownload") return BKBAJI_ANDROID_APP_PATH;
+  if (itemId === "appDownload") return rajabaji_ANDROID_APP_PATH;
   if (itemId === "vipClub") return `/${locale}/vip`;
   if (itemId === "referral") return `/${locale}/referral`;
   const kind = SIDEBAR_TO_LOBBY[itemId];

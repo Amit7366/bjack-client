@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useLocale } from "@/components/LocaleProvider";
 import { useToast } from "@/components/ToastProvider";
 import { usePwaInstall } from "@/lib/use-pwa-install";
-import { BKBAJI_ANDROID_APP_PATH, SITE_ICONS } from "@/lib/seo/site-config";
+import { rajabaji_ANDROID_APP_PATH, SITE_ICONS } from "@/lib/seo/site-config";
 
 type AppDownloadPromptProps = {
   onClose: () => void;
@@ -82,7 +82,7 @@ export default function AppDownloadPrompt({ onClose }: AppDownloadPromptProps) {
 
       <div className="mt-4 flex gap-3">
         <a
-          href={BKBAJI_ANDROID_APP_PATH}
+          href={rajabaji_ANDROID_APP_PATH}
           download
           className="relative flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#3b82f6] py-3 text-sm font-bold text-white"
         >

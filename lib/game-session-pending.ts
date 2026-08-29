@@ -1,4 +1,4 @@
-const GAME_SESSION_PENDING_KEY = "bkbaji.gameSessionPending";
+const GAME_SESSION_PENDING_KEY = "rajabaji.gameSessionPending";
 
 let memoryPending = false;
 

@@ -24,7 +24,7 @@ import {
   memberSuggestionHref,
   memberWithdrawHref,
 } from "@/lib/member-routes";
-import { BKBAJI_ANDROID_APP_PATH } from "@/lib/seo/site-config";
+import { rajabaji_ANDROID_APP_PATH } from "@/lib/seo/site-config";
 import {
   fetchMyNormalUserProfile,
   type NormalUserProfile,
@@ -391,7 +391,7 @@ export default function MemberCenterPage() {
               return (
                 <a
                   key={id}
-                  href={BKBAJI_ANDROID_APP_PATH}
+                  href={rajabaji_ANDROID_APP_PATH}
                   download
                   className={className}
                 >

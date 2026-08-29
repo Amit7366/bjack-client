@@ -82,7 +82,7 @@ export default function HomeJsonLd({ locale }: { locale: Locale }) {
           price: "0",
           priceCurrency: "BDT",
         },
-        url: absoluteUrl("/download/bkbaji/bkbaji.apk"),
+        url: absoluteUrl("/download/rajabaji/rajabaji.apk"),
       },
     ],
   };

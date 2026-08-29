@@ -20,12 +20,12 @@ type HomeSeoCopy = {
 
 const HOME_SEO: Record<Locale, HomeSeoCopy> = {
   en: {
-    title: "BKBaji — Online Casino, Slots, Crash & Sports Betting in Bangladesh",
+    title: "rajabaji — Online Casino, Slots, Crash & Sports Betting in Bangladesh",
     description:
-      "Play casino, live dealer, slots, crash, fishing, arcade & sports betting at BKBaji. Fast BDT deposits & withdrawals, JILI, PG Soft & Evolution games, VIP rewards, referral bonuses & 24/7 support on Bangladesh's trusted gaming platform.",
+      "Play casino, live dealer, slots, crash, fishing, arcade & sports betting at rajabaji. Fast BDT deposits & withdrawals, JILI, PG Soft & Evolution games, VIP rewards, referral bonuses & 24/7 support on Bangladesh's trusted gaming platform.",
     keywords: [
-      "BKBaji",
-      "bkbaji.com",
+      "rajabaji",
+      "rajabaji.com",
       "online casino Bangladesh",
       "sports betting Bangladesh",
       "online slots Bangladesh",
@@ -48,12 +48,12 @@ const HOME_SEO: Record<Locale, HomeSeoCopy> = {
     ogLocale: "en_BD",
   },
   bn: {
-    title: "BKBaji — বাংলাদেশের শীর্ষ অনলাইন ক্যাসিনো, স্লট ও স্পোর্টস বেটিং",
+    title: "rajabaji — বাংলাদেশের শীর্ষ অনলাইন ক্যাসিনো, স্লট ও স্পোর্টস বেটিং",
     description:
-      "BKBaji-তে ক্যাসিনো, লাইভ ডিলার, স্লট, ক্র্যাশ, ফিশিং, আর্কেড ও স্পোর্টস বেটিং খেলুন। দ্রুত BDT ডিপোজিট ও উইথড্র, JILI, PG Soft ও Evolution গেম, ভিআইপি রিওয়ার্ড, রেফারেল বোনাস ও ২৪/৭ সাপোর্ট — বাংলাদেশের বিশ্বস্ত গেমিং প্ল্যাটফর্ম।",
+      "rajabaji-তে ক্যাসিনো, লাইভ ডিলার, স্লট, ক্র্যাশ, ফিশিং, আর্কেড ও স্পোর্টস বেটিং খেলুন। দ্রুত BDT ডিপোজিট ও উইথড্র, JILI, PG Soft ও Evolution গেম, ভিআইপি রিওয়ার্ড, রেফারেল বোনাস ও ২৪/৭ সাপোর্ট — বাংলাদেশের বিশ্বস্ত গেমিং প্ল্যাটফর্ম।",
     keywords: [
-      "BKBaji",
-      "bkbaji.com",
+      "rajabaji",
+      "rajabaji.com",
       "অনলাইন ক্যাসিনো বাংলাদেশ",
       "স্পোর্টস বেটিং",
       "অনলাইন স্লট",
@@ -76,12 +76,12 @@ const HOME_SEO: Record<Locale, HomeSeoCopy> = {
     ogLocale: "bn_BD",
   },
   hi: {
-    title: "BKBaji — बांग्लादेश में ऑनलाइन कैसीनो, स्लॉट और स्पोर्ट्स बेटिंग",
+    title: "rajabaji — बांग्लादेश में ऑनलाइन कैसीनो, स्लॉट और स्पोर्ट्स बेटिंग",
     description:
-      "BKBaji पर कैसीनो, लाइव डीलर, स्लॉट, क्रैश, फिशिंग, आर्केड और स्पोर्ट्स बेटिंग खेलें। तेज़ BDT जमा और निकासी, JILI, PG Soft और Evolution गेम, VIP रिवॉर्ड्स, रेफरल बोनस और 24/7 सपोर्ट — भरोसेमंद गेमिंग प्लेटफॉर्म।",
+      "rajabaji पर कैसीनो, लाइव डीलर, स्लॉट, क्रैश, फिशिंग, आर्केड और स्पोर्ट्स बेटिंग खेलें। तेज़ BDT जमा और निकासी, JILI, PG Soft और Evolution गेम, VIP रिवॉर्ड्स, रेफरल बोनस और 24/7 सपोर्ट — भरोसेमंद गेमिंग प्लेटफॉर्म।",
     keywords: [
-      "BKBaji",
-      "bkbaji.com",
+      "rajabaji",
+      "rajabaji.com",
       "ऑनलाइन कैसीनो बांग्लादेश",
       "स्पोर्ट्स बेटिंग",
       "ऑनलाइन स्लॉट",
