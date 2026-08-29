@@ -61,14 +61,13 @@ jobs:
             git reset --hard origin/main
 
             if [ ! -f .env ]; then
-              cat > .env << 'EOF'
-API_URL=https://api.raja1.online
-NEXT_PUBLIC_SOCKET_URL=https://api.raja1.online
-NEXT_PUBLIC_SITE_URL=https://raja1.online
-GAME_LAUNCH_URL=https://apivexo.com/api/game/v1/gamelaunch
-GAME_API_SECRET=
-GAME_API_PREFIX=
-EOF
+              printf '%s\n' \
+                'API_URL=https://api.raja1.online' \
+                'NEXT_PUBLIC_SOCKET_URL=https://api.raja1.online' \
+                'NEXT_PUBLIC_SITE_URL=https://raja1.online' \
+                'GAME_LAUNCH_URL=https://apivexo.com/api/game/v1/gamelaunch' \
+                'GAME_API_SECRET=' \
+                'GAME_API_PREFIX=' > .env
               echo "WARN: created default .env — add GAME_API_* secrets on the server."
             fi
 
