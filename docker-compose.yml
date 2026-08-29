@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-https://api.raja1.online}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://raja1.online}
+    ports:
+      - "3020:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      API_URL: ${API_URL:-https://api.raja1.online}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://raja1.online}
+      NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-https://api.raja1.online}
+    restart: unless-stopped
