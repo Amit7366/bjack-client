@@ -229,7 +229,7 @@ const en: Messages = {
   },
   home: {
     announcement:
-      "Download our official app: https://rajabaji.com/download/rajabaji/rajabaji.apk — Dear customers, please use the given link to access our website and enjoy uninterrupted service.",
+      "Download our official app: https://raja1.online/download/rajabaji/rajabaji.apk — Dear customers, please use the given link to access our website and enjoy uninterrupted service.",
     slides: [
       {
         brand: "JILI",
@@ -551,7 +551,7 @@ const bn: Messages = {
   },
   home: {
     announcement:
-      "আমাদের অফিসিয়াল অ্যাপ ডাউনলোড করুন: https://rajabaji.com/download/rajabaji/rajabaji.apk — প্রিয় গ্রাহক, আমাদের ওয়েবসাইটে অবিচ্ছিন্ন সেবা পেতে দেওয়া লিংক ব্যবহার করুন।",
+      "আমাদের অফিসিয়াল অ্যাপ ডাউনলোড করুন: https://raja1.online/download/rajabaji/rajabaji.apk — প্রিয় গ্রাহক, আমাদের ওয়েবসাইটে অবিচ্ছিন্ন সেবা পেতে দেওয়া লিংক ব্যবহার করুন।",
     slides: [
       {
         brand: "JILI",
@@ -873,7 +873,7 @@ const hi: Messages = {
   },
   home: {
     announcement:
-      "हमारा आधिकारिक ऐप डाउनलोड करें: https://rajabaji.com/download/rajabaji/rajabaji.apk — प्रिय ग्राहक, निर्बाध सेवा के लिए दिए गए लिंक का उपयोग करें।",
+      "हमारा आधिकारिक ऐप डाउनलोड करें: https://raja1.online/download/rajabaji/rajabaji.apk — प्रिय ग्राहक, निर्बाध सेवा के लिए दिए गए लिंक का उपयोग करें।",
     slides: [
       {
         brand: "JILI",

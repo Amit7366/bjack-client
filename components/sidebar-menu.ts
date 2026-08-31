@@ -107,7 +107,7 @@ export const sidebarPrimaryItems: SidebarMenuItem[] = [
 export const sidebarSecondaryItems: SidebarMenuItem[] = [
   { id: "vipClub", kind: "link" },
   { id: "referral", kind: "link" },
-  { id: "affiliate", kind: "external", externalUrl: "https://aff.rajabaji.com/" },
+  { id: "affiliate", kind: "external", externalUrl: "https://aff.raja1.online/" },
   { id: "brandAmbassadors", kind: "link" },
   { id: "appDownload", kind: "link" },
   {
