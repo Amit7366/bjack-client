@@ -18,6 +18,12 @@ import {
 import {
   fetchActiveDepositAccounts,
   findAccountForMethodChannel,
+  paymentTypeAmountHintText,
+  paymentTypeIntroText,
+  paymentTypeVerifyLabel,
+  paymentTypeWarningText,
+  resolvePaymentType,
+  type DepositPaymentType,
 } from "@/lib/deposit-payment-accounts";
 import { memberDepositHref } from "@/lib/member-routes";
 import { DEFAULT_PROMO_CODE } from "@/lib/deposit-promotions";
@@ -141,6 +147,7 @@ function VerifyContent() {
   }, [methodParam, router, locale]);
 
   const [cashoutNumber, setCashoutNumber] = useState<string | null>(null);
+  const [paymentType, setPaymentType] = useState<DepositPaymentType>("cashout");
   const [channelName, setChannelName] = useState("");
   const [accountLoading, setAccountLoading] = useState(true);
 
@@ -161,6 +168,7 @@ function VerifyContent() {
           return;
         }
         setCashoutNumber(account.accountNumber);
+        setPaymentType(resolvePaymentType(account.paymentType));
         setChannelName(account.channelName);
       } catch {
         if (!cancelled) router.replace(memberDepositHref(locale));
@@ -334,9 +342,7 @@ function VerifyContent() {
 
               <div className="px-5 py-5">
                 <p className="text-center text-[13px] leading-6 text-[#374151]">
-                  {isBn
-                    ? "নিচের নম্বরটিতে দয়াকরে ক্যাশআউট করুন, ট্রাঞ্জেকশন আইডি বসান এবং ডিপোজিট রিকোয়েস্টটি কমপ্লিট করতে সাবমিট করুন। ধন্যবাদ।"
-                    : "Please cash out to the number below, enter the transaction ID, and submit to complete your deposit request. Thank you."}
+                  {paymentTypeIntroText(paymentType, locale)}
                 </p>
 
                 <p className="mt-2 text-center text-[11px] text-[#6b7280]">
@@ -376,7 +382,7 @@ function VerifyContent() {
                   <div className="flex items-center gap-3">
                     <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-[#1aa05a]" aria-hidden />
                     <span className="w-[120px] shrink-0 text-[14px] text-[#374151]">
-                      {isBn ? "ক্যাশআউট করুন:" : "Cash out to:"}
+                      {paymentTypeVerifyLabel(paymentType, locale)}
                     </span>
                     <span className="flex-1 text-[15px] font-bold text-[#1aa05a]">{cashoutNumber}</span>
                     <button
@@ -426,14 +432,10 @@ function VerifyContent() {
                 <div className="mt-6 border-t border-[#e5e7eb] pt-4">
                   <h3 className="text-[15px] font-bold text-[#111827]">{isBn ? "সতর্কতা:" : "Warning:"}</h3>
                   <p className="mt-2 text-[12px] font-medium leading-6 text-[#e11d48]">
-                    {isBn
-                      ? "অবশ্যই নিশ্চিত করুন, বিকাশ ডিপোজিট করার সময় আপনাকে যদি অন্যকোনও ওয়ালেট থেকে ক্যাশআউট করতে বলা হয়, আপনার ডিপোজিট ফেইল হতে পারে এবং আমরা প্রদত্ত আপনাদের এই টাকা ফেরত দিতে পারব না।"
-                      : "Please make sure to cash out only from the wallet shown. Using another wallet may fail your deposit and the amount may not be refundable."}
+                    {paymentTypeWarningText(paymentType, locale)}
                   </p>
                   <p className="mt-3 text-[12px] leading-6 text-[#6b7280]">
-                    {isBn
-                      ? "ডিপোজিট ফর্মে আপনি যে পরিমাণ টাকা বসিয়েছেন সেই পরিমাণ টাকা ক্যাশআউট করতে হবে। যদি আপনি ২,১০০.০০ টাকা বসিয়ে থাকেন এবং ভিন্ন এমাউন্টের টাকা ক্যাশআউট করেন, তাহলে আপনার ডিপোজিট এরর হবে না। দয়াকরে সঠিক ভাবে ট্রাঞ্জেকশন আইডি পূরণ করুন, অন্যথায় ডিপোজিটটি সফল হবে না।"
-                      : "Cash out the exact amount you entered in the deposit form. Entering a different amount or an incorrect transaction ID may cause the deposit to fail."}
+                    {paymentTypeAmountHintText(paymentType, locale)}
                   </p>
                 </div>
               </div>
