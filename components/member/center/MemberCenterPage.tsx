@@ -24,7 +24,7 @@ import {
   memberSuggestionHref,
   memberWithdrawHref,
 } from "@/lib/member-routes";
-import { rajabaji_ANDROID_APP_PATH } from "@/lib/seo/site-config";
+import ApkDownloadLink from "@/components/app-download/ApkDownloadLink";
 import {
   fetchMyNormalUserProfile,
   type NormalUserProfile,
@@ -389,14 +389,9 @@ export default function MemberCenterPage() {
             }
             if (id === "download-app") {
               return (
-                <a
-                  key={id}
-                  href={rajabaji_ANDROID_APP_PATH}
-                  download
-                  className={className}
-                >
+                <ApkDownloadLink key={id} className={className}>
                   {inner}
-                </a>
+                </ApkDownloadLink>
               );
             }
             if (id === "logout") {

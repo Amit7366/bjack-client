@@ -18,6 +18,13 @@ function isMemberPath(pathname: string): boolean {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Static APK (and other /download files) must not be treated as a locale
+  // segment. Mobile browsers ignore `<a download>` and navigate here; a
+  // locale redirect would serve the HTML app shell instead of the file.
+  if (pathname === "/download" || pathname.startsWith("/download/")) {
+    return NextResponse.next();
+  }
+
   if (pathname === "/") {
     const saved = readPreferencesFromCookie(request.headers.get("cookie"));
     const locale = saved?.locale ?? DEFAULT_PREFERENCES.locale;
@@ -60,5 +67,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|download|icons|.*\\..*).*)",
+  ],
 };

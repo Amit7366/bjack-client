@@ -17,7 +17,8 @@ export const SITE_LICENSE = "ALSI-202410030-FI1";
 export const SITE_DEFAULT_LOCALE = "bn" as const;
 
 /** Official Android APK served from `public/download/`. */
-export const rajabaji_ANDROID_APP_PATH = "/download/rajabaji/rajabaji.apk";
+export const rajabaji_ANDROID_APK_FILENAME = "rajabaji.apk";
+export const rajabaji_ANDROID_APP_PATH = `/download/rajabaji/${rajabaji_ANDROID_APK_FILENAME}`;
 
 /** Brand & PWA icons — self-hosted from `public/icons/`. */
 export const SITE_ICONS = {

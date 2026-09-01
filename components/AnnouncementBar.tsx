@@ -1,6 +1,7 @@
 "use client";
 
 import { absoluteUrl, rajabaji_ANDROID_APP_PATH } from "@/lib/seo/site-config";
+import ApkDownloadLink from "./app-download/ApkDownloadLink";
 import { useLocale } from "./LocaleProvider";
 
 function MegaphoneIcon() {
@@ -26,13 +27,9 @@ function AnnouncementText({ text }: { text: string }) {
   return (
     <span>
       {text.slice(0, linkIndex)}
-      <a
-        href={rajabaji_ANDROID_APP_PATH}
-        download
-        className="pointer-events-auto font-medium text-[#2cb86e] underline decoration-[#2cb86e]/50 underline-offset-2 transition-colors hover:text-[#8ef0b4] hover:decoration-[#8ef0b4]"
-      >
+      <ApkDownloadLink className="pointer-events-auto font-medium text-[#2cb86e] underline decoration-[#2cb86e]/50 underline-offset-2 transition-colors hover:text-[#8ef0b4] hover:decoration-[#8ef0b4]">
         {ANNOUNCEMENT_DOWNLOAD_URL}
-      </a>
+      </ApkDownloadLink>
       {text.slice(linkIndex + ANNOUNCEMENT_DOWNLOAD_URL.length)}
     </span>
   );

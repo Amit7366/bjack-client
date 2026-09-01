@@ -7,6 +7,7 @@ import {
   SITE_URL,
   absoluteUrl,
   localePath,
+  rajabaji_ANDROID_APP_PATH,
 } from "@/lib/seo/site-config";
 
 export default function HomeJsonLd({ locale }: { locale: Locale }) {
@@ -82,7 +83,7 @@ export default function HomeJsonLd({ locale }: { locale: Locale }) {
           price: "0",
           priceCurrency: "BDT",
         },
-        url: absoluteUrl("/download/rajabaji/rajabaji.apk"),
+        url: absoluteUrl(rajabaji_ANDROID_APP_PATH),
       },
     ],
   };

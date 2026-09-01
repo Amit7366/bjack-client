@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useLocale } from "@/components/LocaleProvider";
 import { useToast } from "@/components/ToastProvider";
 import { usePwaInstall } from "@/lib/use-pwa-install";
-import { rajabaji_ANDROID_APP_PATH, SITE_ICONS } from "@/lib/seo/site-config";
+import { SITE_ICONS } from "@/lib/seo/site-config";
+import ApkDownloadLink from "./ApkDownloadLink";
 
 type AppDownloadPromptProps = {
   onClose: () => void;
@@ -81,17 +82,13 @@ export default function AppDownloadPrompt({ onClose }: AppDownloadPromptProps) {
       </button>
 
       <div className="mt-4 flex gap-3">
-        <a
-          href={rajabaji_ANDROID_APP_PATH}
-          download
-          className="relative flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#3b82f6] py-3 text-sm font-bold text-white"
-        >
+        <ApkDownloadLink className="relative flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#3b82f6] py-3 text-sm font-bold text-white">
           <span className="absolute -left-1 -top-2 rounded-md bg-[#ef4444] px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
             {m.badge}
           </span>
           <AndroidIcon className="h-5 w-5" />
           {m.apkLabel}
-        </a>
+        </ApkDownloadLink>
 
         <button
           type="button"
