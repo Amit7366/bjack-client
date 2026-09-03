@@ -145,12 +145,12 @@ const en: Messages = {
   vip: "VIP",
   viewAll: "View all",
   gameLoginPrompt: {
-    title: "Become a rajabaji Member",
+    title: "Become a city777 Member",
     description: "Log in to play the game. If you don't have an account, sign up for free!",
     close: "Close",
   },
   appDownloadPrompt: {
-    title: "Download the rajabaji app now and enjoy the best gaming experience.",
+    title: "Download the city777 app now and enjoy the best gaming experience.",
     continueInBrowser: "Continue using browser",
     close: "Close",
     apkLabel: "APP",
@@ -198,7 +198,7 @@ const en: Messages = {
     appDownload: "APP Download",
     contactUs: "Contact Us",
     newMemberGuide: "New Member Guide",
-    bjForum: "rajabaji Forum",
+    bjForum: "city777 Forum",
   },
   sub: {
     all: "All",
@@ -229,7 +229,7 @@ const en: Messages = {
   },
   home: {
     announcement:
-      "Download our official app: https://city777.shop/download/rajabaji/rajabaji.apk — Dear customers, please use the given link to access our website and enjoy uninterrupted service.",
+      "Download our official app: https://city777.shop/download/city777/city777.apk — Dear customers, please use the given link to access our website and enjoy uninterrupted service.",
     slides: [
       {
         brand: "JILI",
@@ -467,12 +467,12 @@ const bn: Messages = {
   vip: "ভিআইপি",
   viewAll: "সব দেখুন",
   gameLoginPrompt: {
-    title: "একজন rajabaji সদস্য হন",
+    title: "একজন city777 সদস্য হন",
     description: "গেমটি খেলতে লগ ইন করুন। আপনার যদি অ্যাকাউন্ট না থাকে তবে ফ্রি সাইন আপ করুন!",
     close: "বন্ধ করুন",
   },
   appDownloadPrompt: {
-    title: "এখনই rajabaji অ্যাপ ডাউনলোড করুন, সর্বোচ্চ পুরস্কার জিতুন।",
+    title: "এখনই city777 অ্যাপ ডাউনলোড করুন, সর্বোচ্চ পুরস্কার জিতুন।",
     continueInBrowser: "ব্রাউজার ব্যবহার করে এগিয়ে যান",
     close: "বন্ধ করুন",
     apkLabel: "APP",
@@ -520,7 +520,7 @@ const bn: Messages = {
     appDownload: "অ্যাপ ডাউনলোড",
     contactUs: "যোগাযোগ করুন",
     newMemberGuide: "নতুন সদস্য নির্দেশিকা",
-    bjForum: "rajabaji ফোরাম",
+    bjForum: "city777 ফোরাম",
   },
   sub: {
     all: "সব",
@@ -551,7 +551,7 @@ const bn: Messages = {
   },
   home: {
     announcement:
-      "আমাদের অফিসিয়াল অ্যাপ ডাউনলোড করুন: https://city777.shop/download/rajabaji/rajabaji.apk — প্রিয় গ্রাহক, আমাদের ওয়েবসাইটে অবিচ্ছিন্ন সেবা পেতে দেওয়া লিংক ব্যবহার করুন।",
+      "আমাদের অফিসিয়াল অ্যাপ ডাউনলোড করুন: https://city777.shop/download/city777/city777.apk — প্রিয় গ্রাহক, আমাদের ওয়েবসাইটে অবিচ্ছিন্ন সেবা পেতে দেওয়া লিংক ব্যবহার করুন।",
     slides: [
       {
         brand: "JILI",
@@ -789,12 +789,12 @@ const hi: Messages = {
   vip: "वीआईपी",
   viewAll: "सभी देखें",
   gameLoginPrompt: {
-    title: "rajabaji सदस्य बनें",
+    title: "city777 सदस्य बनें",
     description: "गेम खेलने के लिए लॉग इन करें। अकाउंट नहीं है तो मुफ्त में साइन अप करें!",
     close: "बंद करें",
   },
   appDownloadPrompt: {
-    title: "अभी rajabaji ऐप डाउनलोड करें और बेहतरीन गेमिंग अनुभव पाएं।",
+    title: "अभी city777 ऐप डाउनलोड करें और बेहतरीन गेमिंग अनुभव पाएं।",
     continueInBrowser: "ब्राउज़र में जारी रखें",
     close: "बंद करें",
     apkLabel: "APP",
@@ -842,7 +842,7 @@ const hi: Messages = {
     appDownload: "ऐप डाउनलोड",
     contactUs: "संपर्क करें",
     newMemberGuide: "नए सदस्य गाइड",
-    bjForum: "rajabaji फोरम",
+    bjForum: "city777 फोरम",
   },
   sub: {
     all: "सभी",
@@ -873,7 +873,7 @@ const hi: Messages = {
   },
   home: {
     announcement:
-      "हमारा आधिकारिक ऐप डाउनलोड करें: https://city777.shop/download/rajabaji/rajabaji.apk — प्रिय ग्राहक, निर्बाध सेवा के लिए दिए गए लिंक का उपयोग करें।",
+      "हमारा आधिकारिक ऐप डाउनलोड करें: https://city777.shop/download/city777/city777.apk — प्रिय ग्राहक, निर्बाध सेवा के लिए दिए गए लिंक का उपयोग करें।",
     slides: [
       {
         brand: "JILI",

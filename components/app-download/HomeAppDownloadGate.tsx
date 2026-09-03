@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { usePwaInstall } from "@/lib/use-pwa-install";
 import AppDownloadPrompt from "./AppDownloadPrompt";
 
-const DISMISS_KEY = "rajabaji.appDownload.dismissed";
+const DISMISS_KEY = "city777.appDownload.dismissed";
 
 function isHomePath(pathname: string): boolean {
   return /^\/(bn|en|hi)\/?$/.test(pathname);

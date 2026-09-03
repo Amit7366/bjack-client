@@ -1,5 +1,5 @@
-const PROFILE_CACHE_KEY = "rajabaji.memberProfile";
-export const PROFILE_CACHE_CHANGE_EVENT = "rajabaji-profile-change";
+const PROFILE_CACHE_KEY = "city777.memberProfile";
+export const PROFILE_CACHE_CHANGE_EVENT = "city777-profile-change";
 
 export type MemberProfileCache = {
   legalName?: string;

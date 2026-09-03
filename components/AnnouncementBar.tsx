@@ -1,6 +1,6 @@
 "use client";
 
-import { absoluteUrl, rajabaji_ANDROID_APP_PATH } from "@/lib/seo/site-config";
+import { absoluteUrl, city777_ANDROID_APP_PATH } from "@/lib/seo/site-config";
 import ApkDownloadLink from "./app-download/ApkDownloadLink";
 import { useLocale } from "./LocaleProvider";
 
@@ -16,7 +16,7 @@ function MegaphoneIcon() {
   );
 }
 
-const ANNOUNCEMENT_DOWNLOAD_URL = absoluteUrl(rajabaji_ANDROID_APP_PATH);
+const ANNOUNCEMENT_DOWNLOAD_URL = absoluteUrl(city777_ANDROID_APP_PATH);
 
 function AnnouncementText({ text }: { text: string }) {
   const linkIndex = text.indexOf(ANNOUNCEMENT_DOWNLOAD_URL);

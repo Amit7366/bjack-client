@@ -8,8 +8,8 @@ import { isJwtExpired, parseJwtPayload } from "./jwt";
 import type { AccountStatus } from "@/lib/account-status";
 import { isAccountStatus } from "@/lib/account-status";
 
-export const AUTH_STORAGE_KEY = "rajabaji.auth";
-export const AUTH_CHANGE_EVENT = "rajabaji-auth-change";
+export const AUTH_STORAGE_KEY = "city777.auth";
+export const AUTH_CHANGE_EVENT = "city777-auth-change";
 
 export type AuthSession = {
   accessToken: string;

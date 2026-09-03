@@ -105,9 +105,9 @@ const bn: ReferralRulesMessages = {
   ],
   otherTermsTitle: "অন্যান্য শর্ত:",
   otherTermsItems: [
-    "যদি অ্যাকাউন্টের ব্যাপারে কোন প্রকার অপব্যবহারের সন্দেহ হয় এবং / অথবা প্রাপ্ত সুবিধাটি মেনে না নেয় তবে rajabaji বোনাস বাতিলের অধিকার সংরক্ষণ করে।",
-    "যে কোনও সময় এই প্রমোশন থেকে যে কোনও প্লেয়ারকে বাদ দিতে এবং কোনও ব্যাখ্যা না দিয়ে পরিবর্তন, সংশোধন, এবং / অথবা কোনও বোনাস অফার বা প্রমোশন বাতিল করার অধিকার rajabaji সংরক্ষণ করে।",
-    "rajabaji-র সাধারণ নীতিমালা এবং শর্তাদি প্রযোজ্য।",
+    "যদি অ্যাকাউন্টের ব্যাপারে কোন প্রকার অপব্যবহারের সন্দেহ হয় এবং / অথবা প্রাপ্ত সুবিধাটি মেনে না নেয় তবে city777 বোনাস বাতিলের অধিকার সংরক্ষণ করে।",
+    "যে কোনও সময় এই প্রমোশন থেকে যে কোনও প্লেয়ারকে বাদ দিতে এবং কোনও ব্যাখ্যা না দিয়ে পরিবর্তন, সংশোধন, এবং / অথবা কোনও বোনাস অফার বা প্রমোশন বাতিল করার অধিকার city777 সংরক্ষণ করে।",
+    "city777-র সাধারণ নীতিমালা এবং শর্তাদি প্রযোজ্য।",
   ],
 };
 
@@ -168,9 +168,9 @@ const en: ReferralRulesMessages = {
   ],
   otherTermsTitle: "Other terms:",
   otherTermsItems: [
-    "rajabaji reserves the right to cancel the bonus if there is any suspicion of account abuse and/or if the benefit received is not accepted.",
-    "rajabaji reserves the right to exclude any player from this promotion at any time and to change, amend, and/or cancel any bonus offer or promotion without explanation.",
-    "rajabaji's general terms and conditions apply.",
+    "city777 reserves the right to cancel the bonus if there is any suspicion of account abuse and/or if the benefit received is not accepted.",
+    "city777 reserves the right to exclude any player from this promotion at any time and to change, amend, and/or cancel any bonus offer or promotion without explanation.",
+    "city777's general terms and conditions apply.",
   ],
 };
 

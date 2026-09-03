@@ -4,8 +4,8 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://city777.sh
   "",
 );
 
-export const SITE_NAME = "rajabaji";
-export const SITE_SHORT_NAME = "rajabaji";
+export const SITE_NAME = "city777";
+export const SITE_SHORT_NAME = "city777";
 
 export const SITE_LEGAL_NAME = "Northern Lights Limited Holdings Limited";
 export const SITE_CONTACT_EMAIL = "legal@northernlightsltd.com";
@@ -17,8 +17,8 @@ export const SITE_LICENSE = "ALSI-202410030-FI1";
 export const SITE_DEFAULT_LOCALE = "bn" as const;
 
 /** Official Android APK served from `public/download/`. */
-export const rajabaji_ANDROID_APK_FILENAME = "rajabaji.apk";
-export const rajabaji_ANDROID_APP_PATH = `/download/rajabaji/${rajabaji_ANDROID_APK_FILENAME}`;
+export const city777_ANDROID_APK_FILENAME = "city777.apk";
+export const city777_ANDROID_APP_PATH = `/download/city777/${city777_ANDROID_APK_FILENAME}`;
 
 /** Brand & PWA icons — self-hosted from `public/icons/`. */
 export const SITE_ICONS = {
@@ -30,7 +30,7 @@ export const SITE_ICONS = {
 } as const;
 
 export const SITE_SOCIAL = {
-  twitter: "@rajabaji",
+  twitter: "@city777",
 } as const;
 
 export function absoluteUrl(path = ""): string {

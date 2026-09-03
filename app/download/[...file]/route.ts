@@ -2,13 +2,13 @@ import { createReadStream, existsSync, statSync } from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { NextResponse } from "next/server";
-import { rajabaji_ANDROID_APK_FILENAME } from "@/lib/seo/site-config";
+import { city777_ANDROID_APK_FILENAME } from "@/lib/seo/site-config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const APK_MIME = "application/vnd.android.package-archive";
-const APK_SEGMENTS = ["rajabaji", rajabaji_ANDROID_APK_FILENAME] as const;
+const APK_SEGMENTS = ["city777", city777_ANDROID_APK_FILENAME] as const;
 
 function apkFilePath(): string {
   return path.join(process.cwd(), "public", "download", ...APK_SEGMENTS);
@@ -17,7 +17,7 @@ function apkFilePath(): string {
 function attachmentHeaders(extra?: Record<string, string>): Headers {
   return new Headers({
     "Content-Type": APK_MIME,
-    "Content-Disposition": `attachment; filename="${rajabaji_ANDROID_APK_FILENAME}"`,
+    "Content-Disposition": `attachment; filename="${city777_ANDROID_APK_FILENAME}"`,
     "X-Content-Type-Options": "nosniff",
     "Accept-Ranges": "bytes",
     "Cache-Control": "public, max-age=3600, immutable",
