@@ -46,7 +46,7 @@ export default function HomeJsonLd({ locale }: { locale: Locale }) {
           height: 192,
         },
         image: SITE_ICONS.ogImage,
-        email: SITE_CONTACT_EMAIL,
+        ...(SITE_CONTACT_EMAIL ? { email: SITE_CONTACT_EMAIL } : {}),
         areaServed: {
           "@type": "Country",
           name: "Bangladesh",

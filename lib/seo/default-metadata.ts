@@ -61,7 +61,7 @@ export const defaultSiteMetadata: Metadata = {
     creator: "@city777",
   },
   other: {
-    contact: SITE_CONTACT_EMAIL,
+    ...(SITE_CONTACT_EMAIL ? { contact: SITE_CONTACT_EMAIL } : {}),
     "apple-mobile-web-app-capable": "yes",
     "mobile-web-app-capable": "yes",
   },

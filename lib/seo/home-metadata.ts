@@ -177,7 +177,7 @@ export function buildHomeMetadata(locale: Locale): Metadata {
       "content-language": locale,
       "geo.region": "BD",
       "geo.placename": "Bangladesh",
-      contact: SITE_CONTACT_EMAIL,
+      ...(SITE_CONTACT_EMAIL ? { contact: SITE_CONTACT_EMAIL } : {}),
     },
   };
 }

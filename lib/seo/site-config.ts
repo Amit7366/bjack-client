@@ -8,10 +8,10 @@ export const SITE_NAME = "city777";
 export const SITE_SHORT_NAME = "city777";
 
 export const SITE_LEGAL_NAME = "Northern Lights Limited Holdings Limited";
-export const SITE_CONTACT_EMAIL = "legal@northernlightsltd.com";
-export const SITE_SUPPORT_EMAIL = "fnjunocron@gmail.com";
-export const SITE_TELEGRAM_USERNAME = "Ragnar778";
-export const SITE_TELEGRAM_URL = `https://t.me/${SITE_TELEGRAM_USERNAME}`;
+export const SITE_CONTACT_EMAIL = "";
+export const SITE_SUPPORT_EMAIL = "";
+export const SITE_TELEGRAM_USERNAME = "";
+export const SITE_TELEGRAM_URL = "";
 export const SITE_LICENSE = "ALSI-202410030-FI1";
 
 export const SITE_DEFAULT_LOCALE = "bn" as const;

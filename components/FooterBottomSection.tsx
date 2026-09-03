@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { socialLinks } from "@/lib/footer-social-data";
+import { SITE_CONTACT_EMAIL } from "@/lib/seo/site-config";
 import { useLocale } from "./LocaleProvider";
 
 function GreenSectionTitle({ children }: { children: React.ReactNode }) {
@@ -163,13 +164,15 @@ export default function FooterBottomSection() {
         <p>
           <span className="text-[#4ade80]">city777.shop</span> {b.legalOwnership}
         </p>
-        <p>
-          {b.legalContactPrefix}{" "}
-          <a href="mailto:legal@northernlightsltd.com" className="text-[#4ade80] hover:underline">
-            legal@northernlightsltd.com
-          </a>
-          .
-        </p>
+        {SITE_CONTACT_EMAIL ? (
+          <p>
+            {b.legalContactPrefix}{" "}
+            <a href={`mailto:${SITE_CONTACT_EMAIL}`} className="text-[#4ade80] hover:underline">
+              {SITE_CONTACT_EMAIL}
+            </a>
+            .
+          </p>
+        ) : null}
         <p>
           <span className="text-[#4ade80]">city777.shop</span> {b.legalLicense}
         </p>

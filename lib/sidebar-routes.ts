@@ -70,8 +70,8 @@ export function sidebarSubItemHref(
 ): string | null {
   if (parentId === "contactUs") {
     if (subId === "liveChat") return memberLiveChatHref(locale);
-    if (subId === "email") return `mailto:${SITE_SUPPORT_EMAIL}`;
-    if (subId === "telegram") return SITE_TELEGRAM_URL;
+    if (subId === "email") return SITE_SUPPORT_EMAIL ? `mailto:${SITE_SUPPORT_EMAIL}` : null;
+    if (subId === "telegram") return SITE_TELEGRAM_URL || null;
   }
 
   const kind = SIDEBAR_TO_LOBBY[parentId];
