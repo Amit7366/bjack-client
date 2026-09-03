@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import {
-  SITE_CONTACT_EMAIL,
   SITE_ICONS,
   SITE_NAME,
   SITE_SHORT_NAME,
@@ -61,7 +60,6 @@ export const defaultSiteMetadata: Metadata = {
     creator: "@city777",
   },
   other: {
-    ...(SITE_CONTACT_EMAIL ? { contact: SITE_CONTACT_EMAIL } : {}),
     "apple-mobile-web-app-capable": "yes",
     "mobile-web-app-capable": "yes",
   },

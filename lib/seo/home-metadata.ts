@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { Locale } from "@/lib/locale";
 import {
-  SITE_CONTACT_EMAIL,
   SITE_DEFAULT_LOCALE,
   SITE_ICONS,
   SITE_NAME,
@@ -177,7 +176,6 @@ export function buildHomeMetadata(locale: Locale): Metadata {
       "content-language": locale,
       "geo.region": "BD",
       "geo.placename": "Bangladesh",
-      ...(SITE_CONTACT_EMAIL ? { contact: SITE_CONTACT_EMAIL } : {}),
     },
   };
 }
