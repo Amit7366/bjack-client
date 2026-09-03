@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-raja-client
+  group: deploy-city-client
   cancel-in-progress: false
 
 jobs:
@@ -32,8 +32,8 @@ jobs:
           script: |
             set -euo pipefail
             export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
-            DEPLOY_DIR="/root/raja-client"
-            DOMAIN="raja1.online"
+            DEPLOY_DIR="/root/city-client"
+            DOMAIN="city777.shop"
             REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
 
             if ! command -v git >/dev/null 2>&1; then
@@ -49,6 +49,33 @@ jobs:
               exit 1
             fi
 
+            mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled /var/www/html
+            printf 'include /etc/nginx/sites-enabled/*;\n' > /etc/nginx/conf.d/zz-sites-enabled.conf
+            if command -v getenforce >/dev/null 2>&1 && [ "$(getenforce 2>/dev/null || true)" != "Disabled" ]; then
+              setsebool -P httpd_can_network_connect 1 || true
+            fi
+
+            SWAP_KB="$(awk '/SwapTotal/ {print $2}' /proc/meminfo 2>/dev/null || echo 0)"
+            if [ "${SWAP_KB:-0}" -lt 1048576 ]; then
+              echo "Swap is ${SWAP_KB} kB — adding 2G /swapfile-extra..."
+              if [ ! -f /swapfile-extra ]; then
+                dd if=/dev/zero of=/swapfile-extra bs=1M count=2048 status=none
+                chmod 600 /swapfile-extra
+                mkswap /swapfile-extra
+              fi
+              swapon /swapfile-extra || true
+              grep -q '/swapfile-extra' /etc/fstab || echo '/swapfile-extra none swap sw 0 0' >> /etc/fstab
+            fi
+            free -h
+
+            mkdir -p /etc/docker
+            if [ ! -f /etc/docker/daemon.json ] || ! grep -q '8.8.8.8' /etc/docker/daemon.json; then
+              echo "Setting Docker DNS to 8.8.8.8 / 1.1.1.1..."
+              printf '%s\n' '{"dns":["8.8.8.8","1.1.1.1"]}' > /etc/docker/daemon.json
+              systemctl restart docker
+              sleep 3
+            fi
+
             if [ ! -d "${DEPLOY_DIR}/.git" ]; then
               echo "Cloning repository into ${DEPLOY_DIR}..."
               rm -rf "${DEPLOY_DIR}"
@@ -62,9 +89,9 @@ jobs:
 
             if [ ! -f .env ]; then
               printf '%s\n' \
-                'API_URL=https://api.raja1.online' \
-                'NEXT_PUBLIC_SOCKET_URL=https://api.raja1.online' \
-                'NEXT_PUBLIC_SITE_URL=https://raja1.online' \
+                'API_URL=https://api.city777.shop' \
+                'NEXT_PUBLIC_SOCKET_URL=https://api.city777.shop' \
+                'NEXT_PUBLIC_SITE_URL=https://city777.shop' \
                 'GAME_LAUNCH_URL=https://apivexo.com/api/game/v1/gamelaunch' \
                 'GAME_API_SECRET=' \
                 'GAME_API_PREFIX=' > .env
@@ -82,10 +109,28 @@ jobs:
             fi
 
             docker compose down --remove-orphans 2>/dev/null || true
-            docker compose up -d --build
+            export DOCKER_BUILDKIT=0
+            export COMPOSE_DOCKER_CLI_BUILD=0
+            docker compose build --progress=plain
+            docker compose up -d
+
+            echo "Freeing port 80/443 from Apache/LiteSpeed if present..."
+            for svc in httpd apache2 lsws ols; do
+              sudo systemctl stop "${svc}" 2>/dev/null || true
+              sudo systemctl disable "${svc}" 2>/dev/null || true
+            done
+            ss -tlnp | grep -E ':80 |:443 ' || true
 
             sudo nginx -t
-            sudo systemctl reload nginx
+            sudo sed -i -E 's/^(\s*)listen\s+\[::\]/#\1listen [::]/' /etc/nginx/nginx.conf || true
+            sudo systemctl unmask nginx || true
+            sudo systemctl enable nginx || true
+            if ! sudo systemctl restart nginx; then
+              echo "===== nginx failed to start ====="
+              sudo systemctl status nginx --no-pager || true
+              sudo journalctl -xeu nginx -n 80 --no-pager || true
+              exit 1
+            fi
 
             if [ ! -d "/etc/letsencrypt/live/${DOMAIN}" ]; then
               echo "Requesting TLS certificate for ${DOMAIN}..."
@@ -100,7 +145,22 @@ jobs:
               sudo ln -sf "/etc/nginx/sites-available/${DOMAIN}" "/etc/nginx/sites-enabled/${DOMAIN}"
             fi
 
+            echo "Freeing port 80/443 from Apache/LiteSpeed if present..."
+            for svc in httpd apache2 lsws ols; do
+              sudo systemctl stop "${svc}" 2>/dev/null || true
+              sudo systemctl disable "${svc}" 2>/dev/null || true
+            done
+            ss -tlnp | grep -E ':80 |:443 ' || true
+
             sudo nginx -t
-            sudo systemctl reload nginx
+            sudo sed -i -E 's/^(\s*)listen\s+\[::\]/#\1listen [::]/' /etc/nginx/nginx.conf || true
+            sudo systemctl unmask nginx || true
+            sudo systemctl enable nginx || true
+            if ! sudo systemctl restart nginx; then
+              echo "===== nginx failed to start ====="
+              sudo systemctl status nginx --no-pager || true
+              sudo journalctl -xeu nginx -n 80 --no-pager || true
+              exit 1
+            fi
 
             echo "Deployed https://${DOMAIN}"
