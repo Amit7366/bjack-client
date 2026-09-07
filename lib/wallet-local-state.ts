@@ -3,7 +3,7 @@
 import { formatWalletBalance, refreshWalletBalance } from "@/lib/auth/api";
 import { readAuthSession, saveAuthSession } from "@/lib/auth/session";
 
-export const WALLET_LOCAL_CHANGE_EVENT = "city777-wallet-local-change";
+export const WALLET_LOCAL_CHANGE_EVENT = "banglajackpot-wallet-local-change";
 export const ANCHOR_TTL_MS = 2 * 60 * 60 * 1000;
 const DRIFT_TOLERANCE = 0.01;
 

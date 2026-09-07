@@ -30,7 +30,7 @@ export type FooterMessages = {
 
 export const footerEn: FooterMessages = {
   gaming: "Gaming",
-  aboutBaji: "About city777",
+  aboutBaji: "About banglajackpot",
   features: "Features",
   help: "Help",
   sponsorships: "Sponsorships",
@@ -53,7 +53,7 @@ export const footerEn: FooterMessages = {
     referral: "Referral",
     brandAmbassadors: "Brand Ambassadors",
     appDownload: "APP Download",
-    bjForum: "city777 Forum",
+    bjForum: "banglajackpot Forum",
   },
   sponsorshipsData: {
     quettaGladiators: { name: "Quetta Gladiators", role: "Titanium Sponsor, 2023" },
@@ -75,13 +75,13 @@ export const footerEn: FooterMessages = {
     officialBrandPartner: "Official Brand Partner",
     gamingLicense: "Gaming License",
     responsibleGaming: "Responsible Gaming",
-    aboutHeading: "city777 Bangladesh - Leading Online Gaming and Betting Platform in Bangladesh",
+    aboutHeading: "banglajackpot Bangladesh - Leading Online Gaming and Betting Platform in Bangladesh",
     aboutText: footerAboutPreview,
     aboutTextMore: footerAboutExpanded,
     showMore: "Show more",
     showLess: "Show less",
     winLikeAKing: "Win Like A King",
-    copyright: "© 2026 city777 Copyrights. All Rights Reserved",
+    copyright: "© 2026 banglajackpot Copyrights. All Rights Reserved",
     legalOwnership:
       "is owned and operated by Northern Lights Limited Holdings Limited. registration number: 15839, registered address: Hamchhako, Mutsamudu, Autonomous Island of Anjouan, Union of Comoros.",
     legalContactPrefix: "Contact us",
@@ -94,7 +94,7 @@ export const footerEn: FooterMessages = {
 
 export const footerBn: FooterMessages = {
   gaming: "গেমিং",
-  aboutBaji: "city777 সম্পর্কে",
+  aboutBaji: "banglajackpot সম্পর্কে",
   features: "ফিচার",
   help: "সাহায্য",
   sponsorships: "স্পন্সরশিপ",
@@ -117,7 +117,7 @@ export const footerBn: FooterMessages = {
     referral: "রেফারেল",
     brandAmbassadors: "ব্র্যান্ড অ্যাম্বাসেডর",
     appDownload: "অ্যাপ ডাউনলোড",
-    bjForum: "city777 ফোরাম",
+    bjForum: "banglajackpot ফোরাম",
   },
   sponsorshipsData: {
     quettaGladiators: { name: "Quetta Gladiators", role: "Titanium Sponsor, 2023" },
@@ -139,13 +139,13 @@ export const footerBn: FooterMessages = {
     officialBrandPartner: "অফিসিয়াল ব্র্যান্ড পার্টনার",
     gamingLicense: "গেমিং লাইসেন্স",
     responsibleGaming: "দায়িত্বশীল গেমিং",
-    aboutHeading: "city777 বাংলাদেশ - বাংলাদেশের শীর্ষ অনলাইন গেমিং ও বেটিং প্ল্যাটফর্ম",
+    aboutHeading: "banglajackpot বাংলাদেশ - বাংলাদেশের শীর্ষ অনলাইন গেমিং ও বেটিং প্ল্যাটফর্ম",
     aboutText: footerAboutPreview,
     aboutTextMore: footerAboutExpanded,
     showMore: "আরও দেখুন",
     showLess: "কম দেখুন",
     winLikeAKing: "Win Like A King",
-    copyright: "© 2026 city777 Copyrights. All Rights Reserved",
+    copyright: "© 2026 banglajackpot Copyrights. All Rights Reserved",
     legalOwnership:
       "Northern Lights Limited Holdings Limited-এর মালিকানাধীন ও পরিচালিত। নিবন্ধন নম্বর: 15839, নিবন্ধিত ঠিকানা: Hamchhako, Mutsamudu, Autonomous Island of Anjouan, Union of Comoros।",
     legalContactPrefix: "যোগাযোগ করুন",
@@ -158,7 +158,7 @@ export const footerBn: FooterMessages = {
 
 export const footerHi: FooterMessages = {
   gaming: "गेमिंग",
-  aboutBaji: "city777 के बारे में",
+  aboutBaji: "banglajackpot के बारे में",
   features: "फीचर्स",
   help: "सहायता",
   sponsorships: "प्रायोजन",
@@ -181,7 +181,7 @@ export const footerHi: FooterMessages = {
     referral: "रेफरल",
     brandAmbassadors: "ब्रांड एंबेसडर",
     appDownload: "ऐप डाउनलोड",
-    bjForum: "city777 फोरम",
+    bjForum: "banglajackpot फोरम",
   },
   sponsorshipsData: {
     quettaGladiators: { name: "Quetta Gladiators", role: "Titanium Sponsor, 2023" },
@@ -203,13 +203,13 @@ export const footerHi: FooterMessages = {
     officialBrandPartner: "आधिकारिक ब्रांड पार्टनर",
     gamingLicense: "गेमिंग लाइसेंस",
     responsibleGaming: "जिम्मेदार गेमिंग",
-    aboutHeading: "city777 Bangladesh - बांग्लादेश में अग्रणी ऑनलाइन गेमिंग और बेटिंग प्लेटफॉर्म",
+    aboutHeading: "banglajackpot Bangladesh - बांग्लादेश में अग्रणी ऑनलाइन गेमिंग और बेटिंग प्लेटफॉर्म",
     aboutText: footerAboutPreview,
     aboutTextMore: footerAboutExpanded,
     showMore: "और देखें",
     showLess: "कम देखें",
     winLikeAKing: "Win Like A King",
-    copyright: "© 2026 city777 Copyrights. All Rights Reserved",
+    copyright: "© 2026 banglajackpot Copyrights. All Rights Reserved",
     legalOwnership:
       "Northern Lights Limited Holdings Limited के स्वामित्व और संचालन में है। पंजीकरण संख्या: 15839, पंजीकृत पता: Hamchhako, Mutsamudu, Autonomous Island of Anjouan, Union of Comoros।",
     legalContactPrefix: "संपर्क करें",

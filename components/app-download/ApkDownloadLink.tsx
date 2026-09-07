@@ -1,5 +1,5 @@
 import type { AnchorHTMLAttributes } from "react";
-import { city777_ANDROID_APK_FILENAME, city777_ANDROID_APP_PATH } from "@/lib/seo/site-config";
+import { banglajackpot_ANDROID_APK_FILENAME, banglajackpot_ANDROID_APP_PATH } from "@/lib/seo/site-config";
 
 type ApkDownloadLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "download">;
 
@@ -12,8 +12,8 @@ export default function ApkDownloadLink({ children, ...props }: ApkDownloadLinkP
   return (
     <a
       {...props}
-      href={city777_ANDROID_APP_PATH}
-      download={city777_ANDROID_APK_FILENAME}
+      href={banglajackpot_ANDROID_APP_PATH}
+      download={banglajackpot_ANDROID_APK_FILENAME}
       type="application/vnd.android.package-archive"
     >
       {children}

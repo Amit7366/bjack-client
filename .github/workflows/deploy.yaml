@@ -33,7 +33,7 @@ jobs:
             set -euo pipefail
             export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
             DEPLOY_DIR="/root/city-client"
-            DOMAIN="city777.shop"
+            DOMAIN="banglajackpot.online"
             REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
 
             if ! command -v git >/dev/null 2>&1; then
@@ -89,9 +89,9 @@ jobs:
 
             if [ ! -f .env ]; then
               printf '%s\n' \
-                'API_URL=https://api.city777.shop' \
-                'NEXT_PUBLIC_SOCKET_URL=https://api.city777.shop' \
-                'NEXT_PUBLIC_SITE_URL=https://city777.shop' \
+                'API_URL=https://api.banglajackpot.online' \
+                'NEXT_PUBLIC_SOCKET_URL=https://api.banglajackpot.online' \
+                'NEXT_PUBLIC_SITE_URL=https://banglajackpot.online' \
                 'GAME_LAUNCH_URL=https://apivexo.com/api/game/v1/gamelaunch' \
                 'GAME_API_SECRET=' \
                 'GAME_API_PREFIX=' > .env
@@ -114,11 +114,12 @@ jobs:
             docker compose build --progress=plain
             docker compose up -d
 
-            echo "Freeing port 80/443 from Apache/LiteSpeed if present..."
+            echo "Keeping nginx on 80/443 — stop Apache only (leave cPanel UI on 2083/2087)..."
             for svc in httpd apache2 lsws ols; do
               sudo systemctl stop "${svc}" 2>/dev/null || true
               sudo systemctl disable "${svc}" 2>/dev/null || true
             done
+            sudo systemctl mask httpd 2>/dev/null || true
             ss -tlnp | grep -E ':80 |:443 ' || true
 
             sudo nginx -t
@@ -145,11 +146,12 @@ jobs:
               sudo ln -sf "/etc/nginx/sites-available/${DOMAIN}" "/etc/nginx/sites-enabled/${DOMAIN}"
             fi
 
-            echo "Freeing port 80/443 from Apache/LiteSpeed if present..."
+            echo "Keeping nginx on 80/443 — stop Apache only (leave cPanel UI on 2083/2087)..."
             for svc in httpd apache2 lsws ols; do
               sudo systemctl stop "${svc}" 2>/dev/null || true
               sudo systemctl disable "${svc}" 2>/dev/null || true
             done
+            sudo systemctl mask httpd 2>/dev/null || true
             ss -tlnp | grep -E ':80 |:443 ' || true
 
             sudo nginx -t

@@ -15,8 +15,8 @@ COPY . .
 
 # NEXT_PUBLIC_* must be present at `next build` (baked into client JS).
 # Pass production URLs as build args on the new VPS.
-ARG NEXT_PUBLIC_SOCKET_URL=https://api.city777.shop
-ARG NEXT_PUBLIC_SITE_URL=https://city777.shop
+ARG NEXT_PUBLIC_SOCKET_URL=https://api.banglajackpot.online
+ARG NEXT_PUBLIC_SITE_URL=https://banglajackpot.online
 ENV NEXT_PUBLIC_SOCKET_URL=$NEXT_PUBLIC_SOCKET_URL
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_TELEMETRY_DISABLED=1

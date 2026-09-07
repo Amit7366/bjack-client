@@ -1,4 +1,4 @@
-const GAME_SESSION_PENDING_KEY = "city777.gameSessionPending";
+const GAME_SESSION_PENDING_KEY = "banglajackpot.gameSessionPending";
 
 let memoryPending = false;
 

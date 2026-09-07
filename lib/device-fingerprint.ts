@@ -1,4 +1,4 @@
-const STORAGE_KEY = "city777.deviceFingerprint";
+const STORAGE_KEY = "banglajackpot.deviceFingerprint";
 
 let fingerprintPromise: Promise<string> | null = null;
 

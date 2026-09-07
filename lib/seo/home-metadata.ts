@@ -19,12 +19,12 @@ type HomeSeoCopy = {
 
 const HOME_SEO: Record<Locale, HomeSeoCopy> = {
   en: {
-    title: "city777 — Online Casino, Slots, Crash & Sports Betting in Bangladesh",
+    title: "banglajackpot — Online Casino, Slots, Crash & Sports Betting in Bangladesh",
     description:
-      "Play casino, live dealer, slots, crash, fishing, arcade & sports betting at city777. Fast BDT deposits & withdrawals, JILI, PG Soft & Evolution games, VIP rewards, referral bonuses & 24/7 support on Bangladesh's trusted gaming platform.",
+      "Play casino, live dealer, slots, crash, fishing, arcade & sports betting at banglajackpot. Fast BDT deposits & withdrawals, JILI, PG Soft & Evolution games, VIP rewards, referral bonuses & 24/7 support on Bangladesh's trusted gaming platform.",
     keywords: [
-      "city777",
-      "city777.shop",
+      "banglajackpot",
+      "banglajackpot.online",
       "online casino Bangladesh",
       "sports betting Bangladesh",
       "online slots Bangladesh",
@@ -47,12 +47,12 @@ const HOME_SEO: Record<Locale, HomeSeoCopy> = {
     ogLocale: "en_BD",
   },
   bn: {
-    title: "city777 — বাংলাদেশের শীর্ষ অনলাইন ক্যাসিনো, স্লট ও স্পোর্টস বেটিং",
+    title: "banglajackpot — বাংলাদেশের শীর্ষ অনলাইন ক্যাসিনো, স্লট ও স্পোর্টস বেটিং",
     description:
-      "city777-তে ক্যাসিনো, লাইভ ডিলার, স্লট, ক্র্যাশ, ফিশিং, আর্কেড ও স্পোর্টস বেটিং খেলুন। দ্রুত BDT ডিপোজিট ও উইথড্র, JILI, PG Soft ও Evolution গেম, ভিআইপি রিওয়ার্ড, রেফারেল বোনাস ও ২৪/৭ সাপোর্ট — বাংলাদেশের বিশ্বস্ত গেমিং প্ল্যাটফর্ম।",
+      "banglajackpot-তে ক্যাসিনো, লাইভ ডিলার, স্লট, ক্র্যাশ, ফিশিং, আর্কেড ও স্পোর্টস বেটিং খেলুন। দ্রুত BDT ডিপোজিট ও উইথড্র, JILI, PG Soft ও Evolution গেম, ভিআইপি রিওয়ার্ড, রেফারেল বোনাস ও ২৪/৭ সাপোর্ট — বাংলাদেশের বিশ্বস্ত গেমিং প্ল্যাটফর্ম।",
     keywords: [
-      "city777",
-      "city777.shop",
+      "banglajackpot",
+      "banglajackpot.online",
       "অনলাইন ক্যাসিনো বাংলাদেশ",
       "স্পোর্টস বেটিং",
       "অনলাইন স্লট",
@@ -75,12 +75,12 @@ const HOME_SEO: Record<Locale, HomeSeoCopy> = {
     ogLocale: "bn_BD",
   },
   hi: {
-    title: "city777 — बांग्लादेश में ऑनलाइन कैसीनो, स्लॉट और स्पोर्ट्स बेटिंग",
+    title: "banglajackpot — बांग्लादेश में ऑनलाइन कैसीनो, स्लॉट और स्पोर्ट्स बेटिंग",
     description:
-      "city777 पर कैसीनो, लाइव डीलर, स्लॉट, क्रैश, फिशिंग, आर्केड और स्पोर्ट्स बेटिंग खेलें। तेज़ BDT जमा और निकासी, JILI, PG Soft और Evolution गेम, VIP रिवॉर्ड्स, रेफरल बोनस और 24/7 सपोर्ट — भरोसेमंद गेमिंग प्लेटफॉर्म।",
+      "banglajackpot पर कैसीनो, लाइव डीलर, स्लॉट, क्रैश, फिशिंग, आर्केड और स्पोर्ट्स बेटिंग खेलें। तेज़ BDT जमा और निकासी, JILI, PG Soft और Evolution गेम, VIP रिवॉर्ड्स, रेफरल बोनस और 24/7 सपोर्ट — भरोसेमंद गेमिंग प्लेटफॉर्म।",
     keywords: [
-      "city777",
-      "city777.shop",
+      "banglajackpot",
+      "banglajackpot.online",
       "ऑनलाइन कैसीनो बांग्लादेश",
       "स्पोर्ट्स बेटिंग",
       "ऑनलाइन स्लॉट",

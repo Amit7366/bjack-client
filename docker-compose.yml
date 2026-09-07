@@ -5,8 +5,8 @@ services:
       dockerfile: Dockerfile
       network: host
       args:
-        NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-https://api.city777.shop}
-        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://city777.shop}
+        NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-https://api.banglajackpot.online}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://banglajackpot.online}
     ports:
       - "127.0.0.1:3020:3000"
     dns:
@@ -16,7 +16,7 @@ services:
       - .env
     environment:
       NODE_ENV: production
-      API_URL: ${API_URL:-https://api.city777.shop}
-      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://city777.shop}
-      NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-https://api.city777.shop}
+      API_URL: ${API_URL:-https://api.banglajackpot.online}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://banglajackpot.online}
+      NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-https://api.banglajackpot.online}
     restart: unless-stopped

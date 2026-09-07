@@ -1,7 +1,7 @@
-# Deploy client to VPS (city777.shop)
+# Deploy client to VPS (banglajackpot.online)
 
 VPS: `103.72.65.213`  
-DNS A record: `city777.shop` → `103.72.65.213` (Cloudflare **DNS only** / grey cloud until SSL is issued)
+DNS A record: `banglajackpot.online` → `103.72.65.213` (Cloudflare **DNS only** / grey cloud until SSL is issued)
 
 ## 1. One-time VPS setup
 
@@ -54,9 +54,9 @@ nano /root/city-client/.env
 ```
 
 ```env
-API_URL=https://api.city777.shop
-NEXT_PUBLIC_SOCKET_URL=https://api.city777.shop
-NEXT_PUBLIC_SITE_URL=https://city777.shop
+API_URL=https://api.banglajackpot.online
+NEXT_PUBLIC_SOCKET_URL=https://api.banglajackpot.online
+NEXT_PUBLIC_SITE_URL=https://banglajackpot.online
 GAME_LAUNCH_URL=https://apivexo.com/api/game/v1/gamelaunch
 GAME_API_SECRET=
 GAME_API_PREFIX=
@@ -68,7 +68,7 @@ From `client/`:
 
 ```bash
 git add -A
-git commit -m "Configure Docker CI/CD for city777.shop"
+git commit -m "Configure Docker CI/CD for banglajackpot.online"
 git push origin main
 ```
 
@@ -77,7 +77,7 @@ Pushing `main` starts **Actions → Deploy client**. You can also run it from **
 ## 6. Verify
 
 ```bash
-curl -I https://city777.shop
+curl -I https://banglajackpot.online
 ```
 
-Login/API will fail until the server is deployed on `api.city777.shop`.
+Login/API will fail until the server is deployed on `api.banglajackpot.online`.

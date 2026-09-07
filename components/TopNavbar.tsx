@@ -166,8 +166,8 @@ export default function TopNavbar({
             href={`/${locale}`}
             className="focus-ring flex shrink-0 items-center rounded-md text-[20px] font-bold tracking-tight sm:text-[22px]"
           >
-            <span className="text-white">City</span>
-            <span className="text-[#ed1c24]">777</span>
+            <span className="text-white">Bangla</span>
+            <span className="text-[#ed1c24]">Jackpot</span>
           </Link>
 
           {!isAuthVariant ? (

@@ -7,7 +7,7 @@ import {
   SITE_URL,
   absoluteUrl,
   localePath,
-  city777_ANDROID_APP_PATH,
+  banglajackpot_ANDROID_APP_PATH,
 } from "@/lib/seo/site-config";
 
 export default function HomeJsonLd({ locale }: { locale: Locale }) {
@@ -83,7 +83,7 @@ export default function HomeJsonLd({ locale }: { locale: Locale }) {
           price: "0",
           priceCurrency: "BDT",
         },
-        url: absoluteUrl(city777_ANDROID_APP_PATH),
+        url: absoluteUrl(banglajackpot_ANDROID_APP_PATH),
       },
     ],
   };

@@ -107,7 +107,7 @@ export const sidebarPrimaryItems: SidebarMenuItem[] = [
 export const sidebarSecondaryItems: SidebarMenuItem[] = [
   { id: "vipClub", kind: "link" },
   { id: "referral", kind: "link" },
-  { id: "affiliate", kind: "external", externalUrl: "https://aff.city777.shop/" },
+  { id: "affiliate", kind: "external", externalUrl: "https://aff.banglajackpot.online/" },
   { id: "brandAmbassadors", kind: "link" },
   { id: "appDownload", kind: "link" },
   {

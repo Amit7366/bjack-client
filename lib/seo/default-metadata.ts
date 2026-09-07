@@ -13,7 +13,7 @@ export const defaultSiteMetadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "city777 is Bangladesh's trusted online gaming platform for casino, slots, crash, fishing, arcade, lottery and sports betting with fast BDT payments, VIP rewards and 24/7 support.",
+    "banglajackpot is Bangladesh's trusted online gaming platform for casino, slots, crash, fishing, arcade, lottery and sports betting with fast BDT payments, VIP rewards and 24/7 support.",
   applicationName: SITE_NAME,
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
@@ -56,8 +56,8 @@ export const defaultSiteMetadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: "@city777",
-    creator: "@city777",
+    site: "@banglajackpot",
+    creator: "@banglajackpot",
   },
   other: {
     "apple-mobile-web-app-capable": "yes",

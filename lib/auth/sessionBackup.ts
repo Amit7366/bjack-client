@@ -6,8 +6,8 @@ import {
 } from "./constants";
 import { parseJwtPayload } from "./jwt";
 
-const AUTH_STORAGE_KEY = "city777.auth";
-export const AUTH_CHANGE_EVENT = "city777-auth-change";
+const AUTH_STORAGE_KEY = "banglajackpot.auth";
+export const AUTH_CHANGE_EVENT = "banglajackpot-auth-change";
 
 export type AuthSession = {
   accessToken: string;
